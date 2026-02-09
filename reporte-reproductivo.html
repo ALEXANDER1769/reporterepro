@@ -188,13 +188,13 @@ to { transform: translateX(5px); }
 </div>
 
 <script>
-const WORKER_URL = "https://pysiga.d-alexjose.workers.dev";
+const WORKER_URL = "https://pysiga.d-alexjose.workers.dev"; // Asegúrate que sea tu URL correcta
 const urlParams = new URLSearchParams(window.location.search);
 const email = urlParams.get('email');
 
 if (!email) {
 alert("Parámetro 'email' no encontrado en la URL.");
-location.href = "/";
+location.href = "/"; // O redirige a donde corresponda
 }
 
 async function cargarReporte() {
