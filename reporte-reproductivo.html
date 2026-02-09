@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reporte Reproductivo - PYSIGA</title>
+<style>
+:root {
+--verde: #2f6f4e;
+--verde-claro: #e6f1eb;
+--azul: #2c4f7c;
+--tierra: #8b6f47;
+--rojo: #e74c3c;
+--gris: #7f8c8d;
+--morado: #9b59b6;
+--fondo: #f7f9f8;
+--blanco: #ffffff;
+}
+body {
+margin: 0;
+font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+background: var(--fondo);
+color: #333;
+}
+.container {
+max-width: 1100px;
+margin: auto;
+padding: 15px;
+}
+.card {
+background: var(--blanco);
+border-radius: 10px;
+padding: 15px;
+box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+margin-bottom: 15px;
+}
+.header-titulo {
+color: var(--azul);
+font-size: 24px;
+margin: 0;
+}
+.kpi-grid {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+gap: 15px;
+margin-bottom: 20px;
+}
+.kpi-card {
+background: var(--blanco);
+border-radius: 8px;
+padding: 15px;
+box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+text-align: center;
+}
+.kpi-valor {
+font-size: 24px;
+font-weight: bold;
+margin: 5px 0;
+}
+.estado-excelente { color: #27ae60; }
+.estado-regular { color: #f39c12; }
+.estado-alerta { color: var(--rojo); }
+.tabla-detalles {
+width: 100%;
+border-collapse: collapse;
+font-size: 13px;
+}
+.tabla-detalles th {
+background: var(--verde);
+color: white;
+padding: 6px;
+position: sticky;
+top: 0;
+}
+.tabla-detalles td {
+padding: 6px;
+border-bottom: 1px solid #ddd;
+text-align: left;
+}
+/* === LOADER === */
+#loader {
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+height: 100vh;
+background: white;
+position: fixed;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+z-index: 9999;
+}
+.vaca-loader {
+font-size: 60px;
+margin-bottom: 16px;
+animation: mover 1s infinite alternate;
+}
+@keyframes mover {
+from { transform: translateX(-5px); }
+to { transform: translateX(5px); }
+}
+</style>
+</head>
+<body>
+<div id="loader">
+<div class="vaca-loader">🐄</div>
+<div id="loader-text">Cargando reporte reproductivo…</div>
+</div>
+
+<div id="contenido" style="display: none;">
+<div class="container">
+<h1 class="header-titulo">Reporte Reproductivo</h1>
+
+<div class="kpi-grid">
+<div class="kpi-card">
+<h3>Tasa de Preñez General</h3>
+<div id="tasaPreñezGeneral" class="kpi-valor">0%</div>
+<div id="tasaPreñezGeneralMeta">Meta: 85%</div>
+</div>
+<div class="kpi-card">
+<h3>Tasa de Preñez Vacas</h3>
+<div id="tasaPreñezVacas" class="kpi-valor">0%</div>
+<div id="tasaPreñezVacasMeta">Meta: 85%</div>
+</div>
+<div class="kpi-card">
+<h3>Tasa de Preñez Novillas</h3>
+<div id="tasaPreñezNovillas" class="kpi-valor">0%</div>
+<div id="tasaPreñezNovillasMeta">Meta: 80%</div>
+</div>
+<div class="kpi-card">
+<h3>% Vacías</h3>
+<div id="porcentajeVacías" class="kpi-valor">0%</div>
+<div id="porcentajeVacíasMeta">Meta: < 10%</div>
+</div>
+<div class="kpi-card">
+<h3>Días Abiertos Prom.</h3>
+<div id="diasAbiertosProm" class="kpi-valor">0</div>
+<div id="diasAbiertosPromMeta">Meta: < 100 días</div>
+</div>
+<div class="kpi-card">
+<h3>Intervalo E/P</h3>
+<div id="iep" class="kpi-valor">0</div>
+<div id="iepMeta">Meta: < 400 días</div>
+</div>
+</div>
+
+<h2>Detalles de Preñadas</h2>
+<h3>Menor a 3 meses del último parto</h3>
+<table class="tabla-detalles">
+<thead><tr><th>ID</th><th>Número Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días</th></tr></thead>
+<tbody id="preñadas_menor3m"></tbody>
+</table>
+
+<h3>3 a 6 meses del último parto</h3>
+<table class="tabla-detalles">
+<thead><tr><th>ID</th><th>Número Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días</th></tr></thead>
+<tbody id="preñadas_3a6m"></tbody>
+</table>
+
+<h3>Mayor a 6 meses del último parto</h3>
+<table class="tabla-detalles">
+<thead><tr><th>ID</th><th>Número Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días</th></tr></thead>
+<tbody id="preñadas_mayor6m"></tbody>
+</table>
+
+<h2>Detalles de Vacías</h2>
+<h3>Menor a 3 meses del último parto</h3>
+<table class="tabla-detalles">
+<thead><tr><th>ID</th><th>Número Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días</th></tr></thead>
+<tbody id="vacías_menor3m"></tbody>
+</table>
+
+<h3>3 a 6 meses del último parto</h3>
+<table class="tabla-detalles">
+<thead><tr><th>ID</th><th>Número Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días</th></tr></thead>
+<tbody id="vacías_3a6m"></tbody>
+</table>
+
+<h3>Mayor a 6 meses del último parto</h3>
+<table class="tabla-detalles">
+<thead><tr><th>ID</th><th>Número Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días</th></tr></thead>
+<tbody id="vacías_mayor6m"></tbody>
+</table>
+
+</div>
+</div>
+
+<script>
+const WORKER_URL = "https://pysiga.d-alexjose.workers.dev";
+const urlParams = new URLSearchParams(window.location.search);
+const email = urlParams.get('email');
+
+if (!email) {
+alert("Parámetro 'email' no encontrado en la URL.");
+location.href = "/";
+}
+
+async function cargarReporte() {
+try {
+const res = await fetch(WORKER_URL, {
+method: "POST",
+headers: { "Content-Type": "application/json" },
+body: JSON.stringify({
+accion: "reporteReproductivo",
+email: email
+})
+});
+const data = await res.json();
+
+if (!data.ok) {
+throw new Error(data.error || "Error desconocido");
+}
+
+document.getElementById("loader").style.display = "none";
+document.getElementById("contenido").style.display = "block";
+
+// Mostrar KPIs
+const kpis = data.kpis;
+document.getElementById("tasaPreñezGeneral").textContent = `${kpis.tasaPreñezGeneral.valor}%`;
+document.getElementById("tasaPreñezGeneral").className = `kpi-valor estado-${kpis.tasaPreñezGeneral.estado}`;
+document.getElementById("tasaPreñezVacas").textContent = `${kpis.tasaPreñezVacas.valor}%`;
+document.getElementById("tasaPreñezVacas").className = `kpi-valor estado-${kpis.tasaPreñezVacas.estado}`;
+document.getElementById("tasaPreñezNovillas").textContent = `${kpis.tasaPreñezNovillas.valor}%`;
+document.getElementById("tasaPreñezNovillas").className = `kpi-valor estado-${kpis.tasaPreñezNovillas.estado}`;
+document.getElementById("porcentajeVacías").textContent = `${kpis.porcentajeVacías.valor}%`;
+document.getElementById("porcentajeVacías").className = `kpi-valor estado-${kpis.porcentajeVacías.estado}`;
+document.getElementById("diasAbiertosProm").textContent = kpis.diasAbiertosPromedio.valor;
+document.getElementById("diasAbiertosProm").className = `kpi-valor estado-${kpis.diasAbiertosPromedio.estado}`;
+document.getElementById("iep").textContent = kpis.intervaloEntrePartos.valor;
+document.getElementById("iep").className = `kpi-valor estado-${kpis.intervaloEntrePartos.estado}`;
+
+// Mostrar detalles
+renderizarTabla("preñadas_menor3m", data.detalles.preñadas_menor3m);
+renderizarTabla("preñadas_3a6m", data.detalles.preñadas_3a6m);
+renderizarTabla("preñadas_mayor6m", data.detalles.preñadas_mayor6m);
+renderizarTabla("vacías_menor3m", data.detalles.vacías_menor3m);
+renderizarTabla("vacías_3a6m", data.detalles.vacías_3a6m);
+renderizarTabla("vacías_mayor6m", data.detalles.vacías_mayor6m);
+
+} catch (e) {
+console.error("Error:", e);
+document.getElementById("loader-text").textContent = `Error: ${e.message}`;
+}
+}
+
+function renderizarTabla(id, datos) {
+const tbody = document.getElementById(id);
+tbody.innerHTML = "";
+if (datos && datos.length > 0) {
+datos.forEach(row => {
+const tr = document.createElement("tr");
+tr.innerHTML = `
+<td>${row.ID}</td>
+<td>${row.numeroPractico}</td>
+<td>${row.ultimoParto}</td>
+<td>${row.diagnostico}</td>
+<td>${row.fechaDiagnostico}</td>
+<td>${row.dias}</td>
+`;
+tbody.appendChild(tr);
+});
+} else {
+tbody.innerHTML = '<tr><td colspan="6">Sin registros</td></tr>';
+}
+}
+
+cargarReporte();
+</script>
+</body>
+</html>
