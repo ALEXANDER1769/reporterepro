@@ -37,22 +37,24 @@ margin-bottom: 15px;
 .header-titulo {
 color: var(--azul);
 font-size: 24px;
-margin: 0 0 15px 0; /* Espacio inferior */
+margin: 0 0 15px 0;
 display: flex;
-justify-content: space-between; /* Espacio entre título y botón */
-align-items: center; /* Alinear verticalmente */
+justify-content: space-between;
+align-items: center;
 }
 .btn-cerrar-reporte {
 background: var(--rojo);
 color: white;
 border: none;
-padding: 8px 16px;
-border-radius: 4px;
+padding: 10px 20px;
+border-radius: 6px;
 cursor: pointer;
-font-size: 14px;
+font-size: 15px;
+font-weight: bold;
 }
 .btn-cerrar-reporte:hover {
 background: #c0392b;
+opacity: 0.9;
 }
 .kpi-grid {
 display: grid;
@@ -92,7 +94,6 @@ padding: 6px;
 border-bottom: 1px solid #ddd;
 text-align: left;
 }
-/* === LOADER === */
 #loader {
 display: flex;
 flex-direction: column;
@@ -123,14 +124,12 @@ to { transform: translateX(5px); }
 <div class="vaca-loader">🐄</div>
 <div id="loader-text">Cargando reporte reproductivo…</div>
 </div>
-
 <div id="contenido" style="display: none;">
 <div class="container">
 <h1 class="header-titulo">
 Reporte Reproductivo
-<button class="btn-cerrar-reporte" onclick="cerrarVentana()">Cerrar</button> <!-- Botón de cierre -->
+<button class="btn-cerrar-reporte" onclick="cerrarReporte()">CloseOperation y regresar al panel</button>
 </h1>
-
 <div class="kpi-grid">
 <div class="kpi-card">
 <h3>Tasa de Preñez General</h3>
@@ -163,66 +162,60 @@ Reporte Reproductivo
 <div id="iepMeta">Meta: < 400 días</div>
 </div>
 </div>
-
 <h2>Detalles de Preñadas</h2>
 <h3>Menor a 3 meses del último parto</h3>
 <table class="tabla-detalles">
 <thead><tr><th>ID</th><th>Número Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días</th></tr></thead>
 <tbody id="preñadas_menor3m"></tbody>
 </table>
-
 <h3>3 a 6 meses del último parto</h3>
 <table class="tabla-detalles">
 <thead><tr><th>ID</th><th>Número Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días</th></tr></thead>
 <tbody id="preñadas_3a6m"></tbody>
 </table>
-
 <h3>Mayor a 6 meses del último parto</h3>
 <table class="tabla-detalles">
 <thead><tr><th>ID</th><th>Número Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días</th></tr></thead>
 <tbody id="preñadas_mayor6m"></tbody>
 </table>
-
 <h2>Detalles de Vacías</h2>
 <h3>Menor a 3 meses del último parto</h3>
 <table class="tabla-detalles">
 <thead><tr><th>ID</th><th>Número Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días</th></tr></thead>
 <tbody id="vacías_menor3m"></tbody>
 </table>
-
 <h3>3 a 6 meses del último parto</h3>
 <table class="tabla-detalles">
 <thead><tr><th>ID</th><th>Número Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días</th></tr></thead>
 <tbody id="vacías_3a6m"></tbody>
 </table>
-
 <h3>Mayor a 6 meses del último parto</h3>
 <table class="tabla-detalles">
 <thead><tr><th>ID</th><th>Número Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días</th></tr></thead>
 <tbody id="vacías_mayor6m"></tbody>
 </table>
-
 </div>
 </div>
-
 <script>
-const WORKER_URL = "https://pysiga.d-alexjose.workers.dev"; // Asegúrate que sea tu URL correcta
+const WORKER_URL = "https://pysiga.d-alexjose.workers.dev";
 const urlParams = new URLSearchParams(window.location.search);
 const email = urlParams.get('email');
-
 if (!email) {
 alert("Parámetro 'email' no encontrado en la URL.");
-location.href = "/"; // O redirige a donde corresponda
+location.href = "/";
 }
-
-// Función para cerrar la ventana actual
-function cerrarVentana() {
+function cerrarReporte() {
+if (window.opener) {
 window.close();
-// Si window.close() no funciona por restricciones del navegador, puedes intentar redirigir a una página vacía o al panel principal si lo tienes como referer.
-// history.back(); // Esto vuelve a la página anterior, puede no ser deseable si fue abierta con window.open
-// location.href = 'https://tu-panel-principal.com'; // Reemplaza con tu URL real
+return;
 }
-
+const emailParam = urlParams.get('email');
+if (emailParam) {
+window.location.href = `https://sites.google.com/view/tu-sitio-pysiga?email=${encodeURIComponent(emailParam)}`;
+} else {
+window.location.href = 'https://sites.google.com/view/tu-sitio-pysiga';
+}
+}
 async function cargarReporte() {
 try {
 const res = await fetch(WORKER_URL, {
@@ -234,15 +227,11 @@ email: email
 })
 });
 const data = await res.json();
-
 if (!data.ok) {
 throw new Error(data.error || "Error desconocido");
 }
-
 document.getElementById("loader").style.display = "none";
 document.getElementById("contenido").style.display = "block";
-
-// Mostrar KPIs
 const kpis = data.kpis;
 document.getElementById("tasaPreñezGeneral").textContent = `${kpis.tasaPreñezGeneral.valor}%`;
 document.getElementById("tasaPreñezGeneral").className = `kpi-valor estado-${kpis.tasaPreñezGeneral.estado}`;
@@ -256,21 +245,17 @@ document.getElementById("diasAbiertosProm").textContent = kpis.diasAbiertosProme
 document.getElementById("diasAbiertosProm").className = `kpi-valor estado-${kpis.diasAbiertosPromedio.estado}`;
 document.getElementById("iep").textContent = kpis.intervaloEntrePartos.valor;
 document.getElementById("iep").className = `kpi-valor estado-${kpis.intervaloEntrePartos.estado}`;
-
-// Mostrar detalles
 renderizarTabla("preñadas_menor3m", data.detalles.preñadas_menor3m);
 renderizarTabla("preñadas_3a6m", data.detalles.preñadas_3a6m);
 renderizarTabla("preñadas_mayor6m", data.detalles.preñadas_mayor6m);
 renderizarTabla("vacías_menor3m", data.detalles.vacías_menor3m);
 renderizarTabla("vacías_3a6m", data.detalles.vacías_3a6m);
 renderizarTabla("vacías_mayor6m", data.detalles.vacías_mayor6m);
-
 } catch (e) {
 console.error("Error:", e);
 document.getElementById("loader-text").textContent = `Error: ${e.message}`;
 }
 }
-
 function renderizarTabla(id, datos) {
 const tbody = document.getElementById(id);
 tbody.innerHTML = "";
@@ -291,7 +276,6 @@ tbody.appendChild(tr);
 tbody.innerHTML = '<tr><td colspan="6">Sin registros</td></tr>';
 }
 }
-
 cargarReporte();
 </script>
 </body>
