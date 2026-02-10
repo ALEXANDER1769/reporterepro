@@ -37,7 +37,22 @@ margin-bottom: 15px;
 .header-titulo {
 color: var(--azul);
 font-size: 24px;
-margin: 0;
+margin: 0 0 15px 0; /* Espacio inferior */
+display: flex;
+justify-content: space-between; /* Espacio entre título y botón */
+align-items: center; /* Alinear verticalmente */
+}
+.btn-cerrar-reporte {
+background: var(--rojo);
+color: white;
+border: none;
+padding: 8px 16px;
+border-radius: 4px;
+cursor: pointer;
+font-size: 14px;
+}
+.btn-cerrar-reporte:hover {
+background: #c0392b;
 }
 .kpi-grid {
 display: grid;
@@ -111,7 +126,10 @@ to { transform: translateX(5px); }
 
 <div id="contenido" style="display: none;">
 <div class="container">
-<h1 class="header-titulo">Reporte Reproductivo</h1>
+<h1 class="header-titulo">
+Reporte Reproductivo
+<button class="btn-cerrar-reporte" onclick="cerrarVentana()">Cerrar</button> <!-- Botón de cierre -->
+</h1>
 
 <div class="kpi-grid">
 <div class="kpi-card">
@@ -195,6 +213,14 @@ const email = urlParams.get('email');
 if (!email) {
 alert("Parámetro 'email' no encontrado en la URL.");
 location.href = "/"; // O redirige a donde corresponda
+}
+
+// Función para cerrar la ventana actual
+function cerrarVentana() {
+window.close();
+// Si window.close() no funciona por restricciones del navegador, puedes intentar redirigir a una página vacía o al panel principal si lo tienes como referer.
+// history.back(); // Esto vuelve a la página anterior, puede no ser deseable si fue abierta con window.open
+// location.href = 'https://tu-panel-principal.com'; // Reemplaza con tu URL real
 }
 
 async function cargarReporte() {
