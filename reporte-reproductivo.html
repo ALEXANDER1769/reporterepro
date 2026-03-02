@@ -1,282 +1,368 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Reporte Reproductivo - PYSIGA</title>
-<style>
-:root {
---verde: #2f6f4e;
---verde-claro: #e6f1eb;
---azul: #2c4f7c;
---tierra: #8b6f47;
---rojo: #e74c3c;
---gris: #7f8c8d;
---morado: #9b59b6;
---fondo: #f7f9f8;
---blanco: #ffffff;
-}
-body {
-margin: 0;
-font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
-background: var(--fondo);
-color: #333;
-}
-.container {
-max-width: 1100px;
-margin: auto;
-padding: 15px;
-}
-.card {
-background: var(--blanco);
-border-radius: 10px;
-padding: 15px;
-box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-margin-bottom: 15px;
-}
-.header-titulo {
-color: var(--azul);
-font-size: 24px;
-margin: 0 0 15px 0;
-display: flex;
-justify-content: space-between;
-align-items: center;
-}
-.btn-cerrar-reporte {
-background: var(--rojo);
-color: white;
-border: none;
-padding: 10px 20px;
-border-radius: 6px;
-cursor: pointer;
-font-size: 15px;
-font-weight: bold;
-}
-.btn-cerrar-reporte:hover {
-background: #c0392b;
-opacity: 0.9;
-}
-.kpi-grid {
-display: grid;
-grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-gap: 15px;
-margin-bottom: 20px;
-}
-.kpi-card {
-background: var(--blanco);
-border-radius: 8px;
-padding: 15px;
-box-shadow: 0 2px 4px rgba(0,0,0,0.08);
-text-align: center;
-}
-.kpi-valor {
-font-size: 24px;
-font-weight: bold;
-margin: 5px 0;
-}
-.estado-excelente { color: #27ae60; }
-.estado-regular { color: #f39c12; }
-.estado-alerta { color: var(--rojo); }
-.tabla-detalles {
-width: 100%;
-border-collapse: collapse;
-font-size: 13px;
-}
-.tabla-detalles th {
-background: var(--verde);
-color: white;
-padding: 6px;
-position: sticky;
-top: 0;
-}
-.tabla-detalles td {
-padding: 6px;
-border-bottom: 1px solid #ddd;
-text-align: left;
-}
-#loader {
-display: flex;
-flex-direction: column;
-align-items: center;
-justify-content: center;
-height: 100vh;
-background: white;
-position: fixed;
-top: 0;
-left: 0;
-right: 0;
-bottom: 0;
-z-index: 9999;
-}
-.vaca-loader {
-font-size: 60px;
-margin-bottom: 16px;
-animation: mover 1s infinite alternate;
-}
-@keyframes mover {
-from { transform: translateX(-5px); }
-to { transform: translateX(5px); }
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reporte Reproductivo - PYSIGA</title>
+  <style>
+    :root {
+      --verde: #2f6f4e;
+      --verde-claro: #e6f1eb;
+      --azul: #2c4f7c;
+      --tierra: #8b6f47;
+      --rojo: #e74c3c;
+      --gris: #7f8c8d;
+      --morado: #9b59b6;
+      --fondo: #f7f9f8;
+      --blanco: #ffffff;
+    }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      background: var(--fondo);
+      color: #333;
+    }
+    .container {
+      max-width: 1100px;
+      margin: auto;
+      padding: 15px;
+    }
+    .card {
+      background: var(--blanco);
+      border-radius: 10px;
+      padding: 15px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      margin-bottom: 15px;
+    }
+    .header-titulo {
+      color: var(--azul);
+      font-size: 24px;
+      margin: 0 0 15px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .btn-cerrar-reporte {
+      background: var(--rojo);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: bold;
+    }
+    .btn-cerrar-reporte:hover {
+      background: #c0392b;
+      opacity: 0.9;
+    }
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    .kpi-card {
+      background: var(--blanco);
+      border-radius: 8px;
+      padding: 15px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+      text-align: center;
+    }
+    .kpi-valor {
+      font-size: 24px;
+      font-weight: bold;
+      margin: 5px 0;
+    }
+    .estado-excelente { color: #27ae60; }
+    .estado-regular { color: #f39c12; }
+    .estado-alerta { color: var(--rojo); }
+    .tabla-detalles {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .tabla-detalles th {
+      background: var(--verde);
+      color: white;
+      padding: 6px;
+      position: sticky;
+      top: 0;
+    }
+    .tabla-detalles td {
+      padding: 6px;
+      border-bottom: 1px solid #ddd;
+      text-align: left;
+    }
+    #loader {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background: white;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 9999;
+    }
+    .vaca-loader {
+      font-size: 60px;
+      margin-bottom: 16px;
+      animation: mover 1s infinite alternate;
+    }
+    @keyframes mover {
+      from { transform: translateX(-5px); }
+      to { transform: translateX(5px); }
+    }
+    .parametros-control {
+      background-color: var(--verde-claro);
+      padding: 10px;
+      border-radius: 6px;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+    .parametros-control label {
+      font-weight: bold;
+    }
+    .parametros-control input {
+      width: 60px;
+      padding: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .parametros-control button {
+      background-color: var(--azul);
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .parametros-control button:hover {
+      opacity: 0.9;
+    }
+  </style>
 </head>
 <body>
-<div id="loader">
-<div class="vaca-loader">🐄</div>
-<div id="loader-text">Cargando reporte reproductivo…</div>
-</div>
-<div id="contenido" style="display: none;">
-<div class="container">
-<h1 class="header-titulo">
-Reporte Reproductivo
-<button class="btn-cerrar-reporte" onclick="cerrarReporte()">CloseOperation y regresar al panel</button>
-</h1>
-<div class="kpi-grid">
-<div class="kpi-card">
-<h3>Tasa de Preñez General</h3>
-<div id="tasaPreñezGeneral" class="kpi-valor">0%</div>
-<div id="tasaPreñezGeneralMeta">Meta: 85%</div>
-</div>
-<div class="kpi-card">
-<h3>Tasa de Preñez Vacas</h3>
-<div id="tasaPreñezVacas" class="kpi-valor">0%</div>
-<div id="tasaPreñezVacasMeta">Meta: 85%</div>
-</div>
-<div class="kpi-card">
-<h3>Tasa de Preñez Novillas</h3>
-<div id="tasaPreñezNovillas" class="kpi-valor">0%</div>
-<div id="tasaPreñezNovillasMeta">Meta: 80%</div>
-</div>
-<div class="kpi-card">
-<h3>% Vacías</h3>
-<div id="porcentajeVacías" class="kpi-valor">0%</div>
-<div id="porcentajeVacíasMeta">Meta: < 10%</div>
-</div>
-<div class="kpi-card">
-<h3>Días Abiertos Prom.</h3>
-<div id="diasAbiertosProm" class="kpi-valor">0</div>
-<div id="diasAbiertosPromMeta">Meta: < 100 días</div>
-</div>
-<div class="kpi-card">
-<h3>Intervalo E/P</h3>
-<div id="iep" class="kpi-valor">0</div>
-<div id="iepMeta">Meta: < 400 días</div>
-</div>
-</div>
-<h2>Detalles de Preñadas</h2>
-<h3>Menor a 3 meses del último parto</h3>
-<table class="tabla-detalles">
-<thead><tr><th>ID</th><th>Número Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días</th></tr></thead>
-<tbody id="preñadas_menor3m"></tbody>
-</table>
-<h3>3 a 6 meses del último parto</h3>
-<table class="tabla-detalles">
-<thead><tr><th>ID</th><th>Número Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días</th></tr></thead>
-<tbody id="preñadas_3a6m"></tbody>
-</table>
-<h3>Mayor a 6 meses del último parto</h3>
-<table class="tabla-detalles">
-<thead><tr><th>ID</th><th>Número Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días</th></tr></thead>
-<tbody id="preñadas_mayor6m"></tbody>
-</table>
-<h2>Detalles de Vacías</h2>
-<h3>Menor a 3 meses del último parto</h3>
-<table class="tabla-detalles">
-<thead><tr><th>ID</th><th>Número Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días</th></tr></thead>
-<tbody id="vacías_menor3m"></tbody>
-</table>
-<h3>3 a 6 meses del último parto</h3>
-<table class="tabla-detalles">
-<thead><tr><th>ID</th><th>Número Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días</th></tr></thead>
-<tbody id="vacías_3a6m"></tbody>
-</table>
-<h3>Mayor a 6 meses del último parto</h3>
-<table class="tabla-detalles">
-<thead><tr><th>ID</th><th>Número Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días</th></tr></thead>
-<tbody id="vacías_mayor6m"></tbody>
-</table>
-</div>
-</div>
-<script>
-const WORKER_URL = "https://pysiga.d-alexjose.workers.dev";
-const urlParams = new URLSearchParams(window.location.search);
-const email = urlParams.get('email');
-if (!email) {
-alert("Parámetro 'email' no encontrado en la URL.");
-location.href = "/";
-}
-function cerrarReporte() {
-if (window.opener) {
-window.close();
-return;
-}
-const emailParam = urlParams.get('email');
-if (emailParam) {
-window.location.href = `https://sites.google.com/view/tu-sitio-pysiga?email=${encodeURIComponent(emailParam)}`;
-} else {
-window.location.href = 'https://sites.google.com/view/tu-sitio-pysiga';
-}
-}
-async function cargarReporte() {
-try {
-const res = await fetch(WORKER_URL, {
-method: "POST",
-headers: { "Content-Type": "application/json" },
-body: JSON.stringify({
-accion: "reporteReproductivo",
-email: email
-})
-});
-const data = await res.json();
-if (!data.ok) {
-throw new Error(data.error || "Error desconocido");
-}
-document.getElementById("loader").style.display = "none";
-document.getElementById("contenido").style.display = "block";
-const kpis = data.kpis;
-document.getElementById("tasaPreñezGeneral").textContent = `${kpis.tasaPreñezGeneral.valor}%`;
-document.getElementById("tasaPreñezGeneral").className = `kpi-valor estado-${kpis.tasaPreñezGeneral.estado}`;
-document.getElementById("tasaPreñezVacas").textContent = `${kpis.tasaPreñezVacas.valor}%`;
-document.getElementById("tasaPreñezVacas").className = `kpi-valor estado-${kpis.tasaPreñezVacas.estado}`;
-document.getElementById("tasaPreñezNovillas").textContent = `${kpis.tasaPreñezNovillas.valor}%`;
-document.getElementById("tasaPreñezNovillas").className = `kpi-valor estado-${kpis.tasaPreñezNovillas.estado}`;
-document.getElementById("porcentajeVacías").textContent = `${kpis.porcentajeVacías.valor}%`;
-document.getElementById("porcentajeVacías").className = `kpi-valor estado-${kpis.porcentajeVacías.estado}`;
-document.getElementById("diasAbiertosProm").textContent = kpis.diasAbiertosPromedio.valor;
-document.getElementById("diasAbiertosProm").className = `kpi-valor estado-${kpis.diasAbiertosPromedio.estado}`;
-document.getElementById("iep").textContent = kpis.intervaloEntrePartos.valor;
-document.getElementById("iep").className = `kpi-valor estado-${kpis.intervaloEntrePartos.estado}`;
-renderizarTabla("preñadas_menor3m", data.detalles.preñadas_menor3m);
-renderizarTabla("preñadas_3a6m", data.detalles.preñadas_3a6m);
-renderizarTabla("preñadas_mayor6m", data.detalles.preñadas_mayor6m);
-renderizarTabla("vacías_menor3m", data.detalles.vacías_menor3m);
-renderizarTabla("vacías_3a6m", data.detalles.vacías_3a6m);
-renderizarTabla("vacías_mayor6m", data.detalles.vacías_mayor6m);
-} catch (e) {
-console.error("Error:", e);
-document.getElementById("loader-text").textContent = `Error: ${e.message}`;
-}
-}
-function renderizarTabla(id, datos) {
-const tbody = document.getElementById(id);
-tbody.innerHTML = "";
-if (datos && datos.length > 0) {
-datos.forEach(row => {
-const tr = document.createElement("tr");
-tr.innerHTML = `
-<td>${row.ID}</td>
-<td>${row.numeroPractico}</td>
-<td>${row.ultimoParto}</td>
-<td>${row.diagnostico}</td>
-<td>${row.fechaDiagnostico}</td>
-<td>${row.dias}</td>
-`;
-tbody.appendChild(tr);
-});
-} else {
-tbody.innerHTML = '<tr><td colspan="6">Sin registros</td></tr>';
-}
-}
-cargarReporte();
-</script>
+  <div id="loader">
+    <div class="vaca-loader">🐄</div>
+    <div id="loader-text">Cargando reporte reproductivo…</div>
+  </div>
+  <div id="contenido" style="display: none;">
+    <div class="container">
+      <h1 class="header-titulo">
+        Reporte Reproductivo
+        <button class="btn-cerrar-reporte" onclick="cerrarReporte()">Cerrar y regresar al panel</button>
+      </h1>
+
+      <!-- Nuevos controles de parámetros -->
+      <div class="parametros-control">
+        <label for="mesesSecadoInput">Meses para Secado:</label>
+        <input type="number" id="mesesSecadoInput" value="6" min="1" max="24">
+        <label for="mesesMaternidadInput">Meses para Maternidad:</label>
+        <input type="number" id="mesesMaternidadInput" value="8" min="1" max="24">
+        <button onclick="recargarReporte()">Actualizar</button>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <h3>Tasa de Preñez General</h3>
+          <div id="tasaPreñezGeneral" class="kpi-valor">0%</div>
+          <div id="tasaPreñezGeneralMeta">Meta: 85%</div>
+        </div>
+        <div class="kpi-card">
+          <h3>Tasa de Preñez Vacas</h3>
+          <div id="tasaPreñezVacas" class="kpi-valor">0%</div>
+          <div id="tasaPreñezVacasMeta">Meta: 85%</div>
+        </div>
+        <div class="kpi-card">
+          <h3>Tasa de Preñez Novillas</h3>
+          <div id="tasaPreñezNovillas" class="kpi-valor">0%</div>
+          <div id="tasaPreñezNovillasMeta">Meta: 80%</div>
+        </div>
+        <div class="kpi-card">
+          <h3>% Vacías</h3>
+          <div id="porcentajeVacías" class="kpi-valor">0%</div>
+          <div id="porcentajeVacíasMeta">Meta: &lt; 10%</div>
+        </div>
+        <div class="kpi-card">
+          <h3>Días Abiertos Prom.</h3>
+          <div id="diasAbiertosProm" class="kpi-valor">0</div>
+          <div id="diasAbiertosPromMeta">Meta: &lt; 100 días</div>
+        </div>
+        <div class="kpi-card">
+          <h3>Intervalo E/P</h3>
+          <div id="iep" class="kpi-valor">0</div>
+          <div id="iepMeta">Meta: &lt; 400 días</div>
+        </div>
+      </div>
+
+      <!-- Nuevas Secciones -->
+      <h2>Vacas para Secado (≥ <span id="mostrarMesesSecado">6</span> meses)</h2>
+      <table class="tabla-detalles">
+        <thead><tr><th>ID</th><th>Número Práctico</th><th>Edad Gestación (meses)</th><th>Fecha Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th></tr></thead>
+        <tbody id="vacas_para_secado"></tbody>
+      </table>
+
+      <h2>Vacas para Maternidad (≥ <span id="mostrarMesesMaternidad">8</span> meses)</h2>
+      <table class="tabla-detalles">
+        <thead><tr><th>ID</th><th>Número Práctico</th><th>Edad Gestación (meses)</th><th>Fecha Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th></tr></thead>
+        <tbody id="vacas_para_maternidad"></tbody>
+      </table>
+
+      <h2>Detalles de Preñadas</h2>
+      <h3>Menor a 3 meses del último parto</h3>
+      <table class="tabla-detalles">
+        <thead><tr><th>ID</th><th>Número Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días</th></tr></thead>
+        <tbody id="preñadas_menor3m"></tbody>
+      </table>
+      <h3>3 a 6 meses del último parto</h3>
+      <table class="tabla-detalles">
+        <thead><tr><th>ID</th><th>Número Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días</th></tr></thead>
+        <tbody id="preñadas_3a6m"></tbody>
+      </table>
+      <h3>Mayor a 6 meses del último parto</h3>
+      <table class="tabla-detalles">
+        <thead><tr><th>ID</th><th>Número Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días</th></tr></thead>
+        <tbody id="preñadas_mayor6m"></tbody>
+      </table>
+      <h2>Detalles de Vacías</h2>
+      <h3>Menor a 3 meses del último parto</h3>
+      <table class="tabla-detalles">
+        <thead><tr><th>ID</th><th>Número Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días</th></tr></thead>
+        <tbody id="vacías_menor3m"></tbody>
+      </table>
+      <h3>3 a 6 meses del último parto</h3>
+      <table class="tabla-detalles">
+        <thead><tr><th>ID</th><th>Número Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días</th></tr></thead>
+        <tbody id="vacías_3a6m"></tbody>
+      </table>
+      <h3>Mayor a 6 meses del último parto</h3>
+      <table class="tabla-detalles">
+        <thead><tr><th>ID</th><th>Número Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días</th></tr></thead>
+        <tbody id="vacías_mayor6m"></tbody>
+      </table>
+    </div>
+  </div>
+  <script>
+    const WORKER_URL = "https://pysiga.d-alexjose.workers.dev"; // Asegúrate que sea tu URL correcta
+    const urlParams = new URLSearchParams(window.location.search);
+    const email = urlParams.get('email');
+
+    if (!email) {
+      alert("Parámetro 'email' no encontrado en la URL.");
+      location.href = "/"; // Redirige a una página de error o inicio si no hay email
+    }
+
+    function cerrarReporte() {
+      if (window.opener) {
+        window.close();
+        return;
+      }
+      // Si no fue abierto por otro window, redirigir al panel
+      const emailParam = urlParams.get('email');
+      if (emailParam) {
+        window.location.href = `https://sites.google.com/view/tu-sitio-pysiga?email=${encodeURIComponent(emailParam)}`;
+      } else {
+        window.location.href = 'https://sites.google.com/view/tu-sitio-pysiga';
+      }
+    }
+
+    // Función para recargar el reporte con nuevos parámetros
+    function recargarReporte() {
+      const mesesSecado = document.getElementById("mesesSecadoInput").value;
+      const mesesMaternidad = document.getElementById("mesesMaternidadInput").value;
+      cargarReporte(mesesSecado, mesesMaternidad);
+    }
+
+    // Función principal de carga, ahora admite parámetros
+    async function cargarReporte(mesesSecado = 6, mesesMaternidad = 8) {
+      try {
+        // Actualizar visualización de los meses en las cabeceras
+        document.getElementById("mostrarMesesSecado").textContent = mesesSecado;
+        document.getElementById("mostrarMesesMaternidad").textContent = mesesMaternidad;
+
+        const res = await fetch(WORKER_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            accion: "reporteReproductivo",
+            email: email,
+            mesesSecado: mesesSecado,
+            mesesMaternidad: mesesMaternidad
+          })
+        });
+        const data = await res.json();
+
+        if (!data.ok) {
+          throw new Error(data.error || "Error desconocido");
+        }
+
+        document.getElementById("loader").style.display = "none";
+        document.getElementById("contenido").style.display = "block";
+
+        const kpis = data.kpis;
+        document.getElementById("tasaPreñezGeneral").textContent = `${kpis.tasaPreñezGeneral.valor}%`;
+        document.getElementById("tasaPreñezGeneral").className = `kpi-valor estado-${kpis.tasaPreñezGeneral.estado}`;
+        document.getElementById("tasaPreñezVacas").textContent = `${kpis.tasaPreñezVacas.valor}%`;
+        document.getElementById("tasaPreñezVacas").className = `kpi-valor estado-${kpis.tasaPreñezVacas.estado}`;
+        document.getElementById("tasaPreñezNovillas").textContent = `${kpis.tasaPreñezNovillas.valor}%`;
+        document.getElementById("tasaPreñezNovillas").className = `kpi-valor estado-${kpis.tasaPreñezNovillas.estado}`;
+        document.getElementById("porcentajeVacías").textContent = `${kpis.porcentajeVacías.valor}%`;
+        document.getElementById("porcentajeVacías").className = `kpi-valor estado-${kpis.porcentajeVacías.estado}`;
+        document.getElementById("diasAbiertosProm").textContent = kpis.diasAbiertosPromedio.valor;
+        document.getElementById("diasAbiertosProm").className = `kpi-valor estado-${kpis.diasAbiertosPromedio.estado}`;
+        document.getElementById("iep").textContent = kpis.intervaloEntrePartos.valor;
+        document.getElementById("iep").className = `kpi-valor estado-${kpis.intervaloEntrePartos.estado}`;
+
+        // Renderizar nuevas tablas
+        renderizarTabla("vacas_para_secado", data.detalles.vacas_para_secado);
+        renderizarTabla("vacas_para_maternidad", data.detalles.vacas_para_maternidad);
+
+        // Renderizar tablas existentes
+        renderizarTabla("preñadas_menor3m", data.detalles.preñadas_menor3m);
+        renderizarTabla("preñadas_3a6m", data.detalles.preñadas_3a6m);
+        renderizarTabla("preñadas_mayor6m", data.detalles.preñadas_mayor6m);
+        renderizarTabla("vacías_menor3m", data.detalles.vacías_menor3m);
+        renderizarTabla("vacías_3a6m", data.detalles.vacías_3a6m);
+        renderizarTabla("vacías_mayor6m", data.detalles.vacías_mayor6m);
+
+      } catch (e) {
+        console.error("Error:", e);
+        document.getElementById("loader-text").textContent = `Error: ${e.message}`;
+      }
+    }
+
+    function renderizarTabla(id, datos) {
+      const tbody = document.getElementById(id);
+      tbody.innerHTML = "";
+      if (datos && datos.length > 0) {
+        datos.forEach(row => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${row.ID}</td>
+            <td>${row.numeroPractico}</td>
+            <td>${row.edadGestacion}</td>
+            <td>${row.fechaUltimoParto}</td>
+            <td>${row.diagnostico}</td>
+            <td>${row.fechaDiagnostico}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } else {
+        tbody.innerHTML = '<tr><td colspan="6">Sin registros</td></tr>';
+      }
+    }
+
+    // Cargar reporte con valores predeterminados al iniciar
+    cargarReporte();
+
+  </script>
 </body>
 </html>
