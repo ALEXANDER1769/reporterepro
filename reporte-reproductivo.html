@@ -1,368 +1,362 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Reporte Reproductivo - PYSIGA</title>
-  <style>
-    :root {
-      --verde: #2f6f4e;
-      --verde-claro: #e6f1eb;
-      --azul: #2c4f7c;
-      --tierra: #8b6f47;
-      --rojo: #e74c3c;
-      --gris: #7f8c8d;
-      --morado: #9b59b6;
-      --fondo: #f7f9f8;
-      --blanco: #ffffff;
-    }
-    body {
-      margin: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
-      background: var(--fondo);
-      color: #333;
-    }
-    .container {
-      max-width: 1100px;
-      margin: auto;
-      padding: 15px;
-    }
-    .card {
-      background: var(--blanco);
-      border-radius: 10px;
-      padding: 15px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-      margin-bottom: 15px;
-    }
-    .header-titulo {
-      color: var(--azul);
-      font-size: 24px;
-      margin: 0 0 15px 0;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .btn-cerrar-reporte {
-      background: var(--rojo);
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 15px;
-      font-weight: bold;
-    }
-    .btn-cerrar-reporte:hover {
-      background: #c0392b;
-      opacity: 0.9;
-    }
-    .kpi-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 15px;
-      margin-bottom: 20px;
-    }
-    .kpi-card {
-      background: var(--blanco);
-      border-radius: 8px;
-      padding: 15px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.08);
-      text-align: center;
-    }
-    .kpi-valor {
-      font-size: 24px;
-      font-weight: bold;
-      margin: 5px 0;
-    }
-    .estado-excelente { color: #27ae60; }
-    .estado-regular { color: #f39c12; }
-    .estado-alerta { color: var(--rojo); }
-    .tabla-detalles {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13px;
-    }
-    .tabla-detalles th {
-      background: var(--verde);
-      color: white;
-      padding: 6px;
-      position: sticky;
-      top: 0;
-    }
-    .tabla-detalles td {
-      padding: 6px;
-      border-bottom: 1px solid #ddd;
-      text-align: left;
-    }
-    #loader {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      background: white;
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      z-index: 9999;
-    }
-    .vaca-loader {
-      font-size: 60px;
-      margin-bottom: 16px;
-      animation: mover 1s infinite alternate;
-    }
-    @keyframes mover {
-      from { transform: translateX(-5px); }
-      to { transform: translateX(5px); }
-    }
-    .parametros-control {
-      background-color: var(--verde-claro);
-      padding: 10px;
-      border-radius: 6px;
-      margin-bottom: 15px;
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      flex-wrap: wrap;
-    }
-    .parametros-control label {
-      font-weight: bold;
-    }
-    .parametros-control input {
-      width: 60px;
-      padding: 5px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-    .parametros-control button {
-      background-color: var(--azul);
-      color: white;
-      border: none;
-      padding: 8px 12px;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    .parametros-control button:hover {
-      opacity: 0.9;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reporte Reproductivo - PYSIGA</title>
+<style>
+:root {
+  --verde: #2f6f4e; --verde-claro: #e6f1eb; --azul: #2c4f7c;
+  --tierra: #8b6f47; --rojo: #e74c3c; --gris: #7f8c8d;
+  --morado: #9b59b6; --fondo: #f7f9f8; --blanco: #ffffff;
+  --alerta: #e67e22; --excelente: #27ae60; --regular: #f39c12;
+}
+body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif; background: var(--fondo); color: #333; }
+.container { max-width: 1200px; margin: auto; padding: 15px; }
+.card { background: var(--blanco); border-radius: 10px; padding: 15px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); margin-bottom: 15px; }
+.header-titulo { color: var(--azul); font-size: 22px; margin: 0 0 15px 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+.btn-cerrar-reporte { background: var(--rojo); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold; }
+.btn-cerrar-reporte:hover { background: #c0392b; }
+
+/* === PARÁMETROS CONFIGURABLES === */
+.parametros-box { background: var(--verde-claro); border-left: 4px solid var(--verde); padding: 12px; margin-bottom: 15px; border-radius: 0 6px 6px 0; }
+.parametros-box label { margin-right: 15px; font-weight: 500; }
+.parametros-box input { width: 50px; padding: 5px; border: 1px solid #ccc; border-radius: 4px; text-align: center; }
+.parametros-box button { background: var(--azul); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; margin-left: 10px; }
+.parametros-box button:hover { opacity: 0.9; }
+
+/* === KPI GRID === */
+.kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-bottom: 20px; }
+.kpi-card { background: var(--blanco); border-radius: 8px; padding: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.08); text-align: center; border-top: 3px solid var(--gris); }
+.kpi-card.estado-excelente { border-top-color: var(--excelente); }
+.kpi-card.estado-regular { border-top-color: var(--regular); }
+.kpi-card.estado-alerta { border-top-color: var(--alerta); }
+.kpi-card.estado-sin_datos { border-top-color: var(--gris); opacity: 0.7; }
+.kpi-valor { font-size: 26px; font-weight: bold; margin: 8px 0; }
+.kpi-meta { font-size: 12px; color: var(--gris); margin-bottom: 4px; }
+.kpi-estado { font-size: 11px; font-weight: 500; padding: 3px 8px; border-radius: 12px; display: inline-block; }
+.estado-excelente .kpi-estado { background: #d5f5e3; color: var(--excelente); }
+.estado-regular .kpi-estado { background: #fef9e7; color: var(--regular); }
+.estado-alerta .kpi-estado { background: #fadbd8; color: var(--rojo); }
+.estado-sin_datos .kpi-estado { background: #f2f4f4; color: var(--gris); }
+.kpi-advertencia { font-size: 10px; color: var(--alerta); margin-top: 4px; font-style: italic; }
+
+/* === SECCIONES DE LISTAS === */
+.seccion-lista { margin: 20px 0; }
+.seccion-lista h3 { color: var(--azul); border-bottom: 2px solid var(--verde-claro); padding-bottom: 8px; margin-bottom: 12px; }
+.tabla-detalles { width: 100%; border-collapse: collapse; font-size: 13px; }
+.tabla-detalles th { background: var(--verde); color: white; padding: 8px; position: sticky; top: 0; text-align: left; }
+.tabla-detalles td { padding: 8px; border-bottom: 1px solid #eee; }
+.tabla-detalles tr:hover { background: var(--verde-claro); }
+.sin-registros { text-align: center; color: var(--gris); font-style: italic; padding: 15px; }
+
+/* === LOADER === */
+#loader { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background: white; position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 9999; }
+.vaca-loader { font-size: 60px; margin-bottom: 16px; animation: mover 1s infinite alternate; }
+@keyframes mover { from { transform: translateX(-5px); } to { transform: translateX(5px); } }
+
+/* === BOTONES DE ACCIÓN === */
+.acciones-lista { display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+.btn-accion { background: var(--azul); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; }
+.btn-accion:hover { opacity: 0.9; }
+.btn-secado { background: var(--tierra); }
+.btn-maternidad { background: var(--morado); }
+</style>
 </head>
 <body>
-  <div id="loader">
-    <div class="vaca-loader">🐄</div>
-    <div id="loader-text">Cargando reporte reproductivo…</div>
-  </div>
-  <div id="contenido" style="display: none;">
-    <div class="container">
-      <h1 class="header-titulo">
-        Reporte Reproductivo
-        <button class="btn-cerrar-reporte" onclick="cerrarReporte()">Cerrar y regresar al panel</button>
-      </h1>
+<div id="loader">
+  <div class="vaca-loader">🐄</div>
+  <div id="loader-text">Cargando reporte reproductivo…</div>
+</div>
 
-      <!-- Nuevos controles de parámetros -->
-      <div class="parametros-control">
-        <label for="mesesSecadoInput">Meses para Secado:</label>
-        <input type="number" id="mesesSecadoInput" value="6" min="1" max="24">
-        <label for="mesesMaternidadInput">Meses para Maternidad:</label>
-        <input type="number" id="mesesMaternidadInput" value="8" min="1" max="24">
-        <button onclick="recargarReporte()">Actualizar</button>
+<div id="contenido" style="display: none;">
+  <div class="container">
+    <h1 class="header-titulo">
+      📊 Reporte Reproductivo
+      <button class="btn-cerrar-reporte" onclick="cerrarReporte()">✕ Cerrar y regresar</button>
+    </h1>
+
+    <!-- === PARÁMETROS CONFIGURABLES === -->
+    <div class="card parametros-box">
+      <strong>⚙️ Parámetros de Preñez:</strong>
+      <label>Meses para secado: 
+        <input type="number" id="mesesSecado" value="6" min="1" max="12">
+      </label>
+      <label>Meses para maternidad: 
+        <input type="number" id="mesesMaternidad" value="8" min="1" max="12">
+      </label>
+      <button onclick="recargarConParametros()">Actualizar</button>
+    </div>
+
+    <!-- === KPIS === -->
+    <div class="kpi-grid">
+      <div class="kpi-card" id="kpi-tasaGeneral">
+        <div class="kpi-meta">Tasa de Preñez General</div>
+        <div class="kpi-valor" id="tasaPreñezGeneral">0%</div>
+        <div class="kpi-meta">Meta: 85%</div>
+        <span class="kpi-estado" id="estado-tasaGeneral">-</span>
+        <div class="kpi-advertencia" id="advertencia-tasaGeneral"></div>
       </div>
-
-      <div class="kpi-grid">
-        <div class="kpi-card">
-          <h3>Tasa de Preñez General</h3>
-          <div id="tasaPreñezGeneral" class="kpi-valor">0%</div>
-          <div id="tasaPreñezGeneralMeta">Meta: 85%</div>
-        </div>
-        <div class="kpi-card">
-          <h3>Tasa de Preñez Vacas</h3>
-          <div id="tasaPreñezVacas" class="kpi-valor">0%</div>
-          <div id="tasaPreñezVacasMeta">Meta: 85%</div>
-        </div>
-        <div class="kpi-card">
-          <h3>Tasa de Preñez Novillas</h3>
-          <div id="tasaPreñezNovillas" class="kpi-valor">0%</div>
-          <div id="tasaPreñezNovillasMeta">Meta: 80%</div>
-        </div>
-        <div class="kpi-card">
-          <h3>% Vacías</h3>
-          <div id="porcentajeVacías" class="kpi-valor">0%</div>
-          <div id="porcentajeVacíasMeta">Meta: &lt; 10%</div>
-        </div>
-        <div class="kpi-card">
-          <h3>Días Abiertos Prom.</h3>
-          <div id="diasAbiertosProm" class="kpi-valor">0</div>
-          <div id="diasAbiertosPromMeta">Meta: &lt; 100 días</div>
-        </div>
-        <div class="kpi-card">
-          <h3>Intervalo E/P</h3>
-          <div id="iep" class="kpi-valor">0</div>
-          <div id="iepMeta">Meta: &lt; 400 días</div>
-        </div>
+      <div class="kpi-card" id="kpi-tasaVacas">
+        <div class="kpi-meta">Tasa de Preñez Vacas</div>
+        <div class="kpi-valor" id="tasaPreñezVacas">0%</div>
+        <div class="kpi-meta">Meta: 85%</div>
+        <span class="kpi-estado" id="estado-tasaVacas">-</span>
       </div>
+      <div class="kpi-card" id="kpi-tasaNovillas">
+        <div class="kpi-meta">Tasa de Preñez Novillas</div>
+        <div class="kpi-valor" id="tasaPreñezNovillas">0%</div>
+        <div class="kpi-meta">Meta: 80%</div>
+        <span class="kpi-estado" id="estado-tasaNovillas">-</span>
+        <div class="kpi-advertencia" id="advertencia-tasaNovillas"></div>
+      </div>
+      <div class="kpi-card" id="kpi-coberturaNovillas">
+        <div class="kpi-meta">Cobertura Evaluación Novillas</div>
+        <div class="kpi-valor" id="coberturaNovillas">0%</div>
+        <div class="kpi-meta">Meta: 100%</div>
+        <span class="kpi-estado" id="estado-coberturaNovillas">-</span>
+      </div>
+      <div class="kpi-card" id="kpi-vacias">
+        <div class="kpi-meta">% Vacías</div>
+        <div class="kpi-valor" id="porcentajeVacías">0%</div>
+        <div class="kpi-meta">Meta: &lt; 10%</div>
+        <span class="kpi-estado" id="estado-vacias">-</span>
+      </div>
+      <div class="kpi-card" id="kpi-diasAbiertos">
+        <div class="kpi-meta">Días Abiertos Prom.</div>
+        <div class="kpi-valor" id="diasAbiertosProm">0</div>
+        <div class="kpi-meta">Meta: &lt; 100 días</div>
+        <span class="kpi-estado" id="estado-diasAbiertos">-</span>
+      </div>
+      <div class="kpi-card" id="kpi-iep">
+        <div class="kpi-meta">Intervalo Entre Partos</div>
+        <div class="kpi-valor" id="iep">0</div>
+        <div class="kpi-meta">Meta: &lt; 400 días</div>
+        <span class="kpi-estado" id="estado-iep">-</span>
+      </div>
+      <div class="kpi-card" id="kpi-isc">
+        <div class="kpi-meta">Servicios por Concepción</div>
+        <div class="kpi-valor" id="isc">0</div>
+        <div class="kpi-meta">Meta: ≤ 1.8</div>
+        <span class="kpi-estado" id="estado-isc">-</span>
+      </div>
+    </div>
 
-      <!-- Nuevas Secciones -->
-      <h2>Vacas para Secado (≥ <span id="mostrarMesesSecado">6</span> meses)</h2>
+    <!-- === LISTA: VACAS PARA SECADO === -->
+    <div class="card seccion-lista">
+      <h3>🥛 Vacas para Secado (≥ <span id="labelMesesSecado">6</span> meses de preñez)</h3>
+      <div class="acciones-lista">
+        <button class="btn-accion btn-secado" onclick="exportarTabla('tablaSecado', 'Vacas_Secado')">📥 Exportar</button>
+      </div>
       <table class="tabla-detalles">
-        <thead><tr><th>ID</th><th>Número Práctico</th><th>Edad Gestación (meses)</th><th>Fecha Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th></tr></thead>
-        <tbody id="vacas_para_secado"></tbody>
-      </table>
-
-      <h2>Vacas para Maternidad (≥ <span id="mostrarMesesMaternidad">8</span> meses)</h2>
-      <table class="tabla-detalles">
-        <thead><tr><th>ID</th><th>Número Práctico</th><th>Edad Gestación (meses)</th><th>Fecha Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th></tr></thead>
-        <tbody id="vacas_para_maternidad"></tbody>
-      </table>
-
-      <h2>Detalles de Preñadas</h2>
-      <h3>Menor a 3 meses del último parto</h3>
-      <table class="tabla-detalles">
-        <thead><tr><th>ID</th><th>Número Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días</th></tr></thead>
-        <tbody id="preñadas_menor3m"></tbody>
-      </table>
-      <h3>3 a 6 meses del último parto</h3>
-      <table class="tabla-detalles">
-        <thead><tr><th>ID</th><th>Número Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días</th></tr></thead>
-        <tbody id="preñadas_3a6m"></tbody>
-      </table>
-      <h3>Mayor a 6 meses del último parto</h3>
-      <table class="tabla-detalles">
-        <thead><tr><th>ID</th><th>Número Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días</th></tr></thead>
-        <tbody id="preñadas_mayor6m"></tbody>
-      </table>
-      <h2>Detalles de Vacías</h2>
-      <h3>Menor a 3 meses del último parto</h3>
-      <table class="tabla-detalles">
-        <thead><tr><th>ID</th><th>Número Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días</th></tr></thead>
-        <tbody id="vacías_menor3m"></tbody>
-      </table>
-      <h3>3 a 6 meses del último parto</h3>
-      <table class="tabla-detalles">
-        <thead><tr><th>ID</th><th>Número Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días</th></tr></thead>
-        <tbody id="vacías_3a6m"></tbody>
-      </table>
-      <h3>Mayor a 6 meses del último parto</h3>
-      <table class="tabla-detalles">
-        <thead><tr><th>ID</th><th>Número Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días</th></tr></thead>
-        <tbody id="vacías_mayor6m"></tbody>
+        <thead><tr><th>ID</th><th>Nº Práctico</th><th>Meses Gestación</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th></tr></thead>
+        <tbody id="tablaSecado"></tbody>
       </table>
     </div>
+
+    <!-- === LISTA: VACAS PARA MATERNIDAD === -->
+    <div class="card seccion-lista">
+      <h3>🤰 Vacas para Maternidad (≥ <span id="labelMesesMaternidad">8</span> meses de preñez)</h3>
+      <div class="acciones-lista">
+        <button class="btn-accion btn-maternidad" onclick="exportarTabla('tablaMaternidad', 'Vacas_Maternidad')">📥 Exportar</button>
+      </div>
+      <table class="tabla-detalles">
+        <thead><tr><th>ID</th><th>Nº Práctico</th><th>Meses Gestación</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th></tr></thead>
+        <tbody id="tablaMaternidad"></tbody>
+      </table>
+    </div>
+
+    <!-- === LISTA: NOVILLAS PENDIENTES === -->
+    <div class="card seccion-lista" id="seccionNovillasPendientes" style="display:none;">
+      <h3>⚠️ Novillas Pendientes de Evaluar (<span id="conteoNovillasPendientes">0</span>)</h3>
+      <table class="tabla-detalles">
+        <thead><tr><th>ID</th><th>Nº Práctico</th><th>Clasificación</th></tr></thead>
+        <tbody id="tablaNovillasPendientes"></tbody>
+      </table>
+    </div>
+
+    <!-- === DETALLES EXISTENTES (Preñadas/Vacías) - SIN MODIFICAR === -->
+    <h2>📋 Detalles por Tiempo desde Último Parto</h2>
+    
+    <div class="seccion-lista">
+      <h3>✅ Preñadas - Menor a 3 meses</h3>
+      <table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días</th></tr></thead><tbody id="preñadas_menor3m"></tbody></table>
+    </div>
+    <div class="seccion-lista">
+      <h3>✅ Preñadas - 3 a 6 meses</h3>
+      <table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días</th></tr></thead><tbody id="preñadas_3a6m"></tbody></table>
+    </div>
+    <div class="seccion-lista">
+      <h3>✅ Preñadas - Mayor a 6 meses</h3>
+      <table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días</th></tr></thead><tbody id="preñadas_mayor6m"></tbody></table>
+    </div>
+    
+    <div class="seccion-lista">
+      <h3>❌ Vacías - Menor a 3 meses</h3>
+      <table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días</th></tr></thead><tbody id="vacías_menor3m"></tbody></table>
+    </div>
+    <div class="seccion-lista">
+      <h3>❌ Vacías - 3 a 6 meses</h3>
+      <table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días</th></tr></thead><tbody id="vacías_3a6m"></tbody></table>
+    </div>
+    <div class="seccion-lista">
+      <h3>❌ Vacías - Mayor a 6 meses</h3>
+      <table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días</th></tr></thead><tbody id="vacías_mayor6m"></tbody></table>
+    </div>
+
   </div>
-  <script>
-    const WORKER_URL = "https://pysiga.d-alexjose.workers.dev"; // Asegúrate que sea tu URL correcta
-    const urlParams = new URLSearchParams(window.location.search);
-    const email = urlParams.get('email');
+</div>
 
-    if (!email) {
-      alert("Parámetro 'email' no encontrado en la URL.");
-      location.href = "/"; // Redirige a una página de error o inicio si no hay email
+<script>
+const WORKER_URL = "https://pysiga.d-alexjose.workers.dev";
+const urlParams = new URLSearchParams(window.location.search);
+const email = urlParams.get('email');
+if (!email) { alert("Parámetro 'email' no encontrado."); location.href = "/"; }
+
+function cerrarReporte() {
+  if (window.opener) { window.close(); return; }
+  const emailParam = encodeURIComponent(email);
+  window.location.href = `https://sites.google.com/view/tu-sitio-pysiga?email=${emailParam}`;
+}
+
+function recargarConParametros() {
+  const mesesSecado = document.getElementById('mesesSecado').value;
+  const mesesMaternidad = document.getElementById('mesesMaternidad').value;
+  document.getElementById('labelMesesSecado').textContent = mesesSecado;
+  document.getElementById('labelMesesMaternidad').textContent = mesesMaternidad;
+  cargarReporte(mesesSecado, mesesMaternidad);
+}
+
+async function cargarReporte(mesesSecado = 6, mesesMaternidad = 8) {
+  try {
+    document.getElementById("loader").style.display = "flex";
+    document.getElementById("contenido").style.display = "none";
+    
+    const res = await fetch(WORKER_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        accion: "reporteReproductivo",
+        email: email,
+        mesesSecado: parseInt(mesesSecado),
+        mesesMaternidad: parseInt(mesesMaternidad)
+      })
+    });
+    const data = await res.json();
+    
+    if (!data.ok) throw new Error(data.error || "Error desconocido");
+    
+    document.getElementById("loader").style.display = "none";
+    document.getElementById("contenido").style.display = "block";
+    
+    document.getElementById('mesesSecado').value = data.parametros?.mesesParaSecado || 6;
+    document.getElementById('mesesMaternidad').value = data.parametros?.mesesParaMaternidad || 8;
+    document.getElementById('labelMesesSecado').textContent = data.parametros?.mesesParaSecado || 6;
+    document.getElementById('labelMesesMaternidad').textContent = data.parametros?.mesesParaMaternidad || 8;
+    
+    renderizarKPIs(data.kpis);
+    renderizarTabla("tablaSecado", data.detalles.vacasSecado, ['ID','numeroPractico','edadGestacion','ultimoParto','diagnostico','fechaDiagnostico']);
+    renderizarTabla("tablaMaternidad", data.detalles.vacasMaternidad, ['ID','numeroPractico','edadGestacion','ultimoParto','diagnostico','fechaDiagnostico']);
+    
+    if (data.detalles.novillasPendientesEvaluar?.length > 0) {
+      document.getElementById('seccionNovillasPendientes').style.display = 'block';
+      document.getElementById('conteoNovillasPendientes').textContent = data.detalles.novillasPendientesEvaluar.length;
+      renderizarTabla("tablaNovillasPendientes", data.detalles.novillasPendientesEvaluar, ['ID','numeroPractico','clasificacion']);
+    } else {
+      document.getElementById('seccionNovillasPendientes').style.display = 'none';
     }
+    
+    renderizarTabla("preñadas_menor3m", data.detalles.preñadas_menor3m);
+    renderizarTabla("preñadas_3a6m", data.detalles.preñadas_3a6m);
+    renderizarTabla("preñadas_mayor6m", data.detalles.preñadas_mayor6m);
+    renderizarTabla("vacías_menor3m", data.detalles.vacías_menor3m);
+    renderizarTabla("vacías_3a6m", data.detalles.vacías_3a6m);
+    renderizarTabla("vacías_mayor6m", data.detalles.vacías_mayor6m);
+    
+  } catch (e) {
+    console.error("Error:", e);
+    document.getElementById("loader-text").textContent = `❌ Error: ${e.message}`;
+  }
+}
 
-    function cerrarReporte() {
-      if (window.opener) {
-        window.close();
-        return;
-      }
-      // Si no fue abierto por otro window, redirigir al panel
-      const emailParam = urlParams.get('email');
-      if (emailParam) {
-        window.location.href = `https://sites.google.com/view/tu-sitio-pysiga?email=${encodeURIComponent(emailParam)}`;
-      } else {
-        window.location.href = 'https://sites.google.com/view/tu-sitio-pysiga';
-      }
+function renderizarKPIs(kpis) {
+  const mapeo = {
+    tasaPreñezGeneral: { id: 'tasaPreñezGeneral', estado: 'estado-tasaGeneral', advertencia: 'advertencia-tasaGeneral', card: 'kpi-tasaGeneral' },
+    tasaPreñezVacas: { id: 'tasaPreñezVacas', estado: 'estado-tasaVacas', card: 'kpi-tasaVacas' },
+    tasaPreñezNovillas: { id: 'tasaPreñezNovillas', estado: 'estado-tasaNovillas', advertencia: 'advertencia-tasaNovillas', card: 'kpi-tasaNovillas' },
+    coberturaEvaluacionNovillas: { id: 'coberturaNovillas', estado: 'estado-coberturaNovillas', card: 'kpi-coberturaNovillas' },
+    porcentajeVacías: { id: 'porcentajeVacías', estado: 'estado-vacias', card: 'kpi-vacias' },
+    diasAbiertosPromedio: { id: 'diasAbiertosProm', estado: 'estado-diasAbiertos', card: 'kpi-diasAbiertos' },
+    intervaloEntrePartos: { id: 'iep', estado: 'estado-iep', card: 'kpi-iep' },
+    indiceServiciosConcepcion: { id: 'isc', estado: 'estado-isc', card: 'kpi-isc' }
+  };
+  
+  Object.entries(mapeo).forEach(([key, cfg]) => {
+    const kpi = kpis[key];
+    if (!kpi) return;
+    
+    const elValor = document.getElementById(cfg.id);
+    const elEstado = document.getElementById(cfg.estado);
+    const elCard = document.getElementById(cfg.card);
+    const elAdvertencia = cfg.advertencia ? document.getElementById(cfg.advertencia) : null;
+    
+    elValor.textContent = kpi.valor + (kpi.unidad || '');
+    elCard.className = `kpi-card estado-${kpi.estado}`;
+    elEstado.textContent = kpi.estado === 'excelente' ? '✅ Meta' : kpi.estado === 'alerta' ? '⚠️ Revisar' : kpi.estado === 'sin_datos' ? '⚪ Sin datos' : '🔄 Regular';
+    
+    if (elAdvertencia && kpi.advertencia) {
+      elAdvertencia.textContent = kpi.advertencia;
+      elAdvertencia.style.display = 'block';
+    } else if (elAdvertencia) {
+      elAdvertencia.style.display = 'none';
     }
+  });
+}
 
-    // Función para recargar el reporte con nuevos parámetros
-    function recargarReporte() {
-      const mesesSecado = document.getElementById("mesesSecadoInput").value;
-      const mesesMaternidad = document.getElementById("mesesMaternidadInput").value;
-      cargarReporte(mesesSecado, mesesMaternidad);
-    }
+function renderizarTabla(id, datos, columnas = ['ID','numeroPractico','ultimoParto','diagnostico','fechaDiagnostico','dias']) {
+  const tbody = document.getElementById(id);
+  tbody.innerHTML = "";
+  
+  if (!datos || datos.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" class="sin-registros">⚠️ Sin registros en esta categoría</td></tr>';
+    return;
+  }
+  
+  datos.forEach(row => {
+    const tr = document.createElement("tr");
+    columnas.forEach(col => {
+      const td = document.createElement("td");
+      let valor = row[col];
+      if (col === 'edadGestacion') valor = `${valor} meses`;
+      if (col === 'diagnostico') valor = valor >= 2 ? `✅ ${valor} meses` : `❌ Vacía`;
+      td.textContent = valor || '-';
+      tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  });
+}
 
-    // Función principal de carga, ahora admite parámetros
-    async function cargarReporte(mesesSecado = 6, mesesMaternidad = 8) {
-      try {
-        // Actualizar visualización de los meses en las cabeceras
-        document.getElementById("mostrarMesesSecado").textContent = mesesSecado;
-        document.getElementById("mostrarMesesMaternidad").textContent = mesesMaternidad;
+function exportarTabla(idTabla, nombreArchivo) {
+  const tbody = document.getElementById(idTabla);
+  if (!tbody || tbody.querySelector('.sin-registros')) {
+    alert("No hay datos para exportar");
+    return;
+  }
+  
+  let csv = "ID,Número Práctico,Meses Gestación,Último Parto,Diagnóstico,Fecha Diagnóstico\n";
+  Array.from(tbody.querySelectorAll("tr")).forEach(tr => {
+    const fila = Array.from(tr.querySelectorAll("td")).map(td => `"${td.textContent.replace(/"/g, '""')}"`).join(",");
+    csv += fila + "\n";
+  });
+  
+  const blob = new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8;" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = `${nombreArchivo}_${new Date().toISOString().slice(0,10)}.csv`;
+  link.click();
+}
 
-        const res = await fetch(WORKER_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            accion: "reporteReproductivo",
-            email: email,
-            mesesSecado: mesesSecado,
-            mesesMaternidad: mesesMaternidad
-          })
-        });
-        const data = await res.json();
-
-        if (!data.ok) {
-          throw new Error(data.error || "Error desconocido");
-        }
-
-        document.getElementById("loader").style.display = "none";
-        document.getElementById("contenido").style.display = "block";
-
-        const kpis = data.kpis;
-        document.getElementById("tasaPreñezGeneral").textContent = `${kpis.tasaPreñezGeneral.valor}%`;
-        document.getElementById("tasaPreñezGeneral").className = `kpi-valor estado-${kpis.tasaPreñezGeneral.estado}`;
-        document.getElementById("tasaPreñezVacas").textContent = `${kpis.tasaPreñezVacas.valor}%`;
-        document.getElementById("tasaPreñezVacas").className = `kpi-valor estado-${kpis.tasaPreñezVacas.estado}`;
-        document.getElementById("tasaPreñezNovillas").textContent = `${kpis.tasaPreñezNovillas.valor}%`;
-        document.getElementById("tasaPreñezNovillas").className = `kpi-valor estado-${kpis.tasaPreñezNovillas.estado}`;
-        document.getElementById("porcentajeVacías").textContent = `${kpis.porcentajeVacías.valor}%`;
-        document.getElementById("porcentajeVacías").className = `kpi-valor estado-${kpis.porcentajeVacías.estado}`;
-        document.getElementById("diasAbiertosProm").textContent = kpis.diasAbiertosPromedio.valor;
-        document.getElementById("diasAbiertosProm").className = `kpi-valor estado-${kpis.diasAbiertosPromedio.estado}`;
-        document.getElementById("iep").textContent = kpis.intervaloEntrePartos.valor;
-        document.getElementById("iep").className = `kpi-valor estado-${kpis.intervaloEntrePartos.estado}`;
-
-        // Renderizar nuevas tablas
-        renderizarTabla("vacas_para_secado", data.detalles.vacas_para_secado);
-        renderizarTabla("vacas_para_maternidad", data.detalles.vacas_para_maternidad);
-
-        // Renderizar tablas existentes
-        renderizarTabla("preñadas_menor3m", data.detalles.preñadas_menor3m);
-        renderizarTabla("preñadas_3a6m", data.detalles.preñadas_3a6m);
-        renderizarTabla("preñadas_mayor6m", data.detalles.preñadas_mayor6m);
-        renderizarTabla("vacías_menor3m", data.detalles.vacías_menor3m);
-        renderizarTabla("vacías_3a6m", data.detalles.vacías_3a6m);
-        renderizarTabla("vacías_mayor6m", data.detalles.vacías_mayor6m);
-
-      } catch (e) {
-        console.error("Error:", e);
-        document.getElementById("loader-text").textContent = `Error: ${e.message}`;
-      }
-    }
-
-    function renderizarTabla(id, datos) {
-      const tbody = document.getElementById(id);
-      tbody.innerHTML = "";
-      if (datos && datos.length > 0) {
-        datos.forEach(row => {
-          const tr = document.createElement("tr");
-          tr.innerHTML = `
-            <td>${row.ID}</td>
-            <td>${row.numeroPractico}</td>
-            <td>${row.edadGestacion}</td>
-            <td>${row.fechaUltimoParto}</td>
-            <td>${row.diagnostico}</td>
-            <td>${row.fechaDiagnostico}</td>
-          `;
-          tbody.appendChild(tr);
-        });
-      } else {
-        tbody.innerHTML = '<tr><td colspan="6">Sin registros</td></tr>';
-      }
-    }
-
-    // Cargar reporte con valores predeterminados al iniciar
-    cargarReporte();
-
-  </script>
+cargarReporte();
+</script>
 </body>
 </html>
