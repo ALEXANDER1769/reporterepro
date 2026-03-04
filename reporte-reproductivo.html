@@ -46,6 +46,7 @@ body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Arial, sans
 .btn-accion:hover { opacity: 0.9; }
 .btn-secado { background: var(--tierra); }
 .btn-maternidad { background: var(--morado); }
+.btn-pendientes { background: var(--alerta); }
 </style>
 </head>
 <body>
@@ -65,7 +66,7 @@ body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Arial, sans
       <div class="kpi-card" id="kpi-tasaGeneral"><div class="kpi-meta">Tasa de Preñez General</div><div class="kpi-valor" id="tasaPreñezGeneral">0%</div><div class="kpi-meta">Meta: 85%</div><span class="kpi-estado" id="estado-tasaGeneral">-</span><div class="kpi-advertencia" id="advertencia-tasaGeneral"></div></div>
       <div class="kpi-card" id="kpi-tasaVacas"><div class="kpi-meta">Tasa de Preñez Vacas</div><div class="kpi-valor" id="tasaPreñezVacas">0%</div><div class="kpi-meta">Meta: 85%</div><span class="kpi-estado" id="estado-tasaVacas">-</span></div>
       <div class="kpi-card" id="kpi-tasaNovillas"><div class="kpi-meta">Tasa de Preñez Novillas</div><div class="kpi-valor" id="tasaPreñezNovillas">0%</div><div class="kpi-meta">Meta: 80%</div><span class="kpi-estado" id="estado-tasaNovillas">-</span><div class="kpi-advertencia" id="advertencia-tasaNovillas"></div></div>
-      <div class="kpi-card" id="kpi-coberturaNovillas"><div class="kpi-meta">Cobertura Evaluación Novillas</div><div class="kpi-valor" id="coberturaNovillas">0%</div><div class="kpi-meta">Meta: 100%</div><span class="kpi-estado" id="estado-coberturaNovillas">-</span></div>
+      <div class="kpi-card" id="kpi-coberturaNovillas"><div class="kpi-meta">Cobertura Evaluación</div><div class="kpi-valor" id="coberturaNovillas">0%</div><div class="kpi-meta">Meta: 100%</div><span class="kpi-estado" id="estado-coberturaNovillas">-</span></div>
       <div class="kpi-card" id="kpi-vacias"><div class="kpi-meta">% Vacías</div><div class="kpi-valor" id="porcentajeVacías">0%</div><div class="kpi-meta">Meta: &lt; 10%</div><span class="kpi-estado" id="estado-vacias">-</span></div>
       <div class="kpi-card" id="kpi-diasAbiertos"><div class="kpi-meta">Días Abiertos Prom.</div><div class="kpi-valor" id="diasAbiertosProm">0</div><div class="kpi-meta">Meta: &lt; 100 días</div><span class="kpi-estado" id="estado-diasAbiertos">-</span></div>
       <div class="kpi-card" id="kpi-iep"><div class="kpi-meta">Intervalo Entre Partos</div><div class="kpi-valor" id="iep">0</div><div class="kpi-meta">Meta: &lt; 400 días</div><span class="kpi-estado" id="estado-iep">-</span></div>
@@ -84,9 +85,17 @@ body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Arial, sans
       <table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Clasificación</th><th>Meses Gestación</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th></tr></thead><tbody id="tablaMaternidad"></tbody></table>
     </div>
 
-    <div class="card seccion-lista" id="seccionNovillasPendientes" style="display:none;">
-      <h3>⚠️ Novillas Pendientes de Evaluar (<span id="conteoNovillasPendientes">0</span>)</h3>
-      <table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Clasificación</th></tr></thead><tbody id="tablaNovillasPendientes"></tbody></table>
+    <!-- 🔥 CAMBIADO: Ahora incluye TODAS las hembras pendientes -->
+    <div class="card seccion-lista" id="seccionHembrasPendientes" style="display:none;">
+      <h3>⚠️ Hembras Pendientes de Evaluar (<span id="conteoHembrasPendientes">0</span>)</h3>
+      <p style="font-size: 12px; color: var(--gris); margin-bottom: 10px;">
+        📌 Criterios: Clasificación "SIN DIAG DE GESTACION" | Vaca/Novilla sin diagnóstico | Peso ≥ 350 kg sin diagnóstico
+      </p>
+      <div class="acciones-lista"><button class="btn-accion btn-pendientes" onclick="exportarTabla('tablaHembrasPendientes', 'Hembras_Pendientes')">📥 Exportar</button></div>
+      <table class="tabla-detalles">
+        <thead><tr><th>ID</th><th>Nº Práctico</th><th>Clasificación</th><th>Sexo</th><th>Último Peso</th><th>Motivo</th></tr></thead>
+        <tbody id="tablaHembrasPendientes"></tbody>
+      </table>
     </div>
 
     <h2>📋 Detalles por Días Abiertos</h2>
@@ -139,11 +148,16 @@ async function cargarReporte(mesesSecado = 6, mesesMaternidad = 8) {
     renderizarKPIs(data.kpis);
     renderizarTablaSecadoMaternidad("tablaSecado", data.detalles.vacasSecado);
     renderizarTablaSecadoMaternidad("tablaMaternidad", data.detalles.vacasMaternidad);
-    if (data.detalles.novillasPendientesEvaluar?.length > 0) {
-      document.getElementById('seccionNovillasPendientes').style.display = 'block';
-      document.getElementById('conteoNovillasPendientes').textContent = data.detalles.novillasPendientesEvaluar.length;
-      renderizarTabla("tablaNovillasPendientes", data.detalles.novillasPendientesEvaluar, ['ID','numeroPractico','clasificacion']);
-    } else { document.getElementById('seccionNovillasPendientes').style.display = 'none'; }
+    
+    // 🔥 Renderizar hembras pendientes (nueva lógica)
+    if (data.detalles.hembrasPendientesEvaluar?.length > 0) {
+      document.getElementById('seccionHembrasPendientes').style.display = 'block';
+      document.getElementById('conteoHembrasPendientes').textContent = data.detalles.hembrasPendientesEvaluar.length;
+      renderizarTablaHembrasPendientes("tablaHembrasPendientes", data.detalles.hembrasPendientesEvaluar);
+    } else { 
+      document.getElementById('seccionHembrasPendientes').style.display = 'none'; 
+    }
+    
     renderizarTabla("preñadas_menor3m", data.detalles.preñadas_menor3m);
     renderizarTabla("preñadas_3a6m", data.detalles.preñadas_3a6m);
     renderizarTabla("preñadas_mayor6m", data.detalles.preñadas_mayor6m);
@@ -198,10 +212,28 @@ function renderizarTablaSecadoMaternidad(id, datos) {
   });
 }
 
+// 🔥 NUEVA FUNCIÓN: Renderizar hembras pendientes
+function renderizarTablaHembrasPendientes(id, datos) {
+  const tbody = document.getElementById(id); tbody.innerHTML = "";
+  if (!datos || datos.length === 0) { tbody.innerHTML = '<tr><td colspan="6" class="sin-registros">⚠️ Sin registros</td></tr>'; return; }
+  datos.forEach(row => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${row.ID}</td>
+      <td>${row.numeroPractico || '-'}</td>
+      <td>${row.clasificacion || '-'}</td>
+      <td>${row.sexo || '-'}</td>
+      <td>${row.ultimoPeso !== 'N/A' ? row.ultimoPeso + ' kg' : 'N/A'}</td>
+      <td>${row.motivo || '-'}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
 function exportarTabla(idTabla, nombreArchivo) {
   const tbody = document.getElementById(idTabla);
   if (!tbody || tbody.querySelector('.sin-registros')) { alert("No hay datos para exportar"); return; }
-  let csv = "ID,Número Práctico,Clasificación,Meses Gestación,Último Parto,Diagnóstico,Fecha Diagnóstico\n";
+  let csv = "ID,Número Práctico,Clasificación,Sexo,Último Peso,Motivo\n";
   Array.from(tbody.querySelectorAll("tr")).forEach(tr => {
     const fila = Array.from(tr.querySelectorAll("td")).map(td => `"${td.textContent.replace(/"/g, '""')}"`).join(",");
     csv += fila + "\n";
