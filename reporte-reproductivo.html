@@ -1,251 +1,507 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Reporte Reproductivo - PYSIGA</title>
-<style>
-:root { --verde: #2f6f4e; --verde-claro: #e6f1eb; --azul: #2c4f7c; --tierra: #8b6f47; --rojo: #e74c3c; --gris: #7f8c8d; --morado: #9b59b6; --fondo: #f7f9f8; --blanco: #ffffff; --alerta: #e67e22; --excelente: #27ae60; --regular: #f39c12; }
-body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif; background: var(--fondo); color: #333; }
-.container { max-width: 1200px; margin: auto; padding: 15px; }
-.card { background: var(--blanco); border-radius: 10px; padding: 15px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); margin-bottom: 15px; }
-.header-titulo { color: var(--azul); font-size: 22px; margin: 0 0 15px 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
-.btn-cerrar-reporte { background: var(--rojo); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold; }
-.btn-cerrar-reporte:hover { background: #c0392b; }
-.parametros-box { background: var(--verde-claro); border-left: 4px solid var(--verde); padding: 12px; margin-bottom: 15px; border-radius: 0 6px 6px 0; }
-.parametros-box label { margin-right: 15px; font-weight: 500; }
-.parametros-box input { width: 50px; padding: 5px; border: 1px solid #ccc; border-radius: 4px; text-align: center; }
-.parametros-box button { background: var(--azul); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; margin-left: 10px; }
-.parametros-box button:hover { opacity: 0.9; }
-.kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-bottom: 20px; }
-.kpi-card { background: var(--blanco); border-radius: 8px; padding: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.08); text-align: center; border-top: 3px solid var(--gris); }
-.kpi-card.estado-excelente { border-top-color: var(--excelente); }
-.kpi-card.estado-regular { border-top-color: var(--regular); }
-.kpi-card.estado-alerta { border-top-color: var(--alerta); }
-.kpi-card.estado-sin_datos { border-top-color: var(--gris); opacity: 0.7; }
-.kpi-valor { font-size: 26px; font-weight: bold; margin: 8px 0; }
-.kpi-meta { font-size: 12px; color: var(--gris); margin-bottom: 4px; }
-.kpi-estado { font-size: 11px; font-weight: 500; padding: 3px 8px; border-radius: 12px; display: inline-block; }
-.estado-excelente .kpi-estado { background: #d5f5e3; color: var(--excelente); }
-.estado-regular .kpi-estado { background: #fef9e7; color: var(--regular); }
-.estado-alerta .kpi-estado { background: #fadbd8; color: var(--rojo); }
-.estado-sin_datos .kpi-estado { background: #f2f4f4; color: var(--gris); }
-.kpi-advertencia { font-size: 10px; color: var(--alerta); margin-top: 4px; font-style: italic; }
-.seccion-lista { margin: 20px 0; }
-.seccion-lista h3 { color: var(--azul); border-bottom: 2px solid var(--verde-claro); padding-bottom: 8px; margin-bottom: 12px; }
-.tabla-detalles { width: 100%; border-collapse: collapse; font-size: 13px; }
-.tabla-detalles th { background: var(--verde); color: white; padding: 8px; position: sticky; top: 0; text-align: left; }
-.tabla-detalles td { padding: 8px; border-bottom: 1px solid #eee; }
-.tabla-detalles tr:hover { background: var(--verde-claro); }
-.sin-registros { text-align: center; color: var(--gris); font-style: italic; padding: 15px; }
-#loader { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background: white; position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 9999; }
-.vaca-loader { font-size: 60px; margin-bottom: 16px; animation: mover 1s infinite alternate; }
-@keyframes mover { from { transform: translateX(-5px); } to { transform: translateX(5px); } }
-.acciones-lista { display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
-.btn-accion { background: var(--azul); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; }
-.btn-accion:hover { opacity: 0.9; }
-.btn-secado { background: var(--tierra); }
-.btn-maternidad { background: var(--morado); }
-.btn-pendientes { background: var(--alerta); }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🐄 Reporte de Pesaje Corporal - PYSIGA</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --verde: #2f6f4e;
+      --verde-claro: #e6f1eb;
+      --azul: #2c4f7c;
+      --tierra: #8b6f47;
+      --rojo: #e74c3c;
+      --gris: #7f8c8d;
+      --fondo: #f7f9f8;
+      --blanco: #ffffff;
+      --borde: #ddd;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, -apple-system, sans-serif; background: var(--fondo); color: #333; line-height: 1.5; }
+    .container { max-width: 1200px; margin: auto; padding: 15px; }
+    
+    .header { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; margin-bottom: 20px; border-bottom: 2px solid var(--verde); }
+    .header h1 { color: var(--verde); font-size: 22px; }
+    .btn { padding: 10px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: 500; transition: opacity 0.2s; }
+    .btn:hover { opacity: 0.9; }
+    .btn-primary { background: var(--verde); color: white; }
+    .btn-danger { background: var(--rojo); color: white; }
+    .btn-secondary { background: var(--tierra); color: white; }
+    
+    .card { background: var(--blanco); border-radius: 10px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
+    .card-title { font-size: 18px; font-weight: 600; color: var(--azul); margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid var(--borde); }
+    
+    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
+    .kpi-card { background: var(--verde-claro); padding: 15px; border-radius: 8px; text-align: center; border-left: 4px solid var(--verde); }
+    .kpi-value { font-size: 24px; font-weight: 700; color: var(--verde); margin: 5px 0; }
+    .kpi-label { font-size: 13px; color: var(--gris); }
+    .kpi-unit { font-size: 12px; color: var(--gris); }
+    
+    .tabs { display: flex; gap: 5px; margin-bottom: 15px; flex-wrap: wrap; }
+    .tab { padding: 8px 16px; background: var(--gris); color: white; border: none; border-radius: 6px 6px 0 0; cursor: pointer; font-size: 14px; }
+    .tab.active { background: var(--verde); font-weight: 600; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    
+    .table-container { overflow-x: auto; margin-top: 10px; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th { background: var(--verde); color: white; padding: 10px 8px; text-align: left; position: sticky; top: 0; }
+    td { padding: 8px; border-bottom: 1px solid var(--borde); }
+    tr:hover { background: #f9f9f9; }
+    .negativo { color: var(--rojo); font-weight: 600; }
+    .positivo { color: var(--verde); font-weight: 600; }
+    
+    .chart-container { position: relative; height: 300px; margin: 20px 0; }
+    
+    .loader { text-align: center; padding: 40px; }
+    .loader .vaca { font-size: 40px; animation: mover 1s infinite alternate; margin-bottom: 15px; }
+    @keyframes mover { from { transform: translateX(-5px); } to { transform: translateX(5px); } }
+    
+    .filters { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px; align-items: center; }
+    .filters select, .filters input { padding: 8px 12px; border: 1px solid var(--borde); border-radius: 6px; font-size: 14px; }
+    
+    @media (max-width: 768px) {
+      .header { flex-direction: column; gap: 10px; text-align: center; }
+      .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
 </head>
 <body>
-<div id="loader"><div class="vaca-loader">🐄</div><div id="loader-text">Cargando reporte reproductivo…</div></div>
-<div id="contenido" style="display: none;">
   <div class="container">
-    <h1 class="header-titulo">📊 Reporte Reproductivo<button class="btn-cerrar-reporte" onclick="cerrarReporte()">✕ Cerrar</button></h1>
+    <div class="header">
+      <h1>🐄 Reporte de Pesaje Corporal</h1>
+      <div style="display: flex; gap: 10px;">
+        <button class="btn btn-secondary" onclick="imprimir()">🖨️ Imprimir</button>
+        <button class="btn btn-danger" onclick="cerrar()">🚪 Cerrar</button>
+      </div>
+    </div>
     
-    <div class="card parametros-box">
-      <strong>⚙️ Parámetros de Preñez:</strong>
-      <label>Meses para secado: <input type="number" id="mesesSecado" value="6" min="1" max="12"></label>
-      <label>Meses para maternidad: <input type="number" id="mesesMaternidad" value="8" min="1" max="12"></label>
-      <button onclick="recargarConParametros()">Actualizar</button>
+    <div id="loader" class="card loader">
+      <div class="vaca">🐄</div>
+      <div>Cargando datos de pesaje y calculando KPIs…</div>
     </div>
-
-    <div class="kpi-grid">
-      <div class="kpi-card" id="kpi-tasaGeneral"><div class="kpi-meta">Tasa de Preñez General</div><div class="kpi-valor" id="tasaPreñezGeneral">0%</div><div class="kpi-meta">Meta: 85%</div><span class="kpi-estado" id="estado-tasaGeneral">-</span><div class="kpi-advertencia" id="advertencia-tasaGeneral"></div></div>
-      <div class="kpi-card" id="kpi-tasaVacas"><div class="kpi-meta">Tasa de Preñez Vacas</div><div class="kpi-valor" id="tasaPreñezVacas">0%</div><div class="kpi-meta">Meta: 85%</div><span class="kpi-estado" id="estado-tasaVacas">-</span></div>
-      <div class="kpi-card" id="kpi-tasaNovillas"><div class="kpi-meta">Tasa de Preñez Novillas</div><div class="kpi-valor" id="tasaPreñezNovillas">0%</div><div class="kpi-meta">Meta: 80%</div><span class="kpi-estado" id="estado-tasaNovillas">-</span><div class="kpi-advertencia" id="advertencia-tasaNovillas"></div></div>
-      <div class="kpi-card" id="kpi-coberturaNovillas"><div class="kpi-meta">Cobertura Evaluación</div><div class="kpi-valor" id="coberturaNovillas">0%</div><div class="kpi-meta">Meta: 100%</div><span class="kpi-estado" id="estado-coberturaNovillas">-</span></div>
-      <div class="kpi-card" id="kpi-vacias"><div class="kpi-meta">% Vacías</div><div class="kpi-valor" id="porcentajeVacías">0%</div><div class="kpi-meta">Meta: &lt; 10%</div><span class="kpi-estado" id="estado-vacias">-</span></div>
-      <div class="kpi-card" id="kpi-diasAbiertos"><div class="kpi-meta">Días Abiertos Prom.</div><div class="kpi-valor" id="diasAbiertosProm">0</div><div class="kpi-meta">Meta: &lt; 100 días</div><span class="kpi-estado" id="estado-diasAbiertos">-</span></div>
-      <div class="kpi-card" id="kpi-iep"><div class="kpi-meta">Intervalo Entre Partos</div><div class="kpi-valor" id="iep">0</div><div class="kpi-meta">Meta: &lt; 400 días</div><span class="kpi-estado" id="estado-iep">-</span></div>
-      <div class="kpi-card" id="kpi-isc"><div class="kpi-meta">Servicios por Concepción</div><div class="kpi-valor" id="isc">0</div><div class="kpi-meta">Meta: ≤ 1.8</div><span class="kpi-estado" id="estado-isc">-</span></div>
+    
+    <div id="contenido" style="display: none;">
+      <div class="card">
+        <div class="filters">
+          <label><strong>Filtrar por Lote:</strong></label>
+          <select id="filtroLote" onchange="aplicarFiltros()">
+            <option value="">Todos los lotes</option>
+          </select>
+          <label><strong>Clasificación:</strong></label>
+          <select id="filtroClasif" onchange="aplicarFiltros()">
+            <option value="">Todas</option>
+          </select>
+          <button class="btn btn-primary" onclick="recargarDatos()">🔄 Actualizar</button>
+        </div>
+      </div>
+      
+      <div class="card">
+        <div class="card-title">📊 Indicadores Clave (KPIs)</div>
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-label">Ganancia Diaria General</div>
+            <div class="kpi-value" id="kpiGananciaGeneral">--</div>
+            <div class="kpi-unit">kg/día promedio</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Kilos Totales Generales</div>
+            <div class="kpi-value" id="kpiKilosTotales">--</div>
+            <div class="kpi-unit">kg en último pesaje</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Animales Evaluados</div>
+            <div class="kpi-value" id="kpiTotalAnimales">--</div>
+            <div class="kpi-unit">con pesaje registrado</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Animales Desmejorados</div>
+            <div class="kpi-value" id="kpiDesmejorados" style="color: var(--rojo);">--</div>
+            <div class="kpi-unit">redujeron ganancia</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="tabs">
+        <button class="tab active" onclick="cambiarTab('general')">📈 Evolución General</button>
+        <button class="tab" onclick="cambiarTab('lotes')">📦 Por Lote</button>
+        <button class="tab" onclick="cambiarTab('clasificacion')">🏷️ Por Clasificación</button>
+        <button class="tab" onclick="cambiarTab('desmejorados')">⚠️ Animales Desmejorados</button>
+        <button class="tab" onclick="cambiarTab('detalle')">📋 Detalle Completo</button>
+      </div>
+      
+      <div id="tab-general" class="tab-content active">
+        <div class="card">
+          <div class="card-title">📈 Evolución de Ganancia Diaria Promedio</div>
+          <div class="chart-container">
+            <canvas id="chartEvolucion"></canvas>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">⚖️ Distribución de Ganancia Diaria</div>
+          <div class="chart-container">
+            <canvas id="chartDistribucion"></canvas>
+          </div>
+        </div>
+      </div>
+      
+      <div id="tab-lotes" class="tab-content">
+        <div class="card">
+          <div class="card-title">📦 KPIs por Lote</div>
+          <div id="kpisPorLote"></div>
+          <div class="table-container">
+            <table id="tablaLotes">
+              <thead>
+                <tr><th>Lote</th><th>Animales</th><th>Kilos Totales</th><th>Ganancia Diaria Prom.</th></tr>
+              </thead>
+              <tbody id="tbodyLotes"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">📊 Evolución por Lote (Últimos Registros)</div>
+          <div class="chart-container">
+            <canvas id="chartPorLote"></canvas>
+          </div>
+        </div>
+      </div>
+      
+      <div id="tab-clasificacion" class="tab-content">
+        <div class="card">
+          <div class="card-title">🏷️ KPIs por Clasificación de Animal</div>
+          <div class="table-container">
+            <table id="tablaClasif">
+              <thead>
+                <tr><th>Clasificación</th><th>Animales</th><th>Kilos Totales</th><th>Ganancia Diaria Prom.</th></tr>
+              </thead>
+              <tbody id="tbodyClasif"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      
+      <div id="tab-desmejorados" class="tab-content">
+        <div class="card">
+          <div class="card-title">⚠️ Animales que Redujeron su Ganancia Diaria</div>
+          <p style="margin-bottom: 15px; color: var(--gris); font-size: 14px;">
+            Animales cuya ganancia diaria actual es menor que en el período anterior.
+          </p>
+          <div class="table-container">
+            <table id="tablaDesmejorados">
+              <thead>
+                <tr>
+                  <th>N° Práctico</th><th>Lote</th><th>Clasificación</th>
+                  <th>Ganancia Anterior</th><th>Ganancia Actual</th><th>Variación</th>
+                  <th>Peso Actual</th><th>Último Pesaje</th>
+                </tr>
+              </thead>
+              <tbody id="tbodyDesmejorados"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      
+      <div id="tab-detalle" class="tab-content">
+        <div class="card">
+          <div class="card-title">📋 Detalle de Todos los Animales con Pesaje</div>
+          <div class="table-container">
+            <table id="tablaDetalle">
+              <thead>
+                <tr>
+                  <th>ID</th><th>N° Práctico</th><th>Lote</th><th>Clasificación</th>
+                  <th>Peso Actual</th><th>Ganancia Diaria</th><th>Último Pesaje</th>
+                </tr>
+              </thead>
+              <tbody id="tbodyDetalle"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      
     </div>
-
-    <div class="card seccion-lista">
-      <h3>🥛 Animales para Secado (≥ <span id="labelMesesSecado">6</span> meses de preñez)</h3>
-      <div class="acciones-lista"><button class="btn-accion btn-secado" onclick="exportarTabla('tablaSecado', 'Vacas_Secado')">📥 Exportar</button></div>
-      <table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Clasificación</th><th>Meses Gestación</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th></tr></thead><tbody id="tablaSecado"></tbody></table>
-    </div>
-
-    <div class="card seccion-lista">
-      <h3>🤰 Animales para Maternidad (≥ <span id="labelMesesMaternidad">8</span> meses de preñez)</h3>
-      <div class="acciones-lista"><button class="btn-accion btn-maternidad" onclick="exportarTabla('tablaMaternidad', 'Vacas_Maternidad')">📥 Exportar</button></div>
-      <table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Clasificación</th><th>Meses Gestación</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th></tr></thead><tbody id="tablaMaternidad"></tbody></table>
-    </div>
-
-    <!-- 🔥 CAMBIADO: Ahora incluye TODAS las hembras pendientes -->
-    <div class="card seccion-lista" id="seccionHembrasPendientes" style="display:none;">
-      <h3>⚠️ Hembras Pendientes de Evaluar (<span id="conteoHembrasPendientes">0</span>)</h3>
-      <p style="font-size: 12px; color: var(--gris); margin-bottom: 10px;">
-        📌 Criterios: Clasificación "SIN DIAG DE GESTACION" | Vaca/Novilla sin diagnóstico | Peso ≥ 350 kg sin diagnóstico
-      </p>
-      <div class="acciones-lista"><button class="btn-accion btn-pendientes" onclick="exportarTabla('tablaHembrasPendientes', 'Hembras_Pendientes')">📥 Exportar</button></div>
-      <table class="tabla-detalles">
-        <thead><tr><th>ID</th><th>Nº Práctico</th><th>Clasificación</th><th>Sexo</th><th>Último Peso</th><th>Motivo</th></tr></thead>
-        <tbody id="tablaHembrasPendientes"></tbody>
-      </table>
-    </div>
-
-    <h2>📋 Detalles por Días Abiertos</h2>
-    <div class="seccion-lista"><h3>✅ Preñadas - Menor a 3 meses</h3><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días Abiertos</th></tr></thead><tbody id="preñadas_menor3m"></tbody></table></div>
-    <div class="seccion-lista"><h3>✅ Preñadas - 3 a 6 meses</h3><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días Abiertos</th></tr></thead><tbody id="preñadas_3a6m"></tbody></table></div>
-    <div class="seccion-lista"><h3>✅ Preñadas - Mayor a 6 meses</h3><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días Abiertos</th></tr></thead><tbody id="preñadas_mayor6m"></tbody></table></div>
-    <div class="seccion-lista"><h3>❌ Vacías - Menor a 3 meses</h3><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días</th></tr></thead><tbody id="vacías_menor3m"></tbody></table></div>
-    <div class="seccion-lista"><h3>❌ Vacías - 3 a 6 meses</h3><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días</th></tr></thead><tbody id="vacías_3a6m"></tbody></table></div>
-    <div class="seccion-lista"><h3>❌ Vacías - Mayor a 6 meses</h3><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días</th></tr></thead><tbody id="vacías_mayor6m"></tbody></table></div>
   </div>
-</div>
 
-<script>
-const WORKER_URL = "https://pysiga.d-alexjose.workers.dev";
-const urlParams = new URLSearchParams(window.location.search);
-const email = urlParams.get('email');
-if (!email) { alert("Parámetro 'email' no encontrado."); location.href = "/"; }
-
-function cerrarReporte() {
-  if (window.opener) { window.close(); return; }
-  const emailParam = encodeURIComponent(email);
-  window.location.href = `https://sites.google.com/view/tu-sitio-pysiga?email=${emailParam}`;
-}
-
-function recargarConParametros() {
-  const mesesSecado = document.getElementById('mesesSecado').value;
-  const mesesMaternidad = document.getElementById('mesesMaternidad').value;
-  document.getElementById('labelMesesSecado').textContent = mesesSecado;
-  document.getElementById('labelMesesMaternidad').textContent = mesesMaternidad;
-  cargarReporte(mesesSecado, mesesMaternidad);
-}
-
-async function cargarReporte(mesesSecado = 6, mesesMaternidad = 8) {
-  try {
-    document.getElementById("loader").style.display = "flex";
-    document.getElementById("contenido").style.display = "none";
-    const res = await fetch(WORKER_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ accion: "reporteReproductivo", email: email, mesesSecado: parseInt(mesesSecado), mesesMaternidad: parseInt(mesesMaternidad) })
-    });
-    const data = await res.json();
-    if (!data.ok) throw new Error(data.error || "Error desconocido");
-    document.getElementById("loader").style.display = "none";
-    document.getElementById("contenido").style.display = "block";
-    document.getElementById('mesesSecado').value = data.parametros?.mesesParaSecado || 6;
-    document.getElementById('mesesMaternidad').value = data.parametros?.mesesParaMaternidad || 8;
-    document.getElementById('labelMesesSecado').textContent = data.parametros?.mesesParaSecado || 6;
-    document.getElementById('labelMesesMaternidad').textContent = data.parametros?.mesesParaMaternidad || 8;
-    renderizarKPIs(data.kpis);
-    renderizarTablaSecadoMaternidad("tablaSecado", data.detalles.vacasSecado);
-    renderizarTablaSecadoMaternidad("tablaMaternidad", data.detalles.vacasMaternidad);
+  <script>
+    // === CONFIGURACIÓN ===
+    const WORKER_URL = "https://pysiga.d-alexjose.workers.dev";
+    const email = new URLSearchParams(window.location.search).get('email');
     
-    // 🔥 Renderizar hembras pendientes (nueva lógica)
-    if (data.detalles.hembrasPendientesEvaluar?.length > 0) {
-      document.getElementById('seccionHembrasPendientes').style.display = 'block';
-      document.getElementById('conteoHembrasPendientes').textContent = data.detalles.hembrasPendientesEvaluar.length;
-      renderizarTablaHembrasPendientes("tablaHembrasPendientes", data.detalles.hembrasPendientesEvaluar);
-    } else { 
-      document.getElementById('seccionHembrasPendientes').style.display = 'none'; 
+    let datosGlobales = null;
+    let chartEvolucion = null, chartDistribucion = null, chartPorLote = null;
+    
+    // === INICIALIZACIÓN ===
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!email) {
+        alert('❌ No se encontró el correo del usuario. Accede desde el panel principal.');
+        window.close();
+        return;
+      }
+      cargarDatos();
+    });
+    
+    // === CARGAR DATOS DEL WORKER ===
+    async function cargarDatos() {
+      mostrarLoader(true);
+      
+      try {
+        const response = await fetch(WORKER_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            accion: 'reportePesajeCorporal',
+            email: email,
+            token: 'pysiga-node'
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (!data.ok) throw new Error(data.error || 'Error al cargar datos');
+        
+        datosGlobales = data;
+        renderizarKPIs();
+        renderizarGraficos();
+        renderizarTablas();
+        poblarFiltros();
+        
+        mostrarLoader(false);
+        document.getElementById('contenido').style.display = 'block';
+        
+      } catch (error) {
+        console.error('Error:', error);
+        alert('❌ Error: ' + error.message);
+        mostrarLoader(false);
+      }
     }
     
-    renderizarTabla("preñadas_menor3m", data.detalles.preñadas_menor3m);
-    renderizarTabla("preñadas_3a6m", data.detalles.preñadas_3a6m);
-    renderizarTabla("preñadas_mayor6m", data.detalles.preñadas_mayor6m);
-    renderizarTabla("vacías_menor3m", data.detalles.vacías_menor3m);
-    renderizarTabla("vacías_3a6m", data.detalles.vacías_3a6m);
-    renderizarTabla("vacías_mayor6m", data.detalles.vacías_mayor6m);
-  } catch (e) { console.error("Error:", e); document.getElementById("loader-text").textContent = `❌ Error: ${e.message}`; }
-}
-
-function renderizarKPIs(kpis) {
-  const mapeo = {
-    tasaPreñezGeneral: { id: 'tasaPreñezGeneral', estado: 'estado-tasaGeneral', advertencia: 'advertencia-tasaGeneral', card: 'kpi-tasaGeneral' },
-    tasaPreñezVacas: { id: 'tasaPreñezVacas', estado: 'estado-tasaVacas', card: 'kpi-tasaVacas' },
-    tasaPreñezNovillas: { id: 'tasaPreñezNovillas', estado: 'estado-tasaNovillas', advertencia: 'advertencia-tasaNovillas', card: 'kpi-tasaNovillas' },
-    coberturaEvaluacionNovillas: { id: 'coberturaNovillas', estado: 'estado-coberturaNovillas', card: 'kpi-coberturaNovillas' },
-    porcentajeVacías: { id: 'porcentajeVacías', estado: 'estado-vacias', card: 'kpi-vacias' },
-    diasAbiertosPromedio: { id: 'diasAbiertosProm', estado: 'estado-diasAbiertos', card: 'kpi-diasAbiertos' },
-    intervaloEntrePartos: { id: 'iep', estado: 'estado-iep', card: 'kpi-iep' },
-    indiceServiciosConcepcion: { id: 'isc', estado: 'estado-isc', card: 'kpi-isc' }
-  };
-  Object.entries(mapeo).forEach(([key, cfg]) => {
-    const kpi = kpis[key]; if (!kpi) return;
-    const elValor = document.getElementById(cfg.id), elEstado = document.getElementById(cfg.estado), elCard = document.getElementById(cfg.card), elAdvertencia = cfg.advertencia ? document.getElementById(cfg.advertencia) : null;
-    elValor.textContent = kpi.valor + (kpi.unidad || '');
-    elCard.className = `kpi-card estado-${kpi.estado}`;
-    elEstado.textContent = kpi.estado === 'excelente' ? '✅ Meta' : kpi.estado === 'alerta' ? '⚠️ Revisar' : kpi.estado === 'sin_datos' ? '⚪ Sin datos' : '🔄 Regular';
-    if (elAdvertencia && kpi.advertencia) { elAdvertencia.textContent = kpi.advertencia; elAdvertencia.style.display = 'block'; } else if (elAdvertencia) { elAdvertencia.style.display = 'none'; }
-  });
-}
-
-function renderizarTabla(id, datos, columnas = ['ID','numeroPractico','ultimoParto','diagnostico','fechaDiagnostico','dias']) {
-  const tbody = document.getElementById(id); tbody.innerHTML = "";
-  if (!datos || datos.length === 0) { tbody.innerHTML = '<tr><td colspan="6" class="sin-registros">⚠️ Sin registros en esta categoría</td></tr>'; return; }
-  datos.forEach(row => {
-    const tr = document.createElement("tr");
-    columnas.forEach(col => {
-      const td = document.createElement("td");
-      let valor = row[col];
-      if (col === 'diagnostico') valor = valor >= 2 ? `✅ ${valor} meses` : `❌ Vacía`;
-      td.textContent = valor || '-'; tr.appendChild(td);
-    }); tbody.appendChild(tr);
-  });
-}
-
-function renderizarTablaSecadoMaternidad(id, datos) {
-  const tbody = document.getElementById(id); tbody.innerHTML = "";
-  if (!datos || datos.length === 0) { tbody.innerHTML = '<tr><td colspan="7" class="sin-registros">⚠️ Sin registros en esta categoría</td></tr>'; return; }
-  datos.forEach(row => {
-    const tr = document.createElement("tr");
-    tr.innerHTML = `<td>${row.ID}</td><td>${row.numeroPractico}</td><td>${row.clasificacion || '-'}</td><td>${row.edadGestacion} meses</td><td>${row.ultimoParto || '-'}</td><td>${row.diagnostico >= 2 ? '✅ ' + row.diagnostico + ' meses' : '❌ Vacía'}</td><td>${row.fechaDiagnostico}</td>`;
-    tbody.appendChild(tr);
-  });
-}
-
-// 🔥 NUEVA FUNCIÓN: Renderizar hembras pendientes
-function renderizarTablaHembrasPendientes(id, datos) {
-  const tbody = document.getElementById(id); tbody.innerHTML = "";
-  if (!datos || datos.length === 0) { tbody.innerHTML = '<tr><td colspan="6" class="sin-registros">⚠️ Sin registros</td></tr>'; return; }
-  datos.forEach(row => {
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${row.ID}</td>
-      <td>${row.numeroPractico || '-'}</td>
-      <td>${row.clasificacion || '-'}</td>
-      <td>${row.sexo || '-'}</td>
-      <td>${row.ultimoPeso !== 'N/A' ? row.ultimoPeso + ' kg' : 'N/A'}</td>
-      <td>${row.motivo || '-'}</td>
-    `;
-    tbody.appendChild(tr);
-  });
-}
-
-function exportarTabla(idTabla, nombreArchivo) {
-  const tbody = document.getElementById(idTabla);
-  if (!tbody || tbody.querySelector('.sin-registros')) { alert("No hay datos para exportar"); return; }
-  let csv = "ID,Número Práctico,Clasificación,Sexo,Último Peso,Motivo\n";
-  Array.from(tbody.querySelectorAll("tr")).forEach(tr => {
-    const fila = Array.from(tr.querySelectorAll("td")).map(td => `"${td.textContent.replace(/"/g, '""')}"`).join(",");
-    csv += fila + "\n";
-  });
-  const blob = new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8;" });
-  const link = document.createElement("a");
-  link.href = URL.createObjectURL(blob);
-  link.download = `${nombreArchivo}_${new Date().toISOString().slice(0,10)}.csv`;
-  link.click();
-}
-
-cargarReporte();
-</script>
+    // === RENDERIZAR KPIs ===
+    function renderizarKPIs() {
+      const kpis = datosGlobales.kpis.general;
+      document.getElementById('kpiGananciaGeneral').textContent = kpis.gananciaDiariaPromedio.toFixed(2);
+      document.getElementById('kpiKilosTotales').textContent = kpis.kilosTotales.toLocaleString('es-VE', {maximumFractionDigits: 1});
+      document.getElementById('kpiTotalAnimales').textContent = kpis.totalAnimalesPesados;
+      document.getElementById('kpiDesmejorados').textContent = datosGlobales.listados.animalesDesmejorados.length;
+    }
+    
+    // === RENDERIZAR GRÁFICOS ===
+    function renderizarGraficos() {
+      // Gráfico de Evolución
+      const ctxEvol = document.getElementById('chartEvolucion').getContext('2d');
+      if (chartEvolucion) chartEvolucion.destroy();
+      
+      const datosEvol = datosGlobales.graficos.evolucionGananciaGeneral;
+      chartEvolucion = new Chart(ctxEvol, {
+        type: 'line',
+         {
+          labels: datosEvol.map(d => d.mes),
+          datasets: [{
+            label: 'Ganancia Diaria Promedio (kg/día)',
+             datosEvol.map(d => d.gananciaDiariaPromedio),
+            borderColor: '#2f6f4e',
+            backgroundColor: 'rgba(47, 111, 78, 0.1)',
+            fill: true,
+            tension: 0.3
+          }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+      });
+      
+      // Gráfico de Distribución
+      const ctxDist = document.getElementById('chartDistribucion').getContext('2d');
+      if (chartDistribucion) chartDistribucion.destroy();
+      
+      const distribucion = datosGlobales.graficos.distribucionGananciaDiaria;
+      chartDistribucion = new Chart(ctxDist, {
+        type: 'doughnut',
+         {
+          labels: Object.keys(distribucion),
+          datasets: [{
+             Object.values(distribucion),
+            backgroundColor: ['#e74c3c', '#f39c12', '#f1c40f', '#2ecc71', '#27ae60', '#2f6f4e']
+          }]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+      });
+      
+      // Gráfico por Lote (solo si hay datos)
+      const ctxLote = document.getElementById('chartPorLote').getContext('2d');
+      if (chartPorLote) chartPorLote.destroy();
+      
+      const evolucionLotes = datosGlobales.graficos.evolucionPorLote;
+      const datasetsLote = Object.entries(evolucionLotes).map(([lote, datos], i) => ({
+        label: lote,
+         datos.map(d => d.gananciaDiariaPromedio),
+        borderColor: ['#2c4f7c', '#8b6f47', '#9b59b6', '#e74c3c', '#7f8c8d'][i % 5],
+        fill: false,
+        tension: 0.2
+      }));
+      
+      if (datasetsLote.length > 0) {
+        chartPorLote = new Chart(ctxLote, {
+          type: 'line',
+           {
+            labels: datasetsLote[0].data.map((_, i) => evolucionLotes[Object.keys(evolucionLotes)[0]][i]?.fecha || ''),
+            datasets: datasetsLote
+          },
+          options: { responsive: true, maintainAspectRatio: false }
+        });
+      }
+    }
+    
+    // === RENDERIZAR TABLAS ===
+    function renderizarTablas() {
+      // Tabla por Lote
+      const tbodyLotes = document.getElementById('tbodyLotes');
+      tbodyLotes.innerHTML = '';
+      Object.entries(datosGlobales.kpis.porLote).forEach(([lote, kpi]) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><strong>${lote}</strong></td>
+          <td>${kpi.totalAnimales}</td>
+          <td>${kpi.kilosTotales.toLocaleString('es-VE', {maximumFractionDigits: 1})}</td>
+          <td class="${kpi.gananciaDiariaPromedio < 0 ? 'negativo' : 'positivo'}">
+            ${kpi.gananciaDiariaPromedio !== null ? kpi.gananciaDiariaPromedio.toFixed(2) : 'N/A'}
+          </td>
+        `;
+        tbodyLotes.appendChild(tr);
+      });
+      
+      // Tabla por Clasificación
+      const tbodyClasif = document.getElementById('tbodyClasif');
+      tbodyClasif.innerHTML = '';
+      Object.entries(datosGlobales.kpis.porClasificacion).forEach(([clasif, kpi]) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><strong>${clasif}</strong></td>
+          <td>${kpi.totalAnimales}</td>
+          <td>${kpi.kilosTotales.toLocaleString('es-VE', {maximumFractionDigits: 1})}</td>
+          <td class="${kpi.gananciaDiariaPromedio < 0 ? 'negativo' : 'positivo'}">
+            ${kpi.gananciaDiariaPromedio !== null ? kpi.gananciaDiariaPromedio.toFixed(2) : 'N/A'}
+          </td>
+        `;
+        tbodyClasif.appendChild(tr);
+      });
+      
+      // Tabla Animales Desmejorados
+      const tbodyDesm = document.getElementById('tbodyDesmejorados');
+      tbodyDesm.innerHTML = '';
+      datosGlobales.listados.animalesDesmejorados.forEach(animal => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${animal.numeroPractico}</td>
+          <td>${animal.lote}</td>
+          <td>${animal.clasificacion}</td>
+          <td class="positivo">${animal.gananciaDiariaAnterior.toFixed(2)}</td>
+          <td class="${animal.gananciaDiariaActual < 0 ? 'negativo' : animal.gananciaDiariaActual < animal.gananciaDiariaAnterior ? 'negativo' : 'positivo'}">
+            ${animal.gananciaDiariaActual.toFixed(2)}
+          </td>
+          <td class="negativo">${animal.variacion.toFixed(2)}</td>
+          <td>${animal.pesoActual.toLocaleString('es-VE')}</td>
+          <td>${animal.fechaUltimoPesaje}</td>
+        `;
+        tbodyDesm.appendChild(tr);
+      });
+      
+      // Tabla Detalle Completo
+      const tbodyDetalle = document.getElementById('tbodyDetalle');
+      tbodyDetalle.innerHTML = '';
+      datosGlobales.listados.animalesConDatos.forEach(animal => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${animal.id}</td>
+          <td>${animal.numeroPractico}</td>
+          <td>${animal.lote}</td>
+          <td>${animal.clasificacion}</td>
+          <td>${animal.pesoActual.toLocaleString('es-VE', {maximumFractionDigits: 1})}</td>
+          <td class="${animal.gananciaDiaria < 0 ? 'negativo' : 'positivo'}">
+            ${animal.gananciaDiaria !== null ? animal.gananciaDiaria.toFixed(2) : 'N/A'}
+          </td>
+          <td>${animal.fechaUltimoPesaje}</td>
+        `;
+        tbodyDetalle.appendChild(tr);
+      });
+    }
+    
+    // === POBLAR FILTROS ===
+    function poblarFiltros() {
+      const filtroLote = document.getElementById('filtroLote');
+      const filtroClasif = document.getElementById('filtroClasif');
+      
+      // Lotes únicos
+      const lotes = [...new Set(datosGlobales.listados.animalesConDatos.map(a => a.lote))].sort();
+      lotes.forEach(lote => {
+        const opt = document.createElement('option');
+        opt.value = lote;
+        opt.textContent = lote;
+        filtroLote.appendChild(opt);
+      });
+      
+      // Clasificaciones únicas
+      const clasifs = [...new Set(datosGlobales.listados.animalesConDatos.map(a => a.clasificacion).filter(c => c && c.toString().trim() !== ""))].sort();
+      clasifs.forEach(clasif => {
+        const opt = document.createElement('option');
+        opt.value = clasif;
+        opt.textContent = clasif;
+        filtroClasif.appendChild(opt);
+      });
+    }
+    
+    // === APLICAR FILTROS ===
+    function aplicarFiltros() {
+      const loteFiltro = document.getElementById('filtroLote').value;
+      const clasifFiltro = document.getElementById('filtroClasif').value;
+      
+      let datosFiltrados = [...datosGlobales.listados.animalesConDatos];
+      if (loteFiltro) datosFiltrados = datosFiltrados.filter(a => a.lote === loteFiltro);
+      if (clasifFiltro) datosFiltrados = datosFiltrados.filter(a => a.clasificacion === clasifFiltro);
+      
+      // Re-renderizar tabla de detalle con filtros
+      const tbodyDetalle = document.getElementById('tbodyDetalle');
+      tbodyDetalle.innerHTML = '';
+      datosFiltrados.forEach(animal => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${animal.id}</td>
+          <td>${animal.numeroPractico}</td>
+          <td>${animal.lote}</td>
+          <td>${animal.clasificacion}</td>
+          <td>${animal.pesoActual.toLocaleString('es-VE', {maximumFractionDigits: 1})}</td>
+          <td class="${animal.gananciaDiaria < 0 ? 'negativo' : 'positivo'}">
+            ${animal.gananciaDiaria !== null ? animal.gananciaDiaria.toFixed(2) : 'N/A'}
+          </td>
+          <td>${animal.fechaUltimoPesaje}</td>
+        `;
+        tbodyDetalle.appendChild(tr);
+      });
+    }
+    
+    // === UTILIDADES ===
+    function cambiarTab(tabId) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      event.target.classList.add('active');
+      document.getElementById(`tab-${tabId}`).classList.add('active');
+    }
+    
+    function mostrarLoader(mostrar) {
+      document.getElementById('loader').style.display = mostrar ? 'block' : 'none';
+    }
+    
+    function recargarDatos() {
+      cargarDatos();
+    }
+    
+    function imprimir() {
+      window.print();
+    }
+    
+    function cerrar() {
+      window.close();
+      if (window.opener) {
+        window.opener.focus();
+      }
+    }
+  </script>
 </body>
 </html>
