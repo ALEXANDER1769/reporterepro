@@ -18,6 +18,8 @@ body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Arial, sans
 .parametros-box input { width: 50px; padding: 5px; border: 1px solid #ccc; border-radius: 4px; text-align: center; }
 .parametros-box button { background: var(--azul); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; margin-left: 10px; }
 .parametros-box button:hover { opacity: 0.9; }
+
+/* Grid de KPIs */
 .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-bottom: 20px; }
 .kpi-card { background: var(--blanco); border-radius: 8px; padding: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.08); text-align: center; border-top: 3px solid var(--gris); }
 .kpi-card.estado-excelente { border-top-color: var(--excelente); }
@@ -32,6 +34,8 @@ body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Arial, sans
 .estado-alerta .kpi-estado { background: #fadbd8; color: var(--rojo); }
 .estado-sin_datos .kpi-estado { background: #f2f4f4; color: var(--gris); }
 .kpi-advertencia { font-size: 10px; color: var(--alerta); margin-top: 4px; font-style: italic; }
+
+/* Gráficos y Tablas */
 .seccion-lista { margin: 20px 0; }
 .seccion-lista h3 { color: var(--azul); border-bottom: 2px solid var(--verde-claro); padding-bottom: 8px; margin-bottom: 12px; }
 .tabla-detalles { width: 100%; border-collapse: collapse; font-size: 13px; }
@@ -39,6 +43,12 @@ body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Arial, sans
 .tabla-detalles td { padding: 8px; border-bottom: 1px solid #eee; }
 .tabla-detalles tr:hover { background: var(--verde-claro); }
 .sin-registros { text-align: center; color: var(--gris); font-style: italic; padding: 15px; }
+
+/* Estilos extraídos del modelo sanitario para el selector y el gráfico */
+.chart-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px; border-top: 4px solid var(--azul); }
+.chart-wrapper { position: relative; height: 350px; width: 100%; margin-top: 15px; }
+.selector-kpi { padding: 10px; font-size: 1rem; width: 100%; max-width: 400px; margin-bottom: 10px; border-radius: 5px; border: 1px solid #ccc; font-weight: 500; color: var(--azul);}
+
 #loader { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background: white; position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 9999; }
 .vaca-loader { font-size: 60px; margin-bottom: 16px; animation: mover 1s infinite alternate; }
 @keyframes mover { from { transform: translateX(-5px); } to { transform: translateX(5px); } }
@@ -48,7 +58,6 @@ body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Arial, sans
 .btn-secado { background: var(--tierra); }
 .btn-maternidad { background: var(--morado); }
 .btn-pendientes { background: var(--alerta); }
-.grafico-container { max-width: 900px; margin: 0 auto; padding-top: 15px; }
 </style>
 </head>
 <body>
@@ -80,12 +89,22 @@ body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Arial, sans
       <div class="kpi-card" id="kpi-iep"><div class="kpi-meta">Intervalo Entre Partos</div><div class="kpi-valor" id="iep">0</div><span class="kpi-estado" id="estado-iep">-</span></div>
     </div>
 
-    <div class="card seccion-lista">
-      <h3>📈 Gráfico General de Estados y Patologías Reproductivas</h3>
-      <p style="font-size: 12px; color: var(--gris); text-align: center; margin-bottom: 5px;">Muestra la distribución porcentual de los indicadores dentro del rebaño evaluable.</p>
-      <div class="grafico-container">
-        <canvas id="graficoBarras"></canvas>
-      </div>
+    <div class="chart-card">
+        <h3 style="color: var(--azul); margin-top: 0;">📈 Estado Poblacional por Indicador Reproductivo</h3>
+        <p style="font-size: 13px; color: #555; margin-bottom: 10px;">Seleccione un indicador para ver la distribución exacta en el rebaño:</p>
+        <select id="kpi-chart-select" class="selector-kpi" onchange="renderizarGraficoSeleccionado()">
+            <option value="prenez_general">Tasa de Preñez General</option>
+            <option value="prenez_vacas">Tasa de Preñez en Vacas</option>
+            <option value="prenez_novillas">Tasa de Preñez en Novillas</option>
+            <option value="QUI">Incidencia de Quistes (QUI)</option>
+            <option value="CL">Incidencia de Cuerpo Lúteo (CL)</option>
+            <option value="FO">Incidencia de Folículos (FO)</option>
+            <option value="EST">Ovarios Estáticos / Anormales (EST, OVA-P)</option>
+            <option value="PAT">Patologías Uterinas (PIO, MOM, RE-CH)</option>
+        </select>
+        <div class="chart-wrapper">
+            <canvas id="chartKPI"></canvas>
+        </div>
     </div>
 
     <div class="card seccion-lista">
@@ -127,6 +146,7 @@ const email = urlParams.get('email');
 if (!email) { alert("Parámetro 'email' no encontrado."); location.href = "/"; }
 
 let chartInstancia = null; 
+window.chartDataMap = {}; // Almacenará los datos de todos los gráficos
 
 function cerrarReporte() {
   if (window.opener) { window.close(); return; }
@@ -180,8 +200,8 @@ async function cargarReporte(mesesSecado = 6, mesesMaternidad = 8) {
     renderizarTabla("vacías_3a6m", data.detalles.vacías_3a6m);
     renderizarTabla("vacías_mayor6m", data.detalles.vacías_mayor6m);
 
-    // 🔥 Llamar nueva función para Patologías y Gráfico de Barras
-    procesarPatologiasYGrafico(data.kpis, data.detalles);
+    // 🔥 PREPARA LOS DATOS PARA LAS TARJETAS Y EL GRÁFICO DINÁMICO
+    prepararDatosYGrafico(data.kpis, data.detalles);
 
   } catch (e) { console.error("Error:", e); document.getElementById("loader-text").textContent = `❌ Error: ${e.message}`; }
 }
@@ -205,46 +225,32 @@ function renderizarKPIsPrincipales(kpis) {
   });
 }
 
-// 🔥 LÓGICA PARA CALCULAR PATOLOGÍAS Y DIBUJAR EL GRÁFICO DE BARRAS
-function procesarPatologiasYGrafico(kpis, detalles) {
-  const todasLasVacas = [
-    ...(detalles.preñadas_menor3m || []), ...(detalles.preñadas_3a6m || []), ...(detalles.preñadas_mayor6m || []),
-    ...(detalles.vacías_menor3m || []), ...(detalles.vacías_3a6m || []), ...(detalles.vacías_mayor6m || []),
-    ...(detalles.hembrasPendientesEvaluar || [])
-  ];
+// 🔥 LÓGICA DE PROCESAMIENTO ESTILO REPORTE SANITARIO
+function prepararDatosYGrafico(kpis, detalles) {
+  const preñadas = [...(detalles.preñadas_menor3m || []), ...(detalles.preñadas_3a6m || []), ...(detalles.preñadas_mayor6m || [])];
+  const vacias = [...(detalles.vacías_menor3m || []), ...(detalles.vacías_3a6m || []), ...(detalles.vacías_mayor6m || []), ...(detalles.hembrasPendientesEvaluar || [])];
+  const todasLasHembras = [...preñadas, ...vacias];
+  const total = todasLasHembras.length;
   
-  const total = todasLasVacas.length;
-  
-  const grupos = {
-    "QUI": ["QUI-D", "QUI-I"],
-    "CL": ["CL-D", "CL-I"],
-    "FO": ["FO-D", "FO-I"],
-    "EST": ["EST-D", "EST-I", "OVA-P", "HIPO"],
-    "PAT": ["PIO", "MOM", "RE-CH"]
+  // Conteo Patologías
+  const conteosPaths = { QUI: 0, CL: 0, FO: 0, EST: 0, PAT: 0 };
+  const keysPath = {
+    QUI: ["QUI-D", "QUI-I"], CL: ["CL-D", "CL-I"], FO: ["FO-D", "FO-I"],
+    EST: ["EST-D", "EST-I", "OVA-P", "HIPO"], PAT: ["PIO", "MOM", "RE-CH"]
   };
 
-  const conteos = { QUI: 0, CL: 0, FO: 0, EST: 0, PAT: 0 };
-
-  todasLasVacas.forEach(vaca => {
+  todasLasHembras.forEach(vaca => {
     const diag = (vaca.diagnostico || vaca.motivo || "").toString().toUpperCase();
-    for (let key in grupos) {
-      if (grupos[key].some(clave => diag.includes(clave))) {
-        conteos[key]++;
-      }
+    for (let key in keysPath) {
+      if (keysPath[key].some(k => diag.includes(k))) conteosPaths[key]++;
     }
   });
 
   const calcPct = (c) => total > 0 ? ((c / total) * 100).toFixed(1) : 0;
-  
-  const pctQUI = calcPct(conteos.QUI);
-  const pctCL = calcPct(conteos.CL);
-  const pctFO = calcPct(conteos.FO);
-  const pctEST = calcPct(conteos.EST);
-  const pctPAT = calcPct(conteos.PAT);
 
   // Actualizar Tarjetas KPI de Patologías
-  const actCard = (idVal, idEst, idCard, pct, count) => {
-    document.getElementById(idVal).textContent = `${pct}%`;
+  const actCard = (idVal, idEst, idCard, count) => {
+    document.getElementById(idVal).textContent = `${calcPct(count)}%`;
     const elEst = document.getElementById(idEst);
     const elCard = document.getElementById(idCard);
     
@@ -257,56 +263,71 @@ function procesarPatologiasYGrafico(kpis, detalles) {
     }
   };
 
-  actCard('val-qui', 'estado-qui', 'kpi-qui', pctQUI, conteos.QUI);
-  actCard('val-cl', 'estado-cl', 'kpi-cl', pctCL, conteos.CL);
-  actCard('val-fo', 'estado-fo', 'kpi-fo', pctFO, conteos.FO);
-  actCard('val-est', 'estado-est', 'kpi-est', pctEST, conteos.EST);
-  actCard('val-pat', 'estado-pat', 'kpi-pat', pctPAT, conteos.PAT);
+  actCard('val-qui', 'estado-qui', 'kpi-qui', conteosPaths.QUI);
+  actCard('val-cl', 'estado-cl', 'kpi-cl', conteosPaths.CL);
+  actCard('val-fo', 'estado-fo', 'kpi-fo', conteosPaths.FO);
+  actCard('val-est', 'estado-est', 'kpi-est', conteosPaths.EST);
+  actCard('val-pat', 'estado-pat', 'kpi-pat', conteosPaths.PAT);
 
-  // Armar datos para el gráfico de barras
-  const valPrenezGral = parseFloat(kpis.tasaPreñezGeneral?.valor || 0);
-  const valPrenezVacas = parseFloat(kpis.tasaPreñezVacas?.valor || 0);
-  const valPrenezNov = parseFloat(kpis.tasaPreñezNovillas?.valor || 0);
-  const valVacias = parseFloat(kpis.porcentajeVacías?.valor || 0);
+  // Conteo Preñadas/Vacías por Tipo para Gráficos Absolutos
+  const isVaca = (c) => (c || '').toUpperCase().includes('VACA');
+  const isNovilla = (c) => (c || '').toUpperCase().includes('NOVILLA');
 
-  const labels = ['Preñez Gral.', 'Preñez Vacas', 'Preñez Nov.', '% Vacías', 'Quistes', 'C. Lúteo', 'Folículos', 'Ov. Estáticos', 'Pat. Uterina'];
-  const dataValues = [valPrenezGral, valPrenezVacas, valPrenezNov, valVacias, parseFloat(pctQUI), parseFloat(pctCL), parseFloat(pctFO), parseFloat(pctEST), parseFloat(pctPAT)];
+  const prenadasVacas = preñadas.filter(v => isVaca(v.clasificacion)).length;
+  const vaciasVacas = vacias.filter(v => isVaca(v.clasificacion)).length;
   
-  // Colores: Verde (Buena señal) vs Rojos/Naranjas (Alertas)
-  const bgColors = [
-    '#27ae60', '#2ecc71', '#2ecc71', // Verdes para preñez
-    '#7f8c8d', // Gris para vacias genéricas
-    '#e74c3c', '#f39c12', '#e67e22', '#d35400', '#c0392b' // Colores de alerta para patologías
-  ];
+  const prenadasNov = preñadas.filter(v => isNovilla(v.clasificacion)).length;
+  const vaciasNov = vacias.filter(v => isNovilla(v.clasificacion)).length;
 
-  const ctx = document.getElementById('graficoBarras').getContext('2d');
+  // Mapa de Configuración del Gráfico de Barras
+  window.chartDataMap = {
+    'prenez_general': { title: 'Preñez General (Cantidades)', labels: ['Preñadas', 'Vacías / Pendientes'], data: [preñadas.length, vacias.length], bg: ['#27ae60', '#7f8c8d'] },
+    'prenez_vacas': { title: 'Preñez en Vacas (Cantidades)', labels: ['Vacas Preñadas', 'Vacas Vacías'], data: [prenadasVacas, vaciasVacas], bg: ['#27ae60', '#7f8c8d'] },
+    'prenez_novillas': { title: 'Preñez en Novillas (Cantidades)', labels: ['Novillas Preñadas', 'Novillas Vacías'], data: [prenadasNov, vaciasNov], bg: ['#27ae60', '#7f8c8d'] },
+    'QUI': { title: 'Quistes (Cantidad de Casos vs Resto)', labels: ['Con Quistes', 'Resto del Rebaño'], data: [conteosPaths.QUI, total - conteosPaths.QUI], bg: ['#e74c3c', '#bdc3c7'] },
+    'CL': { title: 'Cuerpo Lúteo (Cantidad de Casos vs Resto)', labels: ['Con C. Lúteo', 'Resto del Rebaño'], data: [conteosPaths.CL, total - conteosPaths.CL], bg: ['#f39c12', '#bdc3c7'] },
+    'FO': { title: 'Folículos (Cantidad de Casos vs Resto)', labels: ['Con Folículos', 'Resto del Rebaño'], data: [conteosPaths.FO, total - conteosPaths.FO], bg: ['#e67e22', '#bdc3c7'] },
+    'EST': { title: 'Ov. Estáticos (Cantidad de Casos vs Resto)', labels: ['Con Ov. Estáticos', 'Resto del Rebaño'], data: [conteosPaths.EST, total - conteosPaths.EST], bg: ['#d35400', '#bdc3c7'] },
+    'PAT': { title: 'Pat. Uterinas (Cantidad de Casos vs Resto)', labels: ['Con Patologías Uterinas', 'Resto del Rebaño'], data: [conteosPaths.PAT, total - conteosPaths.PAT], bg: ['#c0392b', '#bdc3c7'] }
+  };
+
+  // Renderizar gráfico inicial
+  renderizarGraficoSeleccionado();
+}
+
+// 🔥 NUEVA FUNCIÓN INTERACTIVA DE CHART.JS
+function renderizarGraficoSeleccionado() {
+  const key = document.getElementById('kpi-chart-select').value;
+  const config = window.chartDataMap[key];
+  if (!config) return;
+
   if (chartInstancia) chartInstancia.destroy();
-
+  const ctx = document.getElementById('chartKPI').getContext('2d');
+  
   chartInstancia = new Chart(ctx, {
     type: 'bar',
     data: {
-      labels: labels,
+      labels: config.labels,
       datasets: [{
-        label: '% del Rebaño',
-        data: dataValues,
-        backgroundColor: bgColors,
+        label: 'Número de Animales',
+        data: config.data,
+        backgroundColor: config.bg,
         borderRadius: 4
       }]
     },
     options: {
       responsive: true,
+      maintainAspectRatio: false,
       scales: {
-        y: {
-          beginAtZero: true,
-          max: 100,
-          title: { display: true, text: 'Porcentaje (%)', font: {weight: 'bold'} }
+        y: { 
+          beginAtZero: true, 
+          title: { display: true, text: 'Cantidad de Animales', font: {weight: 'bold'} },
+          ticks: { stepSize: 1 } // Fuerza a que los números de la escala sean enteros
         }
       },
       plugins: {
         legend: { display: false },
-        tooltip: {
-          callbacks: { label: function(context) { return ` ${context.raw}%`; } }
-        }
+        title: { display: true, text: config.title, font: {size: 16} }
       }
     }
   });
