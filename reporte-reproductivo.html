@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Reporte Reproductivo - PYSIGA</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
 :root { --verde: #2f6f4e; --verde-claro: #e6f1eb; --azul: #2c4f7c; --tierra: #8b6f47; --rojo: #e74c3c; --gris: #7f8c8d; --morado: #9b59b6; --fondo: #f7f9f8; --blanco: #ffffff; --alerta: #e67e22; --excelente: #27ae60; --regular: #f39c12; }
 body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif; background: var(--fondo); color: #333; }
@@ -47,6 +48,8 @@ body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Arial, sans
 .btn-secado { background: var(--tierra); }
 .btn-maternidad { background: var(--morado); }
 .btn-pendientes { background: var(--alerta); }
+.grafico-container { max-width: 350px; margin: 0 auto; padding-top: 15px; }
+.filtro-kpi { padding: 8px; border-radius: 4px; border: 1px solid var(--gris); font-size: 14px; min-width: 280px; font-weight: 500;}
 </style>
 </head>
 <body>
@@ -74,6 +77,23 @@ body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Arial, sans
     </div>
 
     <div class="card seccion-lista">
+      <h3>🩺 Análisis de Patologías y Condiciones Ováricas</h3>
+      <div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap; background: var(--verde-claro); padding: 12px; border-radius: 6px;">
+        <label style="color: var(--azul); font-weight: bold;">Seleccione KPI a graficar:</label>
+        <select id="selectCondicion" class="filtro-kpi" onchange="actualizarGraficoCondicion()">
+          <option value="QUI">Quistes (QUI-D, QUI-I)</option>
+          <option value="CL">Cuerpo Lúteo (CL-D, CL-I)</option>
+          <option value="FO">Folículos (FO-D, FO-I)</option>
+          <option value="EST">Ovarios Estáticos/Anormales (EST-D, EST-I, OVA-P, HIPO)</option>
+          <option value="PAT">Patologías Uterinas (PIO, MOM, RE-CH)</option>
+        </select>
+      </div>
+      <div class="grafico-container">
+        <canvas id="graficoCondicion"></canvas>
+      </div>
+    </div>
+
+    <div class="card seccion-lista">
       <h3>🥛 Animales para Secado (≥ <span id="labelMesesSecado">6</span> meses de preñez)</h3>
       <div class="acciones-lista"><button class="btn-accion btn-secado" onclick="exportarTabla('tablaSecado', 'Vacas_Secado')">📥 Exportar</button></div>
       <table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Clasificación</th><th>Meses Gestación</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th></tr></thead><tbody id="tablaSecado"></tbody></table>
@@ -85,7 +105,6 @@ body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Arial, sans
       <table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Clasificación</th><th>Meses Gestación</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th></tr></thead><tbody id="tablaMaternidad"></tbody></table>
     </div>
 
-    <!-- 🔥 CAMBIADO: Ahora incluye TODAS las hembras pendientes -->
     <div class="card seccion-lista" id="seccionHembrasPendientes" style="display:none;">
       <h3>⚠️ Hembras Pendientes de Evaluar (<span id="conteoHembrasPendientes">0</span>)</h3>
       <p style="font-size: 12px; color: var(--gris); margin-bottom: 10px;">
@@ -102,9 +121,9 @@ body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Arial, sans
     <div class="seccion-lista"><h3>✅ Preñadas - Menor a 3 meses</h3><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días Abiertos</th></tr></thead><tbody id="preñadas_menor3m"></tbody></table></div>
     <div class="seccion-lista"><h3>✅ Preñadas - 3 a 6 meses</h3><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días Abiertos</th></tr></thead><tbody id="preñadas_3a6m"></tbody></table></div>
     <div class="seccion-lista"><h3>✅ Preñadas - Mayor a 6 meses</h3><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días Abiertos</th></tr></thead><tbody id="preñadas_mayor6m"></tbody></table></div>
-    <div class="seccion-lista"><h3>❌ Vacías - Menor a 3 meses</h3><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días</th></tr></thead><tbody id="vacías_menor3m"></tbody></table></div>
-    <div class="seccion-lista"><h3>❌ Vacías - 3 a 6 meses</h3><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días</th></tr></thead><tbody id="vacías_3a6m"></tbody></table></div>
-    <div class="seccion-lista"><h3>❌ Vacías - Mayor a 6 meses</h3><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días</th></tr></thead><tbody id="vacías_mayor6m"></tbody></table></div>
+    <div class="seccion-lista"><h3>❌ Vacías / Patologías - Menor a 3 meses</h3><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días</th></tr></thead><tbody id="vacías_menor3m"></tbody></table></div>
+    <div class="seccion-lista"><h3>❌ Vacías / Patologías - 3 a 6 meses</h3><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días</th></tr></thead><tbody id="vacías_3a6m"></tbody></table></div>
+    <div class="seccion-lista"><h3>❌ Vacías / Patologías - Mayor a 6 meses</h3><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días</th></tr></thead><tbody id="vacías_mayor6m"></tbody></table></div>
   </div>
 </div>
 
@@ -113,6 +132,8 @@ const WORKER_URL = "https://pysiga.d-alexjose.workers.dev";
 const urlParams = new URLSearchParams(window.location.search);
 const email = urlParams.get('email');
 if (!email) { alert("Parámetro 'email' no encontrado."); location.href = "/"; }
+
+let chartInstancia = null; // Variable global para destruir/actualizar el gráfico
 
 function cerrarReporte() {
   if (window.opener) { window.close(); return; }
@@ -141,15 +162,16 @@ async function cargarReporte(mesesSecado = 6, mesesMaternidad = 8) {
     if (!data.ok) throw new Error(data.error || "Error desconocido");
     document.getElementById("loader").style.display = "none";
     document.getElementById("contenido").style.display = "block";
+    
     document.getElementById('mesesSecado').value = data.parametros?.mesesParaSecado || 6;
     document.getElementById('mesesMaternidad').value = data.parametros?.mesesParaMaternidad || 8;
     document.getElementById('labelMesesSecado').textContent = data.parametros?.mesesParaSecado || 6;
     document.getElementById('labelMesesMaternidad').textContent = data.parametros?.mesesParaMaternidad || 8;
+    
     renderizarKPIs(data.kpis);
     renderizarTablaSecadoMaternidad("tablaSecado", data.detalles.vacasSecado);
     renderizarTablaSecadoMaternidad("tablaMaternidad", data.detalles.vacasMaternidad);
     
-    // 🔥 Renderizar hembras pendientes (nueva lógica)
     if (data.detalles.hembrasPendientesEvaluar?.length > 0) {
       document.getElementById('seccionHembrasPendientes').style.display = 'block';
       document.getElementById('conteoHembrasPendientes').textContent = data.detalles.hembrasPendientesEvaluar.length;
@@ -164,6 +186,11 @@ async function cargarReporte(mesesSecado = 6, mesesMaternidad = 8) {
     renderizarTabla("vacías_menor3m", data.detalles.vacías_menor3m);
     renderizarTabla("vacías_3a6m", data.detalles.vacías_3a6m);
     renderizarTabla("vacías_mayor6m", data.detalles.vacías_mayor6m);
+
+    // 🔥 Guardar datos globalmente y dibujar el gráfico por primera vez
+    window.datosGlobalesReproductivos = data.detalles;
+    actualizarGraficoCondicion();
+
   } catch (e) { console.error("Error:", e); document.getElementById("loader-text").textContent = `❌ Error: ${e.message}`; }
 }
 
@@ -196,7 +223,19 @@ function renderizarTabla(id, datos, columnas = ['ID','numeroPractico','ultimoPar
     columnas.forEach(col => {
       const td = document.createElement("td");
       let valor = row[col];
-      if (col === 'diagnostico') valor = valor >= 2 ? `✅ ${valor} meses` : `❌ Vacía`;
+      
+      // 🔥 LÓGICA MEJORADA: Respeta el texto de diagnóstico si no es un número
+      if (col === 'diagnostico') {
+        const num = parseFloat(valor);
+        if (!isNaN(num) && num > 0) {
+          valor = `✅ ${num} meses`;
+        } else if (valor && valor.toString().trim() !== "") {
+          valor = `⚠️ ${valor}`; // Muestra el código (ej. QUI-D)
+        } else {
+          valor = `❌ Vacía`;
+        }
+      }
+      
       td.textContent = valor || '-'; tr.appendChild(td);
     }); tbody.appendChild(tr);
   });
@@ -212,7 +251,6 @@ function renderizarTablaSecadoMaternidad(id, datos) {
   });
 }
 
-// 🔥 NUEVA FUNCIÓN: Renderizar hembras pendientes
 function renderizarTablaHembrasPendientes(id, datos) {
   const tbody = document.getElementById(id); tbody.innerHTML = "";
   if (!datos || datos.length === 0) { tbody.innerHTML = '<tr><td colspan="6" class="sin-registros">⚠️ Sin registros</td></tr>'; return; }
@@ -227,6 +265,77 @@ function renderizarTablaHembrasPendientes(id, datos) {
       <td>${row.motivo || '-'}</td>
     `;
     tbody.appendChild(tr);
+  });
+}
+
+// 🔥 NUEVA FUNCIÓN: Generar el gráfico interactivo de patologías
+function actualizarGraficoCondicion() {
+  const val = document.getElementById('selectCondicion').value;
+  const detalles = window.datosGlobalesReproductivos;
+  if (!detalles) return;
+
+  // Unificamos todo el rebaño evaluable o pendiente para tener el tamaño de la población
+  const todasLasVacas = [
+    ...(detalles.preñadas_menor3m || []), ...(detalles.preñadas_3a6m || []), ...(detalles.preñadas_mayor6m || []),
+    ...(detalles.vacías_menor3m || []), ...(detalles.vacías_3a6m || []), ...(detalles.vacías_mayor6m || []),
+    ...(detalles.hembrasPendientesEvaluar || [])
+  ];
+
+  const totalPoblacion = todasLasVacas.length;
+
+  // Clasificación de abreviaturas
+  const grupos = {
+    "QUI": ["QUI-D", "QUI-I"],
+    "CL": ["CL-D", "CL-I"],
+    "FO": ["FO-D", "FO-I"],
+    "EST": ["EST-D", "EST-I", "OVA-P", "HIPO"],
+    "PAT": ["PIO", "MOM", "RE-CH"]
+  };
+
+  const clavesActuales = grupos[val];
+  let encontradas = 0;
+
+  todasLasVacas.forEach(vaca => {
+    const diag = (vaca.diagnostico || vaca.motivo || "").toString().toUpperCase();
+    if (clavesActuales.some(clave => diag.includes(clave))) {
+      encontradas++;
+    }
+  });
+
+  const restoPoblacion = totalPoblacion - encontradas;
+  const dropdown = document.getElementById('selectCondicion');
+  const tituloPuro = dropdown.options[dropdown.selectedIndex].text.split(' (')[0]; 
+
+  const ctx = document.getElementById('graficoCondicion').getContext('2d');
+  
+  if (chartInstancia) chartInstancia.destroy();
+
+  chartInstancia = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: [tituloPuro, 'Resto del Rebaño Evaluable'],
+      datasets: [{
+        data: [encontradas, restoPoblacion],
+        backgroundColor: ['#e74c3c', '#bdc3c7'],
+        hoverOffset: 4
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'bottom' },
+        title: { display: true, text: `Prevalencia en Rebaño: ${tituloPuro}`, font: { size: 14 } },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              const valor = context.raw;
+              const porcentaje = ((valor / totalPoblacion) * 100).toFixed(1);
+              return ` ${context.label}: ${valor} animales (${porcentaje}%)`;
+            }
+          }
+        }
+      }
+    }
   });
 }
 
