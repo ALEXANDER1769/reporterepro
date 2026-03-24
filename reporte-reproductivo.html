@@ -6,93 +6,142 @@
 <title>Reporte Reproductivo - PYSIGA</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
-:root { --verde: #2f6f4e; --verde-claro: #e6f1eb; --azul: #2c4f7c; --tierra: #8b6f47; --rojo: #e74c3c; --gris: #7f8c8d; --morado: #9b59b6; --fondo: #f7f9f8; --blanco: #ffffff; --alerta: #e67e22; --excelente: #27ae60; --regular: #f39c12; }
-body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif; background: var(--fondo); color: #333; }
-.container { max-width: 1200px; margin: auto; padding: 15px; }
-.card { background: var(--blanco); border-radius: 10px; padding: 15px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); margin-bottom: 15px; }
-.header-titulo { color: var(--azul); font-size: 22px; margin: 0 0 15px 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
-.btn-cerrar-reporte { background: var(--rojo); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold; }
-.btn-cerrar-reporte:hover { background: #c0392b; }
-.parametros-box { background: var(--verde-claro); border-left: 4px solid var(--verde); padding: 12px; margin-bottom: 15px; border-radius: 0 6px 6px 0; }
-.parametros-box label { margin-right: 15px; font-weight: 500; }
-.parametros-box input { width: 50px; padding: 5px; border: 1px solid #ccc; border-radius: 4px; text-align: center; }
-.parametros-box button { background: var(--azul); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; margin-left: 10px; }
-.parametros-box button:hover { opacity: 0.9; }
+:root { 
+  /* COLORES VIVOS Y MODERNOS */
+  --verde: #00b894; 
+  --verde-claro: #55efc4; 
+  --azul: #0984e3; 
+  --azul-claro: #74b9ff;
+  --tierra: #e17055; 
+  --rojo: #d63031; 
+  --rojo-claro: #fab1a0;
+  --gris: #636e72; 
+  --gris-claro: #dfe6e9;
+  --morado: #6c5ce7; 
+  --fondo: #f4f6f8; 
+  --blanco: #ffffff; 
+  --alerta: #fdcb6e; 
+  --excelente: #00b894; 
+  --regular: #ffeaa7; 
+}
 
-.kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-bottom: 20px; }
-.kpi-card { background: var(--blanco); border-radius: 8px; padding: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.08); text-align: center; border-top: 3px solid var(--gris); }
+body { margin: 0; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: var(--fondo); color: #2d3436; }
+.container { max-width: 1250px; margin: auto; padding: 20px; }
+.card { background: var(--blanco); border-radius: 12px; padding: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 20px; }
+
+/* ENCABEZADOS CENTRADOS */
+h1, h2, h3 { text-align: center; font-weight: 800; color: var(--azul); }
+.header-container { position: relative; margin-bottom: 25px; text-align: center; }
+.header-titulo { font-size: 28px; margin: 0; text-transform: uppercase; letter-spacing: 1px; }
+.btn-cerrar-reporte { position: absolute; right: 0; top: 0; background: var(--rojo); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: bold; box-shadow: 0 4px 6px rgba(214,48,49,0.3); transition: transform 0.2s; }
+.btn-cerrar-reporte:hover { background: #b33939; transform: scale(1.05); }
+
+/* CONTROLES */
+.parametros-box { background: linear-gradient(135deg, #e4fbf4 0%, #ffffff 100%); border-left: 6px solid var(--verde); padding: 15px; border-radius: 8px; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; align-items: center; }
+.parametros-box label { font-weight: 600; color: #2d3436; }
+.parametros-box input { width: 60px; padding: 8px; border: 2px solid var(--verde-claro); border-radius: 6px; text-align: center; font-weight: bold; font-size: 14px; }
+.btn-actualizar { background: var(--azul); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; box-shadow: 0 4px 6px rgba(9,132,227,0.3); transition: background 0.2s; }
+.btn-actualizar:hover { background: #074b83; }
+
+/* KPI GRID Y TARJETAS VIVIDAS */
+.kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 15px; margin-bottom: 25px; }
+.kpi-card { background: var(--blanco); border-radius: 12px; padding: 15px; text-align: center; border-top: 5px solid var(--gris); box-shadow: 0 4px 8px rgba(0,0,0,0.06); transition: transform 0.2s; }
+.kpi-card:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.1); }
 .kpi-card.estado-excelente { border-top-color: var(--excelente); }
-.kpi-card.estado-regular { border-top-color: var(--regular); }
-.kpi-card.estado-alerta { border-top-color: var(--alerta); }
-.kpi-card.estado-sin_datos { border-top-color: var(--gris); opacity: 0.7; }
-.kpi-valor { font-size: 26px; font-weight: bold; margin: 8px 0; }
-.kpi-meta { font-size: 12px; color: var(--gris); margin-bottom: 4px; }
-.kpi-estado { font-size: 11px; font-weight: 500; padding: 3px 8px; border-radius: 12px; display: inline-block; }
-.estado-excelente .kpi-estado { background: #d5f5e3; color: var(--excelente); }
-.estado-regular .kpi-estado { background: #fef9e7; color: var(--regular); }
-.estado-alerta .kpi-estado { background: #fadbd8; color: var(--rojo); }
-.estado-sin_datos .kpi-estado { background: #f2f4f4; color: var(--gris); }
-.kpi-advertencia { font-size: 10px; color: var(--alerta); margin-top: 4px; font-style: italic; }
+.kpi-card.estado-regular { border-top-color: var(--alerta); }
+.kpi-card.estado-alerta { border-top-color: var(--rojo); }
+.kpi-card.estado-sin_datos { border-top-color: var(--gris-claro); opacity: 0.8; }
 
-.seccion-lista { margin: 20px 0; }
-.seccion-lista h3 { color: var(--azul); border-bottom: 2px solid var(--verde-claro); padding-bottom: 8px; margin-bottom: 12px; }
+.kpi-titulo { font-size: 13px; color: var(--azul); font-weight: 800; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px; }
+.kpi-valor { font-size: 34px; font-weight: 900; margin: 5px 0; color: #2d3436; text-shadow: 1px 1px 2px rgba(0,0,0,0.1); }
+.kpi-meta-obj { font-size: 12px; font-weight: 700; color: #fff; background: var(--gris); padding: 4px 10px; border-radius: 20px; display: inline-block; margin-bottom: 8px; letter-spacing: 0.5px; }
+.estado-excelente .kpi-meta-obj { background: var(--excelente); }
+.estado-regular .kpi-meta-obj { background: var(--alerta); color: #2d3436; }
+.estado-alerta .kpi-meta-obj { background: var(--rojo); }
+
+.kpi-estado { font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 12px; display: inline-block; margin-top: 5px; }
+.estado-excelente .kpi-estado { background: #e8f8f5; color: var(--excelente); }
+.estado-regular .kpi-estado { background: #fff9e6; color: var(--tierra); }
+.estado-alerta .kpi-estado { background: #fdedec; color: var(--rojo); }
+.estado-sin_datos .kpi-estado { background: #f4f6f8; color: var(--gris); }
+
+.kpi-advertencia { font-size: 11px; color: var(--rojo); margin-top: 8px; font-weight: bold; background: #ffeaa7; padding: 4px; border-radius: 4px; }
+
+/* TABLAS Y LISTAS */
+.seccion-lista h3 { border-bottom: 3px solid var(--azul-claro); padding-bottom: 10px; margin-bottom: 15px; display: inline-block; }
+.tabla-container { overflow-x: auto; border-radius: 8px; border: 1px solid var(--gris-claro); }
 .tabla-detalles { width: 100%; border-collapse: collapse; font-size: 13px; }
-.tabla-detalles th { background: var(--verde); color: white; padding: 8px; position: sticky; top: 0; text-align: left; }
-.tabla-detalles td { padding: 8px; border-bottom: 1px solid #eee; }
-.tabla-detalles tr:hover { background: var(--verde-claro); }
-.sin-registros { text-align: center; color: var(--gris); font-style: italic; padding: 15px; }
+.tabla-detalles th { background: var(--azul); color: white; padding: 12px; text-align: center; font-weight: 600; text-transform: uppercase; }
+.tabla-detalles td { padding: 10px; border-bottom: 1px solid var(--gris-claro); text-align: center; }
+.tabla-detalles tr:nth-child(even) { background-color: #f8fafd; }
+.tabla-detalles tr:hover { background: #eef5ff; }
+.sin-registros { text-align: center; color: var(--gris); font-style: italic; padding: 20px; font-weight: bold; background: #fdfdfd; }
 
-.chart-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px; border-top: 4px solid var(--azul); }
-.chart-wrapper { position: relative; height: 350px; width: 100%; margin-top: 15px; }
-.selector-kpi { padding: 10px; font-size: 1rem; width: 100%; max-width: 400px; margin-bottom: 10px; border-radius: 5px; border: 1px solid #ccc; font-weight: 500; color: var(--azul);}
+/* GRÁFICOS */
+.chart-card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-bottom: 30px; border-top: 5px solid var(--morado); text-align: center; }
+.chart-wrapper { position: relative; height: 400px; width: 100%; margin-top: 20px; }
+.selector-kpi { padding: 12px; font-size: 15px; width: 100%; max-width: 450px; margin-bottom: 10px; border-radius: 8px; border: 2px solid var(--azul-claro); font-weight: 700; color: var(--azul); outline: none; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+.selector-kpi:focus { border-color: var(--azul); }
 
-#loader { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background: white; position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 9999; }
-.vaca-loader { font-size: 60px; margin-bottom: 16px; animation: mover 1s infinite alternate; }
-@keyframes mover { from { transform: translateX(-5px); } to { transform: translateX(5px); } }
-.acciones-lista { display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
-.btn-accion { background: var(--azul); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; }
-.btn-accion:hover { opacity: 0.9; }
+/* LOADER */
+#loader { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background: var(--fondo); position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 9999; }
+.vaca-loader { font-size: 70px; margin-bottom: 20px; animation: mover 0.8s infinite alternate ease-in-out; }
+@keyframes mover { from { transform: translateY(0) scale(1); } to { transform: translateY(-15px) scale(1.1); } }
+#loader-text { font-weight: bold; color: var(--azul); font-size: 18px; letter-spacing: 1px; }
+
+/* BOTONES DE EXPORTACIÓN */
+.acciones-lista { display: flex; gap: 10px; justify-content: center; margin-bottom: 15px; flex-wrap: wrap; }
+.btn-accion { color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: bold; box-shadow: 0 3px 6px rgba(0,0,0,0.15); transition: transform 0.2s; }
+.btn-accion:hover { transform: translateY(-2px); box-shadow: 0 5px 10px rgba(0,0,0,0.2); }
 .btn-secado { background: var(--tierra); }
 .btn-maternidad { background: var(--morado); }
-.btn-pendientes { background: var(--alerta); }
+.btn-pendientes { background: var(--rojo); }
 </style>
 </head>
 <body>
-<div id="loader"><div class="vaca-loader">🐄</div><div id="loader-text">Cargando reporte reproductivo…</div></div>
+<div id="loader"><div class="vaca-loader">🐄</div><div id="loader-text">Procesando Base de Datos Reproductiva...</div></div>
 <div id="contenido" style="display: none;">
   <div class="container">
-    <h1 class="header-titulo">📊 Reporte Reproductivo<button class="btn-cerrar-reporte" onclick="cerrarReporte()">✕ Cerrar</button></h1>
+    
+    <div class="header-container">
+        <h1 class="header-titulo">📊 Reporte Reproductivo Avanzado</h1>
+        <button class="btn-cerrar-reporte" onclick="cerrarReporte()">✕ Cerrar</button>
+    </div>
     
     <div class="card parametros-box">
-      <strong>⚙️ Parámetros de Preñez:</strong>
+      <span style="font-size: 18px;">⚙️</span>
       <label>Meses para secado: <input type="number" id="mesesSecado" value="6" min="1" max="12"></label>
       <label>Meses para maternidad: <input type="number" id="mesesMaternidad" value="8" min="1" max="12"></label>
-      <button onclick="recargarConParametros()">Actualizar</button>
+      <button class="btn-actualizar" onclick="recargarConParametros()">🔄 Actualizar Reporte</button>
     </div>
 
+    <h2 style="margin-bottom: 20px;">⏱️ Indicadores Clave de Desempeño (KPI)</h2>
     <div class="kpi-grid">
-      <div class="kpi-card" id="kpi-tasaGeneral"><div class="kpi-meta">Tasa Preñez General</div><div class="kpi-valor" id="tasaPreñezGeneral">0%</div><span class="kpi-estado" id="estado-tasaGeneral">-</span><div class="kpi-advertencia" id="advertencia-tasaGeneral"></div></div>
-      <div class="kpi-card" id="kpi-tasaVacas"><div class="kpi-meta">Tasa Preñez Vacas</div><div class="kpi-valor" id="tasaPreñezVacas">0%</div><span class="kpi-estado" id="estado-tasaVacas">-</span></div>
-      <div class="kpi-card" id="kpi-tasaNovillas"><div class="kpi-meta">Tasa Preñez Novillas</div><div class="kpi-valor" id="tasaPreñezNovillas">0%</div><span class="kpi-estado" id="estado-tasaNovillas">-</span><div class="kpi-advertencia" id="advertencia-tasaNovillas"></div></div>
-      <div class="kpi-card" id="kpi-vacias"><div class="kpi-meta">% Vacías</div><div class="kpi-valor" id="porcentajeVacías">0%</div><span class="kpi-estado" id="estado-vacias">-</span></div>
+      <div class="kpi-card" id="kpi-tasaGeneral"><div class="kpi-titulo">Tasa Preñez General</div><div class="kpi-valor" id="tasaPreñezGeneral">0%</div><div class="kpi-meta-obj" id="meta-tasaGeneral">Meta: 85%</div><br><span class="kpi-estado" id="estado-tasaGeneral">-</span><div class="kpi-advertencia" id="advertencia-tasaGeneral"></div></div>
+      <div class="kpi-card" id="kpi-tasaVacas"><div class="kpi-titulo">Tasa Preñez Vacas</div><div class="kpi-valor" id="tasaPreñezVacas">0%</div><div class="kpi-meta-obj" id="meta-tasaVacas">Meta: 85%</div><br><span class="kpi-estado" id="estado-tasaVacas">-</span></div>
+      <div class="kpi-card" id="kpi-tasaNovillas"><div class="kpi-titulo">Tasa Preñez Novillas</div><div class="kpi-valor" id="tasaPreñezNovillas">0%</div><div class="kpi-meta-obj" id="meta-tasaNovillas">Meta: 80%</div><br><span class="kpi-estado" id="estado-tasaNovillas">-</span><div class="kpi-advertencia" id="advertencia-tasaNovillas"></div></div>
+      <div class="kpi-card" id="kpi-vacias"><div class="kpi-titulo">% Vacías / Pendientes</div><div class="kpi-valor" id="porcentajeVacías">0%</div><div class="kpi-meta-obj" id="meta-vacias">Meta: < 10%</div><br><span class="kpi-estado" id="estado-vacias">-</span></div>
       
-      <div class="kpi-card" id="kpi-qui"><div class="kpi-meta">% Quistes (QUI)</div><div class="kpi-valor" id="val-qui">0%</div><span class="kpi-estado" id="estado-qui">-</span></div>
-      <div class="kpi-card" id="kpi-cl"><div class="kpi-meta">% Cuerpo Lúteo (CL)</div><div class="kpi-valor" id="val-cl">0%</div><span class="kpi-estado" id="estado-cl">-</span></div>
-      <div class="kpi-card" id="kpi-fo"><div class="kpi-meta">% Folículos (FO)</div><div class="kpi-valor" id="val-fo">0%</div><span class="kpi-estado" id="estado-fo">-</span></div>
-      <div class="kpi-card" id="kpi-est"><div class="kpi-meta">% Ov. Estáticos (EST)</div><div class="kpi-valor" id="val-est">0%</div><span class="kpi-estado" id="estado-est">-</span></div>
-      <div class="kpi-card" id="kpi-pat"><div class="kpi-meta">% Pat. Uterinas (PAT)</div><div class="kpi-valor" id="val-pat">0%</div><span class="kpi-estado" id="estado-pat">-</span></div>
+      <div class="kpi-card" id="kpi-diasAbiertos"><div class="kpi-titulo">Días Abiertos Prom.</div><div class="kpi-valor" id="diasAbiertosProm">0</div><div class="kpi-meta-obj" id="meta-diasAbiertos">Meta: < 100 Días</div><br><span class="kpi-estado" id="estado-diasAbiertos">-</span></div>
+      <div class="kpi-card" id="kpi-iep"><div class="kpi-titulo">Intervalo Entre Partos</div><div class="kpi-valor" id="iep">0</div><div class="kpi-meta-obj" id="meta-iep">Meta: 400 Días</div><br><span class="kpi-estado" id="estado-iep">-</span></div>
+    </div>
 
-      <div class="kpi-card" id="kpi-diasAbiertos"><div class="kpi-meta">Días Abiertos Prom.</div><div class="kpi-valor" id="diasAbiertosProm">0</div><span class="kpi-estado" id="estado-diasAbiertos">-</span></div>
-      <div class="kpi-card" id="kpi-iep"><div class="kpi-meta">Intervalo Entre Partos</div><div class="kpi-valor" id="iep">0</div><span class="kpi-estado" id="estado-iep">-</span></div>
+    <h2 style="margin-top: 40px; margin-bottom: 20px;">🔬 Incidencia de Patologías</h2>
+    <div class="kpi-grid">
+      <div class="kpi-card" id="kpi-qui"><div class="kpi-titulo">% Quistes (QUI)</div><div class="kpi-valor" id="val-qui">0%</div><div class="kpi-meta-obj" style="background:var(--gris);">Meta: 0%</div><br><span class="kpi-estado" id="estado-qui">-</span></div>
+      <div class="kpi-card" id="kpi-cl"><div class="kpi-titulo">% Cuerpo Lúteo (CL)</div><div class="kpi-valor" id="val-cl">0%</div><div class="kpi-meta-obj" style="background:var(--gris);">Meta: 0%</div><br><span class="kpi-estado" id="estado-cl">-</span></div>
+      <div class="kpi-card" id="kpi-fo"><div class="kpi-titulo">% Folículos (FO)</div><div class="kpi-valor" id="val-fo">0%</div><div class="kpi-meta-obj" style="background:var(--gris);">Meta: 0%</div><br><span class="kpi-estado" id="estado-fo">-</span></div>
+      <div class="kpi-card" id="kpi-est"><div class="kpi-titulo">% Ov. Estáticos (EST)</div><div class="kpi-valor" id="val-est">0%</div><div class="kpi-meta-obj" style="background:var(--gris);">Meta: 0%</div><br><span class="kpi-estado" id="estado-est">-</span></div>
+      <div class="kpi-card" id="kpi-pat"><div class="kpi-titulo">% Pat. Uterinas (PAT)</div><div class="kpi-valor" id="val-pat">0%</div><div class="kpi-meta-obj" style="background:var(--gris);">Meta: 0%</div><br><span class="kpi-estado" id="estado-pat">-</span></div>
     </div>
 
     <div class="chart-card">
-        <h3 style="color: var(--azul); margin-top: 0;">📈 Estado Poblacional por Indicador Reproductivo</h3>
-        <p style="font-size: 13px; color: #555; margin-bottom: 10px;">Seleccione un indicador para ver la distribución exacta en el rebaño:</p>
+        <h3>📈 Estado Poblacional Absoluto</h3>
+        <p style="font-size: 14px; color: var(--gris); margin-bottom: 15px;">Seleccione un indicador para ver la distribución exacta con gráficos interactivos:</p>
         <select id="kpi-chart-select" class="selector-kpi" onchange="renderizarGraficoSeleccionado()">
-            <option value="prenez_general">Tasa de Preñez General</option>
-            <option value="prenez_vacas">Tasa de Preñez en Vacas</option>
-            <option value="prenez_novillas">Tasa de Preñez en Novillas</option>
+            <option value="prenez_general">Tasa de Preñez General (Vacas + Novillas)</option>
+            <option value="prenez_vacas">Tasa de Preñez en Vacas (Adultas)</option>
+            <option value="prenez_novillas">Tasa de Preñez en Novillas (Reemplazos)</option>
             <option value="QUI">Incidencia de Quistes (QUI)</option>
             <option value="CL">Incidencia de Cuerpo Lúteo (CL)</option>
             <option value="FO">Incidencia de Folículos (FO)</option>
@@ -104,40 +153,44 @@ body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Arial, sans
         </div>
     </div>
 
+    <h2 style="margin-top: 40px; margin-bottom: 30px;">📋 Listados de Trabajo en Campo</h2>
+    
     <div class="card seccion-lista">
-      <h3>🥛 Animales para Secado (≥ <span id="labelMesesSecado">6</span> meses de preñez)</h3>
-      <div class="acciones-lista"><button class="btn-accion btn-secado" onclick="exportarTabla('tablaSecado', 'Vacas_Secado')">📥 Exportar</button></div>
-      <table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Clasificación</th><th>Meses Gestación</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th></tr></thead><tbody id="tablaSecado"></tbody></table>
+      <div style="text-align:center;">
+        <h3>🥛 Para Secado (≥ <span id="labelMesesSecado">6</span> meses preñez)</h3>
+        <div class="acciones-lista"><button class="btn-accion btn-secado" onclick="exportarTabla('tablaSecado', 'Vacas_Secado')">📥 Exportar a Excel/CSV</button></div>
+      </div>
+      <div class="tabla-container"><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Clasificación</th><th>Meses Gestación</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th></tr></thead><tbody id="tablaSecado"></tbody></table></div>
     </div>
 
     <div class="card seccion-lista">
-      <h3>🤰 Animales para Maternidad (≥ <span id="labelMesesMaternidad">8</span> meses de preñez)</h3>
-      <div class="acciones-lista"><button class="btn-accion btn-maternidad" onclick="exportarTabla('tablaMaternidad', 'Vacas_Maternidad')">📥 Exportar</button></div>
-      <table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Clasificación</th><th>Meses Gestación</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th></tr></thead><tbody id="tablaMaternidad"></tbody></table>
+      <div style="text-align:center;">
+        <h3>🤰 Para Maternidad (≥ <span id="labelMesesMaternidad">8</span> meses preñez)</h3>
+        <div class="acciones-lista"><button class="btn-accion btn-maternidad" onclick="exportarTabla('tablaMaternidad', 'Vacas_Maternidad')">📥 Exportar a Excel/CSV</button></div>
+      </div>
+      <div class="tabla-container"><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Clasificación</th><th>Meses Gestación</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th></tr></thead><tbody id="tablaMaternidad"></tbody></table></div>
     </div>
 
-    <div class="card seccion-lista" id="seccionHembrasPendientes" style="display:none;">
-      <h3>⚠️ Hembras Pendientes de Evaluar (<span id="conteoHembrasPendientes">0</span>)</h3>
-      <p style="font-size: 12px; color: var(--gris); margin-bottom: 10px;">📌 Criterios: Clasificación "SIN DIAG DE GESTACION" | Vaca/Novilla sin diagnóstico | Peso ≥ 350 kg sin diagnóstico</p>
-      <div class="acciones-lista"><button class="btn-accion btn-pendientes" onclick="exportarTabla('tablaHembrasPendientes', 'Hembras_Pendientes')">📥 Exportar</button></div>
-      <table class="tabla-detalles">
-        <thead><tr><th>ID</th><th>Nº Práctico</th><th>Clasificación</th><th>Sexo</th><th>Último Peso</th><th>Motivo</th></tr></thead>
-        <tbody id="tablaHembrasPendientes"></tbody>
-      </table>
+    <div class="card seccion-lista" id="seccionHembrasPendientes" style="display:none; border: 2px solid var(--rojo);">
+      <div style="text-align:center;">
+        <h3 style="color: var(--rojo);">⚠️ Pendientes de Evaluar (<span id="conteoHembrasPendientes">0</span>)</h3>
+        <p style="font-size: 13px; color: var(--gris); margin-bottom: 10px;">Animales productivos que no tienen ningún diagnóstico en el sistema.</p>
+        <div class="acciones-lista"><button class="btn-accion btn-pendientes" onclick="exportarTabla('tablaHembrasPendientes', 'Hembras_Pendientes')">📥 Exportar a Excel/CSV</button></div>
+      </div>
+      <div class="tabla-container"><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Clasificación</th><th>Sexo</th><th>Motivo</th></tr></thead><tbody id="tablaHembrasPendientes"></tbody></table></div>
     </div>
 
-    <h2>📋 Detalles por Días Abiertos</h2>
-    <div class="seccion-lista"><h3>✅ Preñadas - Menor a 3 meses</h3><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días Abiertos</th></tr></thead><tbody id="preñadas_menor3m"></tbody></table></div>
-    <div class="seccion-lista"><h3>✅ Preñadas - 3 a 6 meses</h3><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días Abiertos</th></tr></thead><tbody id="preñadas_3a6m"></tbody></table></div>
-    <div class="seccion-lista"><h3>✅ Preñadas - Mayor a 6 meses</h3><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días Abiertos</th></tr></thead><tbody id="preñadas_mayor6m"></tbody></table></div>
-    <div class="seccion-lista"><h3>❌ Vacías / Patologías - Menor a 3 meses</h3><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días</th></tr></thead><tbody id="vacías_menor3m"></tbody></table></div>
-    <div class="seccion-lista"><h3>❌ Vacías / Patologías - 3 a 6 meses</h3><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días</th></tr></thead><tbody id="vacías_3a6m"></tbody></table></div>
-    <div class="seccion-lista"><h3>❌ Vacías / Patologías - Mayor a 6 meses</h3><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días</th></tr></thead><tbody id="vacías_mayor6m"></tbody></table></div>
+    <h2 style="margin-top: 40px; margin-bottom: 20px;">📅 Estatus por Días Abiertos (Cronograma)</h2>
+    <div class="card seccion-lista"><div style="text-align:center;"><h3>✅ Preñadas - Menor a 3 meses</h3></div><div class="tabla-container"><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días Abiertos</th></tr></thead><tbody id="preñadas_menor3m"></tbody></table></div></div>
+    <div class="card seccion-lista"><div style="text-align:center;"><h3>✅ Preñadas - 3 a 6 meses</h3></div><div class="tabla-container"><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días Abiertos</th></tr></thead><tbody id="preñadas_3a6m"></tbody></table></div></div>
+    <div class="card seccion-lista"><div style="text-align:center;"><h3>✅ Preñadas - Mayor a 6 meses</h3></div><div class="tabla-container"><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días Abiertos</th></tr></thead><tbody id="preñadas_mayor6m"></tbody></table></div></div>
+    <div class="card seccion-lista"><div style="text-align:center;"><h3>❌ Vacías / Patologías - Menor a 3 meses</h3></div><div class="tabla-container"><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días Vacía</th></tr></thead><tbody id="vacías_menor3m"></tbody></table></div></div>
+    <div class="card seccion-lista"><div style="text-align:center;"><h3>❌ Vacías / Patologías - 3 a 6 meses</h3></div><div class="tabla-container"><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días Vacía</th></tr></thead><tbody id="vacías_3a6m"></tbody></table></div></div>
+    <div class="card seccion-lista"><div style="text-align:center;"><h3>❌ Vacías / Patologías - Mayor a 6 meses</h3></div><div class="tabla-container"><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días Vacía</th></tr></thead><tbody id="vacías_mayor6m"></tbody></table></div></div>
   </div>
 </div>
 
 <script>
-// ----- FUNCIONES DE SEGURIDAD PARA EVITAR ERRORES DE PANTALLA EN BLANCO -----
 const safeStyle = (id, prop, val) => { const el = document.getElementById(id); if (el) el.style[prop] = val; };
 const safeText = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
 const safeVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val; };
@@ -149,6 +202,23 @@ if (!email) { alert("Parámetro 'email' no encontrado."); location.href = "/"; }
 
 let chartInstancia = null; 
 window.chartDataMap = {}; 
+
+// 🔥 PLUGIN CUSTOM PARA EFECTO 3D EN LAS BARRAS
+const pluginSombra3D = {
+  id: 'sombra3D',
+  beforeDatasetsDraw: function(chart) {
+    const ctx = chart.ctx;
+    ctx.save();
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.35)'; // Sombra oscura
+    ctx.shadowBlur = 12; // Difuminado
+    ctx.shadowOffsetX = 6; // Desplazamiento X
+    ctx.shadowOffsetY = 6; // Desplazamiento Y
+  },
+  afterDatasetsDraw: function(chart) {
+    chart.ctx.restore(); // Limpiar la sombra para no afectar otras partes del gráfico
+  }
+};
+Chart.register(pluginSombra3D); // Registramos el plugin de forma global
 
 function cerrarReporte() {
   if (window.opener) { window.close(); return; }
@@ -216,21 +286,27 @@ async function cargarReporte(mesesSecado = 6, mesesMaternidad = 8) {
 function renderizarKPIsPrincipales(kpis) {
   if (!kpis) return;
   const mapeo = {
-    tasaPreñezGeneral: { id: 'tasaPreñezGeneral', estado: 'estado-tasaGeneral', advertencia: 'advertencia-tasaGeneral', card: 'kpi-tasaGeneral' },
-    tasaPreñezVacas: { id: 'tasaPreñezVacas', estado: 'estado-tasaVacas', card: 'kpi-tasaVacas' },
-    tasaPreñezNovillas: { id: 'tasaPreñezNovillas', estado: 'estado-tasaNovillas', advertencia: 'advertencia-tasaNovillas', card: 'kpi-tasaNovillas' },
-    porcentajeVacías: { id: 'porcentajeVacías', estado: 'estado-vacias', card: 'kpi-vacias' },
-    diasAbiertosPromedio: { id: 'diasAbiertosProm', estado: 'estado-diasAbiertos', card: 'kpi-diasAbiertos' },
-    intervaloEntrePartos: { id: 'iep', estado: 'estado-iep', card: 'kpi-iep' }
+    tasaPreñezGeneral: { id: 'tasaPreñezGeneral', estado: 'estado-tasaGeneral', advertencia: 'advertencia-tasaGeneral', card: 'kpi-tasaGeneral', metaId: 'meta-tasaGeneral' },
+    tasaPreñezVacas: { id: 'tasaPreñezVacas', estado: 'estado-tasaVacas', card: 'kpi-tasaVacas', metaId: 'meta-tasaVacas' },
+    tasaPreñezNovillas: { id: 'tasaPreñezNovillas', estado: 'estado-tasaNovillas', advertencia: 'advertencia-tasaNovillas', card: 'kpi-tasaNovillas', metaId: 'meta-tasaNovillas' },
+    porcentajeVacías: { id: 'porcentajeVacías', estado: 'estado-vacias', card: 'kpi-vacias', metaId: 'meta-vacias' },
+    diasAbiertosPromedio: { id: 'diasAbiertosProm', estado: 'estado-diasAbiertos', card: 'kpi-diasAbiertos', metaId: 'meta-diasAbiertos' },
+    intervaloEntrePartos: { id: 'iep', estado: 'estado-iep', card: 'kpi-iep', metaId: 'meta-iep' }
   };
   Object.entries(mapeo).forEach(([key, cfg]) => {
     const kpi = kpis[key]; if (!kpi) return;
     safeText(cfg.id, kpi.valor + (kpi.unidad || ''));
     
+    // Inyectar la meta dinámica
+    if(cfg.metaId && kpi.meta !== undefined) {
+       let signo = key === 'porcentajeVacías' || key === 'diasAbiertosPromedio' || key === 'intervaloEntrePartos' ? '< ' : '≥ ';
+       safeText(cfg.metaId, `Meta: ${signo}${kpi.meta}${kpi.unidad || ''}`);
+    }
+
     const elCard = document.getElementById(cfg.card);
     if (elCard) elCard.className = `kpi-card estado-${kpi.estado}`;
     
-    const estadoTxt = kpi.estado === 'excelente' ? '✅ Meta' : kpi.estado === 'alerta' ? '⚠️ Revisar' : kpi.estado === 'sin_datos' ? '⚪ Sin datos' : '🔄 Regular';
+    const estadoTxt = kpi.estado === 'excelente' ? '✅ ÓPTIMO' : kpi.estado === 'alerta' ? '⚠️ REVISAR' : kpi.estado === 'sin_datos' ? '⚪ SIN DATOS' : '🔄 REGULAR';
     safeText(cfg.estado, estadoTxt);
     
     if (cfg.advertencia) {
@@ -275,10 +351,10 @@ function prepararDatosYGrafico(kpis, detalles) {
     
     if (elEst && elCard) {
       if(count > 0) {
-        elEst.textContent = `⚠️ ${count} casos`;
+        elEst.textContent = `⚠️ ${count} ANIMALES`;
         elCard.className = `kpi-card estado-alerta`;
       } else {
-        elEst.textContent = `✅ 0 casos`;
+        elEst.textContent = `✅ 0 CASOS`;
         elCard.className = `kpi-card estado-excelente`;
       }
     }
@@ -290,23 +366,42 @@ function prepararDatosYGrafico(kpis, detalles) {
   actCard('val-est', 'estado-est', 'kpi-est', conteosPaths.EST);
   actCard('val-pat', 'estado-pat', 'kpi-pat', conteosPaths.PAT);
 
-  const isVaca = (c) => (c || '').toUpperCase().includes('VACA');
-  const isNovilla = (c) => (c || '').toUpperCase().includes('NOVILLA');
+  const isVaca = (v) => {
+    let c = (v.clasificacion || '').toUpperCase();
+    if (c.includes('VACA')) return true;
+    if (c.includes('NOVILLA')) return false;
+    let up = (v.ultimoParto || '').trim().toUpperCase();
+    return (up !== '' && up !== '-' && up !== 'S/P' && up !== 'N/A');
+  };
 
-  const prenadasVacas = preñadas.filter(v => isVaca(v.clasificacion)).length;
-  const vaciasVacas = vacias.filter(v => isVaca(v.clasificacion)).length;
-  const prenadasNov = preñadas.filter(v => isNovilla(v.clasificacion)).length;
-  const vaciasNov = vacias.filter(v => isNovilla(v.clasificacion)).length;
+  const isNovilla = (v) => {
+    let c = (v.clasificacion || '').toUpperCase();
+    if (c.includes('NOVILLA')) return true;
+    if (c.includes('VACA')) return false;
+    let up = (v.ultimoParto || '').trim().toUpperCase();
+    return (up === '' || up === '-' || up === 'S/P' || up === 'N/A');
+  };
+
+  const prenadasVacas = preñadas.filter(isVaca).length;
+  const vaciasVacas = vacias.filter(isVaca).length;
+  const prenadasNov = preñadas.filter(isNovilla).length;
+  const vaciasNov = vacias.filter(isNovilla).length;
+
+  // COLORES VIVIDOS PARA LOS GRAFICOS
+  const colorVerde = '#00b894';
+  const colorGris = '#b2bec3';
+  const colorRojo = '#d63031';
+  const colorAmarillo = '#fdcb6e';
 
   window.chartDataMap = {
-    'prenez_general': { title: 'Preñez General (Cantidades)', labels: ['Preñadas', 'Vacías / Pendientes'], data: [preñadas.length, vacias.length], bg: ['#27ae60', '#7f8c8d'] },
-    'prenez_vacas': { title: 'Preñez en Vacas (Cantidades)', labels: ['Vacas Preñadas', 'Vacas Vacías'], data: [prenadasVacas, vaciasVacas], bg: ['#27ae60', '#7f8c8d'] },
-    'prenez_novillas': { title: 'Preñez en Novillas (Cantidades)', labels: ['Novillas Preñadas', 'Novillas Vacías'], data: [prenadasNov, vaciasNov], bg: ['#27ae60', '#7f8c8d'] },
-    'QUI': { title: 'Quistes (Cantidad de Casos vs Resto)', labels: ['Con Quistes', 'Resto del Rebaño'], data: [conteosPaths.QUI, total - conteosPaths.QUI], bg: ['#e74c3c', '#bdc3c7'] },
-    'CL': { title: 'Cuerpo Lúteo (Cantidad de Casos vs Resto)', labels: ['Con C. Lúteo', 'Resto del Rebaño'], data: [conteosPaths.CL, total - conteosPaths.CL], bg: ['#f39c12', '#bdc3c7'] },
-    'FO': { title: 'Folículos (Cantidad de Casos vs Resto)', labels: ['Con Folículos', 'Resto del Rebaño'], data: [conteosPaths.FO, total - conteosPaths.FO], bg: ['#e67e22', '#bdc3c7'] },
-    'EST': { title: 'Ov. Estáticos (Cantidad de Casos vs Resto)', labels: ['Con Ov. Estáticos', 'Resto del Rebaño'], data: [conteosPaths.EST, total - conteosPaths.EST], bg: ['#d35400', '#bdc3c7'] },
-    'PAT': { title: 'Pat. Uterinas (Cantidad de Casos vs Resto)', labels: ['Con Patologías Uterinas', 'Resto del Rebaño'], data: [conteosPaths.PAT, total - conteosPaths.PAT], bg: ['#c0392b', '#bdc3c7'] }
+    'prenez_general': { title: 'Preñez General (Cantidades)', labels: ['Preñadas', 'Vacías / Pendientes'], data: [preñadas.length, vacias.length], bg: [colorVerde, colorGris] },
+    'prenez_vacas': { title: 'Preñez en Vacas (Cantidades)', labels: ['Vacas Preñadas', 'Vacas Vacías / Pendientes'], data: [prenadasVacas, vaciasVacas], bg: [colorVerde, colorGris] },
+    'prenez_novillas': { title: 'Preñez en Novillas (Cantidades)', labels: ['Novillas Preñadas', 'Novillas Vacías / Pendientes'], data: [prenadasNov, vaciasNov], bg: [colorVerde, colorGris] },
+    'QUI': { title: 'Quistes (Casos vs Rebaño Sano)', labels: ['Con Quistes', 'Rebaño Sano'], data: [conteosPaths.QUI, total - conteosPaths.QUI], bg: [colorRojo, colorGris] },
+    'CL': { title: 'Cuerpo Lúteo (Casos vs Rebaño Sano)', labels: ['Con C. Lúteo', 'Rebaño Sano'], data: [conteosPaths.CL, total - conteosPaths.CL], bg: [colorAmarillo, colorGris] },
+    'FO': { title: 'Folículos (Casos vs Rebaño Sano)', labels: ['Con Folículos', 'Rebaño Sano'], data: [conteosPaths.FO, total - conteosPaths.FO], bg: ['#e17055', colorGris] },
+    'EST': { title: 'Ov. Estáticos (Casos vs Rebaño Sano)', labels: ['Con Ov. Estáticos', 'Rebaño Sano'], data: [conteosPaths.EST, total - conteosPaths.EST], bg: ['#e84393', colorGris] },
+    'PAT': { title: 'Pat. Uterinas (Casos vs Rebaño Sano)', labels: ['Con Patologías Uterinas', 'Rebaño Sano'], data: [conteosPaths.PAT, total - conteosPaths.PAT], bg: ['#6c5ce7', colorGris] }
   };
 
   renderizarGraficoSeleccionado();
@@ -329,10 +424,14 @@ function renderizarGraficoSeleccionado() {
     data: {
       labels: config.labels,
       datasets: [{
-        label: 'Número de Animales',
+        label: 'Cantidad de Animales',
         data: config.data,
         backgroundColor: config.bg,
-        borderRadius: 4
+        borderColor: '#2d3436', // Borde oscuro para dar profundidad
+        borderWidth: 2, 
+        borderRadius: 8, // Bordes redondeados modernos
+        borderSkipped: false, // Asegura que el borde aplique en los 4 lados para cerrar el efecto 3D
+        hoverOffset: 4
       }]
     },
     options: {
@@ -341,13 +440,16 @@ function renderizarGraficoSeleccionado() {
       scales: {
         y: { 
           beginAtZero: true, 
-          title: { display: true, text: 'Cantidad de Animales', font: {weight: 'bold'} },
-          ticks: { stepSize: 1 } 
+          title: { display: true, text: 'CANTIDAD DE ANIMALES', font: {weight: 'bold', size: 13} },
+          ticks: { stepSize: 1, font: {weight: 'bold'} } 
+        },
+        x: {
+          ticks: { font: {weight: 'bold', size: 14} }
         }
       },
       plugins: {
         legend: { display: false },
-        title: { display: true, text: config.title, font: {size: 16} }
+        title: { display: true, text: config.title, font: {size: 18, weight: '900'}, color: '#0984e3', padding: {bottom: 20} }
       }
     }
   });
@@ -357,7 +459,7 @@ function renderizarTabla(id, datos, columnas = ['ID','numeroPractico','ultimoPar
   const tbody = document.getElementById(id); 
   if (!tbody) return;
   tbody.innerHTML = "";
-  if (!datos || datos.length === 0) { tbody.innerHTML = '<tr><td colspan="6" class="sin-registros">⚠️ Sin registros en esta categoría</td></tr>'; return; }
+  if (!datos || datos.length === 0) { tbody.innerHTML = '<tr><td colspan="6" class="sin-registros">⚠️ No existen registros en esta categoría actualmente.</td></tr>'; return; }
   datos.forEach(row => {
     const tr = document.createElement("tr");
     columnas.forEach(col => {
@@ -366,9 +468,10 @@ function renderizarTabla(id, datos, columnas = ['ID','numeroPractico','ultimoPar
       if (col === 'diagnostico') {
         const num = parseFloat(valor);
         if (!isNaN(num) && num > 0) { valor = `✅ ${num} meses`; } 
-        else if (valor && valor.toString().trim() !== "") { valor = `⚠️ ${valor}`; } 
+        else if (valor && valor.toString().trim() !== "") { valor = `⚠️ ${valor}`; td.style.color = "red"; td.style.fontWeight = "bold"; } 
         else { valor = `❌ Vacía`; }
       }
+      if (col === 'ID') { td.style.fontWeight = "bold"; td.style.color = "#0984e3"; }
       td.textContent = valor || '-'; tr.appendChild(td);
     }); tbody.appendChild(tr);
   });
@@ -378,10 +481,10 @@ function renderizarTablaSecadoMaternidad(id, datos) {
   const tbody = document.getElementById(id);
   if (!tbody) return;
   tbody.innerHTML = "";
-  if (!datos || datos.length === 0) { tbody.innerHTML = '<tr><td colspan="7" class="sin-registros">⚠️ Sin registros en esta categoría</td></tr>'; return; }
+  if (!datos || datos.length === 0) { tbody.innerHTML = '<tr><td colspan="7" class="sin-registros">⚠️ No existen registros en esta categoría actualmente.</td></tr>'; return; }
   datos.forEach(row => {
     const tr = document.createElement("tr");
-    tr.innerHTML = `<td>${row.ID}</td><td>${row.numeroPractico}</td><td>${row.clasificacion || '-'}</td><td>${row.edadGestacion} meses</td><td>${row.ultimoParto || '-'}</td><td>${row.diagnostico >= 2 ? '✅ ' + row.diagnostico + ' meses' : '❌ Vacía'}</td><td>${row.fechaDiagnostico}</td>`;
+    tr.innerHTML = `<td style="font-weight:bold; color:var(--azul);">${row.ID}</td><td><b>${row.numeroPractico}</b></td><td>${row.clasificacion || '-'}</td><td style="font-weight:bold; font-size: 15px;">${row.edadGestacion} meses</td><td>${row.ultimoParto || '-'}</td><td>${row.diagnostico >= 2 ? '✅ ' + row.diagnostico + ' meses' : '❌ Vacía'}</td><td>${row.fechaDiagnostico}</td>`;
     tbody.appendChild(tr);
   });
 }
@@ -390,10 +493,10 @@ function renderizarTablaHembrasPendientes(id, datos) {
   const tbody = document.getElementById(id);
   if (!tbody) return;
   tbody.innerHTML = "";
-  if (!datos || datos.length === 0) { tbody.innerHTML = '<tr><td colspan="6" class="sin-registros">⚠️ Sin registros</td></tr>'; return; }
+  if (!datos || datos.length === 0) { tbody.innerHTML = '<tr><td colspan="5" class="sin-registros">⚠️ Todos los animales tienen diagnóstico al día.</td></tr>'; return; }
   datos.forEach(row => {
     const tr = document.createElement("tr");
-    tr.innerHTML = `<td>${row.ID}</td><td>${row.numeroPractico || '-'}</td><td>${row.clasificacion || '-'}</td><td>${row.sexo || '-'}</td><td>${row.ultimoPeso !== 'N/A' ? row.ultimoPeso + ' kg' : 'N/A'}</td><td>${row.motivo || '-'}</td>`;
+    tr.innerHTML = `<td style="font-weight:bold; color:var(--rojo);">${row.ID}</td><td><b>${row.numeroPractico || '-'}</b></td><td>${row.clasificacion || '-'}</td><td>${row.sexo || '-'}</td><td style="color:var(--tierra); font-weight:bold;">${row.motivo || '-'}</td>`;
     tbody.appendChild(tr);
   });
 }
@@ -401,7 +504,7 @@ function renderizarTablaHembrasPendientes(id, datos) {
 function exportarTabla(idTabla, nombreArchivo) {
   const tbody = document.getElementById(idTabla);
   if (!tbody || tbody.querySelector('.sin-registros')) { alert("No hay datos para exportar"); return; }
-  let csv = "ID,Número Práctico,Clasificación,Sexo,Último Peso,Motivo\n";
+  let csv = "ID,Número Práctico,Clasificación,Sexo,Motivo/Diagnóstico\n";
   Array.from(tbody.querySelectorAll("tr")).forEach(tr => {
     const fila = Array.from(tr.querySelectorAll("td")).map(td => `"${td.textContent.replace(/"/g, '""')}"`).join(",");
     csv += fila + "\n";
