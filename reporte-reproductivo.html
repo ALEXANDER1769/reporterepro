@@ -1,144 +1,3 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Reporte Reproductivo - PYSIGA</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<style>
-:root { --verde: #2f6f4e; --verde-claro: #e6f1eb; --azul: #2c4f7c; --tierra: #8b6f47; --rojo: #e74c3c; --gris: #7f8c8d; --morado: #9b59b6; --fondo: #f7f9f8; --blanco: #ffffff; --alerta: #e67e22; --excelente: #27ae60; --regular: #f39c12; }
-body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif; background: var(--fondo); color: #333; }
-.container { max-width: 1200px; margin: auto; padding: 15px; }
-.card { background: var(--blanco); border-radius: 10px; padding: 15px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); margin-bottom: 15px; }
-.header-titulo { color: var(--azul); font-size: 22px; margin: 0 0 15px 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
-.btn-cerrar-reporte { background: var(--rojo); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold; }
-.btn-cerrar-reporte:hover { background: #c0392b; }
-.parametros-box { background: var(--verde-claro); border-left: 4px solid var(--verde); padding: 12px; margin-bottom: 15px; border-radius: 0 6px 6px 0; }
-.parametros-box label { margin-right: 15px; font-weight: 500; }
-.parametros-box input { width: 50px; padding: 5px; border: 1px solid #ccc; border-radius: 4px; text-align: center; }
-.parametros-box button { background: var(--azul); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; margin-left: 10px; }
-.parametros-box button:hover { opacity: 0.9; }
-
-/* Grid de KPIs */
-.kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-bottom: 20px; }
-.kpi-card { background: var(--blanco); border-radius: 8px; padding: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.08); text-align: center; border-top: 3px solid var(--gris); }
-.kpi-card.estado-excelente { border-top-color: var(--excelente); }
-.kpi-card.estado-regular { border-top-color: var(--regular); }
-.kpi-card.estado-alerta { border-top-color: var(--alerta); }
-.kpi-card.estado-sin_datos { border-top-color: var(--gris); opacity: 0.7; }
-.kpi-valor { font-size: 26px; font-weight: bold; margin: 8px 0; }
-.kpi-meta { font-size: 12px; color: var(--gris); margin-bottom: 4px; }
-.kpi-estado { font-size: 11px; font-weight: 500; padding: 3px 8px; border-radius: 12px; display: inline-block; }
-.estado-excelente .kpi-estado { background: #d5f5e3; color: var(--excelente); }
-.estado-regular .kpi-estado { background: #fef9e7; color: var(--regular); }
-.estado-alerta .kpi-estado { background: #fadbd8; color: var(--rojo); }
-.estado-sin_datos .kpi-estado { background: #f2f4f4; color: var(--gris); }
-.kpi-advertencia { font-size: 10px; color: var(--alerta); margin-top: 4px; font-style: italic; }
-
-/* Gráficos y Tablas */
-.seccion-lista { margin: 20px 0; }
-.seccion-lista h3 { color: var(--azul); border-bottom: 2px solid var(--verde-claro); padding-bottom: 8px; margin-bottom: 12px; }
-.tabla-detalles { width: 100%; border-collapse: collapse; font-size: 13px; }
-.tabla-detalles th { background: var(--verde); color: white; padding: 8px; position: sticky; top: 0; text-align: left; }
-.tabla-detalles td { padding: 8px; border-bottom: 1px solid #eee; }
-.tabla-detalles tr:hover { background: var(--verde-claro); }
-.sin-registros { text-align: center; color: var(--gris); font-style: italic; padding: 15px; }
-
-/* Estilos extraídos del modelo sanitario para el selector y el gráfico */
-.chart-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px; border-top: 4px solid var(--azul); }
-.chart-wrapper { position: relative; height: 350px; width: 100%; margin-top: 15px; }
-.selector-kpi { padding: 10px; font-size: 1rem; width: 100%; max-width: 400px; margin-bottom: 10px; border-radius: 5px; border: 1px solid #ccc; font-weight: 500; color: var(--azul);}
-
-#loader { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background: white; position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 9999; }
-.vaca-loader { font-size: 60px; margin-bottom: 16px; animation: mover 1s infinite alternate; }
-@keyframes mover { from { transform: translateX(-5px); } to { transform: translateX(5px); } }
-.acciones-lista { display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
-.btn-accion { background: var(--azul); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; }
-.btn-accion:hover { opacity: 0.9; }
-.btn-secado { background: var(--tierra); }
-.btn-maternidad { background: var(--morado); }
-.btn-pendientes { background: var(--alerta); }
-</style>
-</head>
-<body>
-<div id="loader"><div class="vaca-loader">🐄</div><div id="loader-text">Cargando reporte reproductivo…</div></div>
-<div id="contenido" style="display: none;">
-  <div class="container">
-    <h1 class="header-titulo">📊 Reporte Reproductivo<button class="btn-cerrar-reporte" onclick="cerrarReporte()">✕ Cerrar</button></h1>
-    
-    <div class="card parametros-box">
-      <strong>⚙️ Parámetros de Preñez:</strong>
-      <label>Meses para secado: <input type="number" id="mesesSecado" value="6" min="1" max="12"></label>
-      <label>Meses para maternidad: <input type="number" id="mesesMaternidad" value="8" min="1" max="12"></label>
-      <button onclick="recargarConParametros()">Actualizar</button>
-    </div>
-
-    <div class="kpi-grid">
-      <div class="kpi-card" id="kpi-tasaGeneral"><div class="kpi-meta">Tasa Preñez General</div><div class="kpi-valor" id="tasaPreñezGeneral">0%</div><span class="kpi-estado" id="estado-tasaGeneral">-</span><div class="kpi-advertencia" id="advertencia-tasaGeneral"></div></div>
-      <div class="kpi-card" id="kpi-tasaVacas"><div class="kpi-meta">Tasa Preñez Vacas</div><div class="kpi-valor" id="tasaPreñezVacas">0%</div><span class="kpi-estado" id="estado-tasaVacas">-</span></div>
-      <div class="kpi-card" id="kpi-tasaNovillas"><div class="kpi-meta">Tasa Preñez Novillas</div><div class="kpi-valor" id="tasaPreñezNovillas">0%</div><span class="kpi-estado" id="estado-tasaNovillas">-</span><div class="kpi-advertencia" id="advertencia-tasaNovillas"></div></div>
-      <div class="kpi-card" id="kpi-vacias"><div class="kpi-meta">% Vacías</div><div class="kpi-valor" id="porcentajeVacías">0%</div><span class="kpi-estado" id="estado-vacias">-</span></div>
-      
-      <div class="kpi-card" id="kpi-qui"><div class="kpi-meta">% Quistes (QUI)</div><div class="kpi-valor" id="val-qui">0%</div><span class="kpi-estado" id="estado-qui">-</span></div>
-      <div class="kpi-card" id="kpi-cl"><div class="kpi-meta">% Cuerpo Lúteo (CL)</div><div class="kpi-valor" id="val-cl">0%</div><span class="kpi-estado" id="estado-cl">-</span></div>
-      <div class="kpi-card" id="kpi-fo"><div class="kpi-meta">% Folículos (FO)</div><div class="kpi-valor" id="val-fo">0%</div><span class="kpi-estado" id="estado-fo">-</span></div>
-      <div class="kpi-card" id="kpi-est"><div class="kpi-meta">% Ov. Estáticos (EST)</div><div class="kpi-valor" id="val-est">0%</div><span class="kpi-estado" id="estado-est">-</span></div>
-      <div class="kpi-card" id="kpi-pat"><div class="kpi-meta">% Pat. Uterinas (PAT)</div><div class="kpi-valor" id="val-pat">0%</div><span class="kpi-estado" id="estado-pat">-</span></div>
-
-      <div class="kpi-card" id="kpi-diasAbiertos"><div class="kpi-meta">Días Abiertos Prom.</div><div class="kpi-valor" id="diasAbiertosProm">0</div><span class="kpi-estado" id="estado-diasAbiertos">-</span></div>
-      <div class="kpi-card" id="kpi-iep"><div class="kpi-meta">Intervalo Entre Partos</div><div class="kpi-valor" id="iep">0</div><span class="kpi-estado" id="estado-iep">-</span></div>
-    </div>
-
-    <div class="chart-card">
-        <h3 style="color: var(--azul); margin-top: 0;">📈 Estado Poblacional por Indicador Reproductivo</h3>
-        <p style="font-size: 13px; color: #555; margin-bottom: 10px;">Seleccione un indicador para ver la distribución exacta en el rebaño:</p>
-        <select id="kpi-chart-select" class="selector-kpi" onchange="renderizarGraficoSeleccionado()">
-            <option value="prenez_general">Tasa de Preñez General</option>
-            <option value="prenez_vacas">Tasa de Preñez en Vacas</option>
-            <option value="prenez_novillas">Tasa de Preñez en Novillas</option>
-            <option value="QUI">Incidencia de Quistes (QUI)</option>
-            <option value="CL">Incidencia de Cuerpo Lúteo (CL)</option>
-            <option value="FO">Incidencia de Folículos (FO)</option>
-            <option value="EST">Ovarios Estáticos / Anormales (EST, OVA-P)</option>
-            <option value="PAT">Patologías Uterinas (PIO, MOM, RE-CH)</option>
-        </select>
-        <div class="chart-wrapper">
-            <canvas id="chartKPI"></canvas>
-        </div>
-    </div>
-
-    <div class="card seccion-lista">
-      <h3>🥛 Animales para Secado (≥ <span id="labelMesesSecado">6</span> meses de preñez)</h3>
-      <div class="acciones-lista"><button class="btn-accion btn-secado" onclick="exportarTabla('tablaSecado', 'Vacas_Secado')">📥 Exportar</button></div>
-      <table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Clasificación</th><th>Meses Gestación</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th></tr></thead><tbody id="tablaSecado"></tbody></table>
-    </div>
-
-    <div class="card seccion-lista">
-      <h3>🤰 Animales para Maternidad (≥ <span id="labelMesesMaternidad">8</span> meses de preñez)</h3>
-      <div class="acciones-lista"><button class="btn-accion btn-maternidad" onclick="exportarTabla('tablaMaternidad', 'Vacas_Maternidad')">📥 Exportar</button></div>
-      <table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Clasificación</th><th>Meses Gestación</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th></tr></thead><tbody id="tablaMaternidad"></tbody></table>
-    </div>
-
-    <div class="card seccion-lista" id="seccionHembrasPendientes" style="display:none;">
-      <h3>⚠️ Hembras Pendientes de Evaluar (<span id="conteoHembrasPendientes">0</span>)</h3>
-      <p style="font-size: 12px; color: var(--gris); margin-bottom: 10px;">📌 Criterios: Clasificación "SIN DIAG DE GESTACION" | Vaca/Novilla sin diagnóstico | Peso ≥ 350 kg sin diagnóstico</p>
-      <div class="acciones-lista"><button class="btn-accion btn-pendientes" onclick="exportarTabla('tablaHembrasPendientes', 'Hembras_Pendientes')">📥 Exportar</button></div>
-      <table class="tabla-detalles">
-        <thead><tr><th>ID</th><th>Nº Práctico</th><th>Clasificación</th><th>Sexo</th><th>Último Peso</th><th>Motivo</th></tr></thead>
-        <tbody id="tablaHembrasPendientes"></tbody>
-      </table>
-    </div>
-
-    <h2>📋 Detalles por Días Abiertos</h2>
-    <div class="seccion-lista"><h3>✅ Preñadas - Menor a 3 meses</h3><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días Abiertos</th></tr></thead><tbody id="preñadas_menor3m"></tbody></table></div>
-    <div class="seccion-lista"><h3>✅ Preñadas - 3 a 6 meses</h3><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días Abiertos</th></tr></thead><tbody id="preñadas_3a6m"></tbody></table></div>
-    <div class="seccion-lista"><h3>✅ Preñadas - Mayor a 6 meses</h3><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días Abiertos</th></tr></thead><tbody id="preñadas_mayor6m"></tbody></table></div>
-    <div class="seccion-lista"><h3>❌ Vacías / Patologías - Menor a 3 meses</h3><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días</th></tr></thead><tbody id="vacías_menor3m"></tbody></table></div>
-    <div class="seccion-lista"><h3>❌ Vacías / Patologías - 3 a 6 meses</h3><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días</th></tr></thead><tbody id="vacías_3a6m"></tbody></table></div>
-    <div class="seccion-lista"><h3>❌ Vacías / Patologías - Mayor a 6 meses</h3><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días</th></tr></thead><tbody id="vacías_mayor6m"></tbody></table></div>
-  </div>
-</div>
-
 <script>
 const WORKER_URL = "https://pysiga.d-alexjose.workers.dev";
 const urlParams = new URLSearchParams(window.location.search);
@@ -146,7 +5,7 @@ const email = urlParams.get('email');
 if (!email) { alert("Parámetro 'email' no encontrado."); location.href = "/"; }
 
 let chartInstancia = null; 
-window.chartDataMap = {}; // Almacenará los datos de todos los gráficos
+window.chartDataMap = {}; 
 
 function cerrarReporte() {
   if (window.opener) { window.close(); return; }
@@ -200,7 +59,7 @@ async function cargarReporte(mesesSecado = 6, mesesMaternidad = 8) {
     renderizarTabla("vacías_3a6m", data.detalles.vacías_3a6m);
     renderizarTabla("vacías_mayor6m", data.detalles.vacías_mayor6m);
 
-    // 🔥 PREPARA LOS DATOS PARA LAS TARJETAS Y EL GRÁFICO DINÁMICO
+    // Ejecuta el cálculo preciso de KPIs
     prepararDatosYGrafico(data.kpis, data.detalles);
 
   } catch (e) { console.error("Error:", e); document.getElementById("loader-text").textContent = `❌ Error: ${e.message}`; }
@@ -225,30 +84,42 @@ function renderizarKPIsPrincipales(kpis) {
   });
 }
 
-// 🔥 LÓGICA DE PROCESAMIENTO ESTILO REPORTE SANITARIO
 function prepararDatosYGrafico(kpis, detalles) {
   const preñadas = [...(detalles.preñadas_menor3m || []), ...(detalles.preñadas_3a6m || []), ...(detalles.preñadas_mayor6m || [])];
   const vacias = [...(detalles.vacías_menor3m || []), ...(detalles.vacías_3a6m || []), ...(detalles.vacías_mayor6m || []), ...(detalles.hembrasPendientesEvaluar || [])];
+  
+  // El tamaño real de la población (Rebaño evaluable)
   const todasLasHembras = [...preñadas, ...vacias];
   const total = todasLasHembras.length;
   
-  // Conteo Patologías
   const conteosPaths = { QUI: 0, CL: 0, FO: 0, EST: 0, PAT: 0 };
   const keysPath = {
-    QUI: ["QUI-D", "QUI-I"], CL: ["CL-D", "CL-I"], FO: ["FO-D", "FO-I"],
-    EST: ["EST-D", "EST-I", "OVA-P", "HIPO"], PAT: ["PIO", "MOM", "RE-CH"]
+    QUI: ["QUI-D", "QUI-I"],
+    CL: ["CL-D", "CL-I"],
+    FO: ["FO-D", "FO-I"],
+    EST: ["EST-D", "EST-I", "OVA-P", "HIPO"],
+    PAT: ["PIO", "MOM", "RE-CH"]
   };
 
+  // 🔥 NUEVA LÓGICA ESTRICTA DE BÚSQUEDA
   todasLasHembras.forEach(vaca => {
-    const diag = (vaca.diagnostico || vaca.motivo || "").toString().toUpperCase();
+    // 1. Extraemos el texto y lo ponemos en mayúsculas
+    let textoCrudo = (vaca.diagnostico || vaca.motivo || vaca.clasificacion || "").toString().toUpperCase();
+    
+    // 2. Rompemos el texto en un array de palabras exactas separadas por espacios, comas o puntos
+    let palabrasEnTexto = textoCrudo.split(/[\s,;.]+/);
+    
+    // 3. Verificamos coincidencia exacta para evitar contar si el texto viene "sucio"
     for (let key in keysPath) {
-      if (keysPath[key].some(k => diag.includes(k))) conteosPaths[key]++;
+      let tieneLaPatologia = keysPath[key].some(abreviatura => palabrasEnTexto.includes(abreviatura));
+      if (tieneLaPatologia) {
+        conteosPaths[key]++;
+      }
     }
   });
 
   const calcPct = (c) => total > 0 ? ((c / total) * 100).toFixed(1) : 0;
 
-  // Actualizar Tarjetas KPI de Patologías
   const actCard = (idVal, idEst, idCard, count) => {
     document.getElementById(idVal).textContent = `${calcPct(count)}%`;
     const elEst = document.getElementById(idEst);
@@ -269,17 +140,14 @@ function prepararDatosYGrafico(kpis, detalles) {
   actCard('val-est', 'estado-est', 'kpi-est', conteosPaths.EST);
   actCard('val-pat', 'estado-pat', 'kpi-pat', conteosPaths.PAT);
 
-  // Conteo Preñadas/Vacías por Tipo para Gráficos Absolutos
   const isVaca = (c) => (c || '').toUpperCase().includes('VACA');
   const isNovilla = (c) => (c || '').toUpperCase().includes('NOVILLA');
 
   const prenadasVacas = preñadas.filter(v => isVaca(v.clasificacion)).length;
   const vaciasVacas = vacias.filter(v => isVaca(v.clasificacion)).length;
-  
   const prenadasNov = preñadas.filter(v => isNovilla(v.clasificacion)).length;
   const vaciasNov = vacias.filter(v => isNovilla(v.clasificacion)).length;
 
-  // Mapa de Configuración del Gráfico de Barras
   window.chartDataMap = {
     'prenez_general': { title: 'Preñez General (Cantidades)', labels: ['Preñadas', 'Vacías / Pendientes'], data: [preñadas.length, vacias.length], bg: ['#27ae60', '#7f8c8d'] },
     'prenez_vacas': { title: 'Preñez en Vacas (Cantidades)', labels: ['Vacas Preñadas', 'Vacas Vacías'], data: [prenadasVacas, vaciasVacas], bg: ['#27ae60', '#7f8c8d'] },
@@ -291,11 +159,9 @@ function prepararDatosYGrafico(kpis, detalles) {
     'PAT': { title: 'Pat. Uterinas (Cantidad de Casos vs Resto)', labels: ['Con Patologías Uterinas', 'Resto del Rebaño'], data: [conteosPaths.PAT, total - conteosPaths.PAT], bg: ['#c0392b', '#bdc3c7'] }
   };
 
-  // Renderizar gráfico inicial
   renderizarGraficoSeleccionado();
 }
 
-// 🔥 NUEVA FUNCIÓN INTERACTIVA DE CHART.JS
 function renderizarGraficoSeleccionado() {
   const key = document.getElementById('kpi-chart-select').value;
   const config = window.chartDataMap[key];
@@ -322,7 +188,7 @@ function renderizarGraficoSeleccionado() {
         y: { 
           beginAtZero: true, 
           title: { display: true, text: 'Cantidad de Animales', font: {weight: 'bold'} },
-          ticks: { stepSize: 1 } // Fuerza a que los números de la escala sean enteros
+          ticks: { stepSize: 1 } 
         }
       },
       plugins: {
@@ -389,5 +255,3 @@ function exportarTabla(idTabla, nombreArchivo) {
 
 cargarReporte();
 </script>
-</body>
-</html>
