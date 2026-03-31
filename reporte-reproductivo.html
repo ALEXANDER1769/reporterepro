@@ -120,8 +120,11 @@ h1, h2, h3 { text-align: center; font-weight: 800; color: var(--azul); }
       <div class="kpi-card" id="kpi-tasaGeneral"><div class="kpi-titulo">Tasa Preñez General</div><div class="kpi-valor" id="tasaPreñezGeneral">0%</div><div class="kpi-meta-obj" id="meta-tasaGeneral">Meta: 85%</div><br><span class="kpi-estado" id="estado-tasaGeneral">-</span><div class="kpi-advertencia" id="advertencia-tasaGeneral"></div></div>
       <div class="kpi-card" id="kpi-tasaVacas"><div class="kpi-titulo">Tasa Preñez Vacas</div><div class="kpi-valor" id="tasaPreñezVacas">0%</div><div class="kpi-meta-obj" id="meta-tasaVacas">Meta: 85%</div><br><span class="kpi-estado" id="estado-tasaVacas">-</span></div>
       <div class="kpi-card" id="kpi-tasaNovillas"><div class="kpi-titulo">Tasa Preñez Novillas</div><div class="kpi-valor" id="tasaPreñezNovillas">0%</div><div class="kpi-meta-obj" id="meta-tasaNovillas">Meta: 80%</div><br><span class="kpi-estado" id="estado-tasaNovillas">-</span><div class="kpi-advertencia" id="advertencia-tasaNovillas"></div></div>
-      <div class="kpi-card" id="kpi-vacias"><div class="kpi-titulo">% Vacías / Pendientes</div><div class="kpi-valor" id="porcentajeVacías">0%</div><div class="kpi-meta-obj" id="meta-vacias">Meta: < 10%</div><br><span class="kpi-estado" id="estado-vacias">-</span></div>
       
+      <div class="kpi-card" id="kpi-tasaBufalas"><div class="kpi-titulo">Tasa Preñez Búfalas</div><div class="kpi-valor" id="tasaPreñezBufalas">0%</div><div class="kpi-meta-obj" id="meta-tasaBufalas">Meta: 85%</div><br><span class="kpi-estado" id="estado-tasaBufalas">-</span></div>
+      <div class="kpi-card" id="kpi-tasaBuvillas"><div class="kpi-titulo">Tasa Preñez Buvillas</div><div class="kpi-valor" id="tasaPreñezBuvillas">0%</div><div class="kpi-meta-obj" id="meta-tasaBuvillas">Meta: 80%</div><br><span class="kpi-estado" id="estado-tasaBuvillas">-</span></div>
+
+      <div class="kpi-card" id="kpi-vacias"><div class="kpi-titulo">% Vacías / Pendientes</div><div class="kpi-valor" id="porcentajeVacías">0%</div><div class="kpi-meta-obj" id="meta-vacias">Meta: < 10%</div><br><span class="kpi-estado" id="estado-vacias">-</span></div>
       <div class="kpi-card" id="kpi-diasAbiertos"><div class="kpi-titulo">Días Abiertos Prom.</div><div class="kpi-valor" id="diasAbiertosProm">0</div><div class="kpi-meta-obj" id="meta-diasAbiertos">Meta: < 100 Días</div><br><span class="kpi-estado" id="estado-diasAbiertos">-</span></div>
       <div class="kpi-card" id="kpi-iep"><div class="kpi-titulo">Intervalo Entre Partos</div><div class="kpi-valor" id="iep">0</div><div class="kpi-meta-obj" id="meta-iep">Meta: 400 Días</div><br><span class="kpi-estado" id="estado-iep">-</span></div>
     </div>
@@ -139,9 +142,9 @@ h1, h2, h3 { text-align: center; font-weight: 800; color: var(--azul); }
         <h3>📈 Estado Poblacional Absoluto</h3>
         <p style="font-size: 14px; color: var(--gris); margin-bottom: 15px;">Seleccione un indicador para ver la distribución exacta con gráficos interactivos:</p>
         <select id="kpi-chart-select" class="selector-kpi" onchange="renderizarGraficoSeleccionado()">
-            <option value="prenez_general">Tasa de Preñez General (Vacas + Novillas)</option>
-            <option value="prenez_vacas">Tasa de Preñez en Vacas (Adultas)</option>
-            <option value="prenez_novillas">Tasa de Preñez en Novillas (Reemplazos)</option>
+            <option value="prenez_general">Tasa de Preñez General (Todo el Rebaño)</option>
+            <option value="prenez_vacas">Tasa de Preñez en Vientres (Vacas + Búfalas)</option>
+            <option value="prenez_novillas">Tasa de Preñez en Reemplazos (Novillas + Buvillas)</option>
             <option value="QUI">Incidencia de Quistes (QUI)</option>
             <option value="CL">Incidencia de Cuerpo Lúteo (CL)</option>
             <option value="FO">Incidencia de Folículos (FO)</option>
@@ -203,22 +206,22 @@ if (!email) { alert("Parámetro 'email' no encontrado."); location.href = "/"; }
 let chartInstancia = null; 
 window.chartDataMap = {}; 
 
-// 🔥 PLUGIN CUSTOM PARA EFECTO 3D EN LAS BARRAS
+// PLUGIN CUSTOM PARA EFECTO 3D EN LAS BARRAS
 const pluginSombra3D = {
   id: 'sombra3D',
   beforeDatasetsDraw: function(chart) {
     const ctx = chart.ctx;
     ctx.save();
-    ctx.shadowColor = 'rgba(0, 0, 0, 0.35)'; // Sombra oscura
-    ctx.shadowBlur = 12; // Difuminado
-    ctx.shadowOffsetX = 6; // Desplazamiento X
-    ctx.shadowOffsetY = 6; // Desplazamiento Y
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.35)';
+    ctx.shadowBlur = 12;
+    ctx.shadowOffsetX = 6;
+    ctx.shadowOffsetY = 6;
   },
   afterDatasetsDraw: function(chart) {
-    chart.ctx.restore(); // Limpiar la sombra para no afectar otras partes del gráfico
+    chart.ctx.restore();
   }
 };
-Chart.register(pluginSombra3D); // Registramos el plugin de forma global
+Chart.register(pluginSombra3D);
 
 function cerrarReporte() {
   if (window.opener) { window.close(); return; }
@@ -289,6 +292,8 @@ function renderizarKPIsPrincipales(kpis) {
     tasaPreñezGeneral: { id: 'tasaPreñezGeneral', estado: 'estado-tasaGeneral', advertencia: 'advertencia-tasaGeneral', card: 'kpi-tasaGeneral', metaId: 'meta-tasaGeneral' },
     tasaPreñezVacas: { id: 'tasaPreñezVacas', estado: 'estado-tasaVacas', card: 'kpi-tasaVacas', metaId: 'meta-tasaVacas' },
     tasaPreñezNovillas: { id: 'tasaPreñezNovillas', estado: 'estado-tasaNovillas', advertencia: 'advertencia-tasaNovillas', card: 'kpi-tasaNovillas', metaId: 'meta-tasaNovillas' },
+    tasaPreñezBufalas: { id: 'tasaPreñezBufalas', estado: 'estado-tasaBufalas', card: 'kpi-tasaBufalas', metaId: 'meta-tasaBufalas' },
+    tasaPreñezBuvillas: { id: 'tasaPreñezBuvillas', estado: 'estado-tasaBuvillas', card: 'kpi-tasaBuvillas', metaId: 'meta-tasaBuvillas' },
     porcentajeVacías: { id: 'porcentajeVacías', estado: 'estado-vacias', card: 'kpi-vacias', metaId: 'meta-vacias' },
     diasAbiertosPromedio: { id: 'diasAbiertosProm', estado: 'estado-diasAbiertos', card: 'kpi-diasAbiertos', metaId: 'meta-diasAbiertos' },
     intervaloEntrePartos: { id: 'iep', estado: 'estado-iep', card: 'kpi-iep', metaId: 'meta-iep' }
@@ -297,7 +302,6 @@ function renderizarKPIsPrincipales(kpis) {
     const kpi = kpis[key]; if (!kpi) return;
     safeText(cfg.id, kpi.valor + (kpi.unidad || ''));
     
-    // Inyectar la meta dinámica
     if(cfg.metaId && kpi.meta !== undefined) {
        let signo = key === 'porcentajeVacías' || key === 'diasAbiertosPromedio' || key === 'intervaloEntrePartos' ? '< ' : '≥ ';
        safeText(cfg.metaId, `Meta: ${signo}${kpi.meta}${kpi.unidad || ''}`);
@@ -368,16 +372,16 @@ function prepararDatosYGrafico(kpis, detalles) {
 
   const isVaca = (v) => {
     let c = (v.clasificacion || '').toUpperCase();
-    if (c.includes('VACA')) return true;
-    if (c.includes('NOVILLA')) return false;
+    if (c.includes('VACA') || c.includes('BUFALA')) return true;
+    if (c.includes('NOVILLA') || c.includes('BUVILLA')) return false;
     let up = (v.ultimoParto || '').trim().toUpperCase();
     return (up !== '' && up !== '-' && up !== 'S/P' && up !== 'N/A');
   };
 
   const isNovilla = (v) => {
     let c = (v.clasificacion || '').toUpperCase();
-    if (c.includes('NOVILLA')) return true;
-    if (c.includes('VACA')) return false;
+    if (c.includes('NOVILLA') || c.includes('BUVILLA')) return true;
+    if (c.includes('VACA') || c.includes('BUFALA')) return false;
     let up = (v.ultimoParto || '').trim().toUpperCase();
     return (up === '' || up === '-' || up === 'S/P' || up === 'N/A');
   };
@@ -387,7 +391,6 @@ function prepararDatosYGrafico(kpis, detalles) {
   const prenadasNov = preñadas.filter(isNovilla).length;
   const vaciasNov = vacias.filter(isNovilla).length;
 
-  // COLORES VIVIDOS PARA LOS GRAFICOS
   const colorVerde = '#00b894';
   const colorGris = '#b2bec3';
   const colorRojo = '#d63031';
@@ -395,8 +398,8 @@ function prepararDatosYGrafico(kpis, detalles) {
 
   window.chartDataMap = {
     'prenez_general': { title: 'Preñez General (Cantidades)', labels: ['Preñadas', 'Vacías / Pendientes'], data: [preñadas.length, vacias.length], bg: [colorVerde, colorGris] },
-    'prenez_vacas': { title: 'Preñez en Vacas (Cantidades)', labels: ['Vacas Preñadas', 'Vacas Vacías / Pendientes'], data: [prenadasVacas, vaciasVacas], bg: [colorVerde, colorGris] },
-    'prenez_novillas': { title: 'Preñez en Novillas (Cantidades)', labels: ['Novillas Preñadas', 'Novillas Vacías / Pendientes'], data: [prenadasNov, vaciasNov], bg: [colorVerde, colorGris] },
+    'prenez_vacas': { title: 'Preñez en Vientres (Cantidades)', labels: ['Vientres Preñados', 'Vientres Vacíos / Pendientes'], data: [prenadasVacas, vaciasVacas], bg: [colorVerde, colorGris] },
+    'prenez_novillas': { title: 'Preñez en Reemplazos (Cantidades)', labels: ['Reemplazos Preñados', 'Reemplazos Vacíos / Pendientes'], data: [prenadasNov, vaciasNov], bg: [colorVerde, colorGris] },
     'QUI': { title: 'Quistes (Casos vs Rebaño Sano)', labels: ['Con Quistes', 'Rebaño Sano'], data: [conteosPaths.QUI, total - conteosPaths.QUI], bg: [colorRojo, colorGris] },
     'CL': { title: 'Cuerpo Lúteo (Casos vs Rebaño Sano)', labels: ['Con C. Lúteo', 'Rebaño Sano'], data: [conteosPaths.CL, total - conteosPaths.CL], bg: [colorAmarillo, colorGris] },
     'FO': { title: 'Folículos (Casos vs Rebaño Sano)', labels: ['Con Folículos', 'Rebaño Sano'], data: [conteosPaths.FO, total - conteosPaths.FO], bg: ['#e17055', colorGris] },
@@ -427,10 +430,10 @@ function renderizarGraficoSeleccionado() {
         label: 'Cantidad de Animales',
         data: config.data,
         backgroundColor: config.bg,
-        borderColor: '#2d3436', // Borde oscuro para dar profundidad
+        borderColor: '#2d3436',
         borderWidth: 2, 
-        borderRadius: 8, // Bordes redondeados modernos
-        borderSkipped: false, // Asegura que el borde aplique en los 4 lados para cerrar el efecto 3D
+        borderRadius: 8,
+        borderSkipped: false,
         hoverOffset: 4
       }]
     },
@@ -484,7 +487,7 @@ function renderizarTablaSecadoMaternidad(id, datos) {
   if (!datos || datos.length === 0) { tbody.innerHTML = '<tr><td colspan="7" class="sin-registros">⚠️ No existen registros en esta categoría actualmente.</td></tr>'; return; }
   datos.forEach(row => {
     const tr = document.createElement("tr");
-    tr.innerHTML = `<td style="font-weight:bold; color:var(--azul);">${row.ID}</td><td><b>${row.numeroPractico}</b></td><td>${row.clasificacion || '-'}</td><td style="font-weight:bold; font-size: 15px;">${row.edadGestacion} meses</td><td>${row.ultimoParto || '-'}</td><td>${row.diagnostico >= 2 ? '✅ ' + row.diagnostico + ' meses' : '❌ Vacía'}</td><td>${row.fechaDiagnostico}</td>`;
+    tr.innerHTML = `<td style="font-weight:bold; color:var(--azul);">${row.ID}</td><td><b>${row.numeroPractico}</b></td><td>${row.clasificacion || '-'}</td><td style="font-weight:bold; font-size: 15px;">${row.edadGestacion} meses</td><td>${row.ultimoParto || '-'}</td><td>${row.diagnostico > 0 ? '✅ ' + row.diagnostico + ' meses' : '❌ Vacía'}</td><td>${row.fechaDiagnostico}</td>`;
     tbody.appendChild(tr);
   });
 }
@@ -504,11 +507,16 @@ function renderizarTablaHembrasPendientes(id, datos) {
 function exportarTabla(idTabla, nombreArchivo) {
   const tbody = document.getElementById(idTabla);
   if (!tbody || tbody.querySelector('.sin-registros')) { alert("No hay datos para exportar"); return; }
-  let csv = "ID,Número Práctico,Clasificación,Sexo,Motivo/Diagnóstico\n";
+  
+  const tabla = tbody.closest('table');
+  const ths = Array.from(tabla.querySelectorAll("thead th")).map(th => `"${th.textContent}"`);
+  let csv = ths.join(",") + "\n";
+  
   Array.from(tbody.querySelectorAll("tr")).forEach(tr => {
     const fila = Array.from(tr.querySelectorAll("td")).map(td => `"${td.textContent.replace(/"/g, '""')}"`).join(",");
     csv += fila + "\n";
   });
+  
   const blob = new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8;" });
   const link = document.createElement("a");
   link.href = URL.createObjectURL(blob);
