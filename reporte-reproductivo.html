@@ -117,16 +117,15 @@ h1, h2, h3 { text-align: center; font-weight: 800; color: var(--azul); }
 
     <h2 style="margin-bottom: 20px;">⏱️ Indicadores Clave de Desempeño (KPI)</h2>
     <div class="kpi-grid">
-      <div class="kpi-card" id="kpi-tasaGeneral"><div class="kpi-titulo">Tasa Preñez General</div><div class="kpi-valor" id="tasaPreñezGeneral">0%</div><div class="kpi-meta-obj" id="meta-tasaGeneral">Meta: 85%</div><br><span class="kpi-estado" id="estado-tasaGeneral">-</span><div class="kpi-advertencia" id="advertencia-tasaGeneral"></div></div>
-      <div class="kpi-card" id="kpi-tasaVacas"><div class="kpi-titulo">Tasa Preñez Vacas</div><div class="kpi-valor" id="tasaPreñezVacas">0%</div><div class="kpi-meta-obj" id="meta-tasaVacas">Meta: 85%</div><br><span class="kpi-estado" id="estado-tasaVacas">-</span></div>
-      <div class="kpi-card" id="kpi-tasaNovillas"><div class="kpi-titulo">Tasa Preñez Novillas</div><div class="kpi-valor" id="tasaPreñezNovillas">0%</div><div class="kpi-meta-obj" id="meta-tasaNovillas">Meta: 80%</div><br><span class="kpi-estado" id="estado-tasaNovillas">-</span><div class="kpi-advertencia" id="advertencia-tasaNovillas"></div></div>
+      <div class="kpi-card" id="kpi-tasaGeneral"><div class="kpi-titulo">Tasa Preñez General</div><div class="kpi-valor" id="tasaPreñezGeneral">0%</div><div class="kpi-meta-obj" id="meta-tasaGeneral">Meta: 85%</div></div>
       
-      <div class="kpi-card" id="kpi-tasaBufalas"><div class="kpi-titulo">Tasa Preñez Búfalas</div><div class="kpi-valor" id="tasaPreñezBufalas">0%</div><div class="kpi-meta-obj" id="meta-tasaBufalas">Meta: 85%</div><br><span class="kpi-estado" id="estado-tasaBufalas">-</span></div>
-      <div class="kpi-card" id="kpi-tasaBuvillas"><div class="kpi-titulo">Tasa Preñez Buvillas</div><div class="kpi-valor" id="tasaPreñezBuvillas">0%</div><div class="kpi-meta-obj" id="meta-tasaBuvillas">Meta: 80%</div><br><span class="kpi-estado" id="estado-tasaBuvillas">-</span></div>
+      <div class="kpi-card" id="kpi-tasaBovinos"><div class="kpi-titulo">Tasa Preñez Bovinos</div><div class="kpi-valor" id="tasaPreñezBovinos">0%</div><div class="kpi-meta-obj">Meta: 85%</div></div>
+      
+      <div class="kpi-card" id="kpi-tasaBufalas"><div class="kpi-titulo">Tasa Preñez Búfalos</div><div class="kpi-valor" id="tasaPreñezBufalos">0%</div><div class="kpi-meta-obj">Meta: 85%</div></div>
 
-      <div class="kpi-card" id="kpi-vacias"><div class="kpi-titulo">% Vacías / Pendientes</div><div class="kpi-valor" id="porcentajeVacías">0%</div><div class="kpi-meta-obj" id="meta-vacias">Meta: < 10%</div><br><span class="kpi-estado" id="estado-vacias">-</span></div>
-      <div class="kpi-card" id="kpi-diasAbiertos"><div class="kpi-titulo">Días Abiertos Prom.</div><div class="kpi-valor" id="diasAbiertosProm">0</div><div class="kpi-meta-obj" id="meta-diasAbiertos">Meta: < 100 Días</div><br><span class="kpi-estado" id="estado-diasAbiertos">-</span></div>
-      <div class="kpi-card" id="kpi-iep"><div class="kpi-titulo">Intervalo Entre Partos</div><div class="kpi-valor" id="iep">0</div><div class="kpi-meta-obj" id="meta-iep">Meta: 400 Días</div><br><span class="kpi-estado" id="estado-iep">-</span></div>
+      <div class="kpi-card" id="kpi-diasAbiertos"><div class="kpi-titulo">Días Abiertos Prom.</div><div class="kpi-valor" id="diasAbiertosProm" style="font-size: 22px;">0</div><div class="kpi-meta-obj">Bov < 100 | Búf < 120</div></div>
+      
+      <div class="kpi-card" id="kpi-iep"><div class="kpi-titulo">Intervalo Entre Partos</div><div class="kpi-valor" id="iep" style="font-size: 22px;">0</div><div class="kpi-meta-obj">Meta: 400 / 430 Días</div></div>
     </div>
 
     <h2 style="margin-top: 40px; margin-bottom: 20px;">🔬 Incidencia de Patologías</h2>
@@ -237,6 +236,7 @@ function recargarConParametros() {
   cargarReporte(mesesSecado, mesesMaternidad);
 }
 
+// SECCIÓN MODIFICADA: cargarReporte
 async function cargarReporte(mesesSecado = 6, mesesMaternidad = 8) {
   try {
     safeStyle("loader", "display", "flex");
@@ -260,13 +260,15 @@ async function cargarReporte(mesesSecado = 6, mesesMaternidad = 8) {
     safeText('labelMesesMaternidad', data.parametros?.mesesParaMaternidad || 8);
     
     renderizarKPIsPrincipales(data.kpis);
-    renderizarTablaSecadoMaternidad("tablaSecado", data.detalles.vacasSecado);
-    renderizarTablaSecadoMaternidad("tablaMaternidad", data.detalles.vacasMaternidad);
     
-    if (data.detalles.hembrasPendientesEvaluar && data.detalles.hembrasPendientesEvaluar.length > 0) {
+    // Variables actualizadas aquí
+    renderizarTablaSecadoMaternidad("tablaSecado", data.detalles.secado);
+    renderizarTablaSecadoMaternidad("tablaMaternidad", data.detalles.maternidad);
+    
+    if (data.detalles.pendientes && data.detalles.pendientes.length > 0) {
       safeStyle('seccionHembrasPendientes', 'display', 'block');
-      safeText('conteoHembrasPendientes', data.detalles.hembrasPendientesEvaluar.length);
-      renderizarTablaHembrasPendientes("tablaHembrasPendientes", data.detalles.hembrasPendientesEvaluar);
+      safeText('conteoHembrasPendientes', data.detalles.pendientes.length);
+      renderizarTablaHembrasPendientes("tablaHembrasPendientes", data.detalles.pendientes);
     } else { 
       safeStyle('seccionHembrasPendientes', 'display', 'none'); 
     }
@@ -286,47 +288,28 @@ async function cargarReporte(mesesSecado = 6, mesesMaternidad = 8) {
   }
 }
 
+// SECCIÓN MODIFICADA: renderizarKPIsPrincipales
 function renderizarKPIsPrincipales(kpis) {
   if (!kpis) return;
-  const mapeo = {
-    tasaPreñezGeneral: { id: 'tasaPreñezGeneral', estado: 'estado-tasaGeneral', advertencia: 'advertencia-tasaGeneral', card: 'kpi-tasaGeneral', metaId: 'meta-tasaGeneral' },
-    tasaPreñezVacas: { id: 'tasaPreñezVacas', estado: 'estado-tasaVacas', card: 'kpi-tasaVacas', metaId: 'meta-tasaVacas' },
-    tasaPreñezNovillas: { id: 'tasaPreñezNovillas', estado: 'estado-tasaNovillas', advertencia: 'advertencia-tasaNovillas', card: 'kpi-tasaNovillas', metaId: 'meta-tasaNovillas' },
-    tasaPreñezBufalas: { id: 'tasaPreñezBufalas', estado: 'estado-tasaBufalas', card: 'kpi-tasaBufalas', metaId: 'meta-tasaBufalas' },
-    tasaPreñezBuvillas: { id: 'tasaPreñezBuvillas', estado: 'estado-tasaBuvillas', card: 'kpi-tasaBuvillas', metaId: 'meta-tasaBuvillas' },
-    porcentajeVacías: { id: 'porcentajeVacías', estado: 'estado-vacias', card: 'kpi-vacias', metaId: 'meta-vacias' },
-    diasAbiertosPromedio: { id: 'diasAbiertosProm', estado: 'estado-diasAbiertos', card: 'kpi-diasAbiertos', metaId: 'meta-diasAbiertos' },
-    intervaloEntrePartos: { id: 'iep', estado: 'estado-iep', card: 'kpi-iep', metaId: 'meta-iep' }
-  };
-  Object.entries(mapeo).forEach(([key, cfg]) => {
-    const kpi = kpis[key]; if (!kpi) return;
-    safeText(cfg.id, kpi.valor + (kpi.unidad || ''));
-    
-    if(cfg.metaId && kpi.meta !== undefined) {
-       let signo = key === 'porcentajeVacías' || key === 'diasAbiertosPromedio' || key === 'intervaloEntrePartos' ? '< ' : '≥ ';
-       safeText(cfg.metaId, `Meta: ${signo}${kpi.meta}${kpi.unidad || ''}`);
-    }
+  
+  // 1. Tasas de Preñez
+  safeText('tasaPreñezGeneral', (kpis.tasaPreñezGeneral?.valor || 0) + '%');
+  safeText('tasaPreñezBovinos', (kpis.tasaPreñezBovinos?.valor || 0) + '%');
+  safeText('tasaPreñezBufalos', (kpis.tasaPreñezBufalos?.valor || 0) + '%');
 
-    const elCard = document.getElementById(cfg.card);
-    if (elCard) elCard.className = `kpi-card estado-${kpi.estado}`;
-    
-    const estadoTxt = kpi.estado === 'excelente' ? '✅ ÓPTIMO' : kpi.estado === 'alerta' ? '⚠️ REVISAR' : kpi.estado === 'sin_datos' ? '⚪ SIN DATOS' : '🔄 REGULAR';
-    safeText(cfg.estado, estadoTxt);
-    
-    if (cfg.advertencia) {
-      if (kpi.advertencia) {
-        safeText(cfg.advertencia, kpi.advertencia);
-        safeStyle(cfg.advertencia, 'display', 'block');
-      } else {
-        safeStyle(cfg.advertencia, 'display', 'none');
-      }
-    }
-  });
+  // 2. Días Abiertos y IEP (Mostrar ambos lados: Bovinos y Búfalos)
+  const daBov = kpis.diasAbiertosPromedio?.bovinos?.valor || 'N/A';
+  const daBuf = kpis.diasAbiertosPromedio?.bufalos?.valor || 'N/A';
+  safeText('diasAbiertosProm', `Bov: ${daBov} | Búf: ${daBuf}`);
+
+  const iepBov = kpis.intervalosEntrePartos?.bovinos?.valor || 'N/A';
+  const iepBuf = kpis.intervalosEntrePartos?.bufalos?.valor || 'N/A';
+  safeText('iep', `Bov: ${iepBov} | Búf: ${iepBuf}`);
 }
 
 function prepararDatosYGrafico(kpis, detalles) {
   const preñadas = [...(detalles.preñadas_menor3m || []), ...(detalles.preñadas_3a6m || []), ...(detalles.preñadas_mayor6m || [])];
-  const vacias = [...(detalles.vacías_menor3m || []), ...(detalles.vacías_3a6m || []), ...(detalles.vacías_mayor6m || []), ...(detalles.hembrasPendientesEvaluar || [])];
+  const vacias = [...(detalles.vacías_menor3m || []), ...(detalles.vacías_3a6m || []), ...(detalles.vacías_mayor6m || []), ...(detalles.pendientes || [])];
   
   const todasLasHembras = [...preñadas, ...vacias];
   const total = todasLasHembras.length;
