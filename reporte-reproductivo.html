@@ -65,8 +65,6 @@ h1, h2, h3 { text-align: center; font-weight: 800; color: var(--azul); }
 .estado-alerta .kpi-estado { background: #fdedec; color: var(--rojo); }
 .estado-sin_datos .kpi-estado { background: #f4f6f8; color: var(--gris); }
 
-.kpi-advertencia { font-size: 11px; color: var(--rojo); margin-top: 8px; font-weight: bold; background: #ffeaa7; padding: 4px; border-radius: 4px; }
-
 /* TABLAS Y LISTAS */
 .seccion-lista h3 { border-bottom: 3px solid var(--azul-claro); padding-bottom: 10px; margin-bottom: 15px; display: inline-block; }
 .tabla-container { overflow-x: auto; border-radius: 8px; border: 1px solid var(--gris-claro); }
@@ -120,21 +118,21 @@ h1, h2, h3 { text-align: center; font-weight: 800; color: var(--azul); }
       <div class="kpi-card" id="kpi-tasaGeneral">
         <div class="kpi-titulo">Tasa Preñez General</div>
         <div class="kpi-valor" id="tasaPreñezGeneral">0%</div>
-        <div class="kpi-subtexto" id="sub-tasaGeneral" style="font-size:12px; color:var(--gris); margin-bottom:6px; font-weight:bold;">0 DE 0 ANIMALES</div>
+        <div class="kpi-subtexto" id="sub-tasaGeneral" style="font-size:12px; color:var(--gris); margin-bottom:6px; font-weight:bold;">0 ANIMALES DE 0</div>
         <div class="kpi-meta-obj" id="meta-tasaGeneral">Meta: 85%</div>
       </div>
       
       <div class="kpi-card" id="kpi-tasaBovinos">
         <div class="kpi-titulo">Tasa Preñez Bovinos</div>
         <div class="kpi-valor" id="tasaPreñezBovinos">0%</div>
-        <div class="kpi-subtexto" id="sub-tasaBovinos" style="font-size:12px; color:var(--gris); margin-bottom:6px; font-weight:bold;">0 DE 0 ANIMALES</div>
+        <div class="kpi-subtexto" id="sub-tasaBovinos" style="font-size:12px; color:var(--gris); margin-bottom:6px; font-weight:bold;">0 ANIMALES DE 0</div>
         <div class="kpi-meta-obj">Meta: 85%</div>
       </div>
       
       <div class="kpi-card" id="kpi-tasaBufalas">
         <div class="kpi-titulo">Tasa Preñez Búfalos</div>
         <div class="kpi-valor" id="tasaPreñezBufalos">0%</div>
-        <div class="kpi-subtexto" id="sub-tasaBufalos" style="font-size:12px; color:var(--gris); margin-bottom:6px; font-weight:bold;">0 DE 0 ANIMALES</div>
+        <div class="kpi-subtexto" id="sub-tasaBufalos" style="font-size:12px; color:var(--gris); margin-bottom:6px; font-weight:bold;">0 ANIMALES DE 0</div>
         <div class="kpi-meta-obj">Meta: 85%</div>
       </div>
 
@@ -299,7 +297,8 @@ async function cargarReporte(mesesSecado = 6, mesesMaternidad = 8) {
     renderizarTabla("preñadas_menor3m", data.detalles.preñadas_menor3m);
     renderizarTabla("preñadas_3a6m", data.detalles.preñadas_3a6m);
     renderizarTabla("preñadas_mayor6m", data.detalles.preñadas_mayor6m);
-    // IMPORTANTE: Aquí se usan las variables "vacias" (sin tilde) como viene del API
+    
+    // TABLAS VACIAS (Sin acento para que funcione correctamente)
     renderizarTabla("vacias_menor3m", data.detalles.vacias_menor3m);
     renderizarTabla("vacias_3a6m", data.detalles.vacias_3a6m);
     renderizarTabla("vacias_mayor6m", data.detalles.vacias_mayor6m);
@@ -315,12 +314,10 @@ async function cargarReporte(mesesSecado = 6, mesesMaternidad = 8) {
 function renderizarKPIsPrincipales(kpis) {
   if (!kpis) return;
   
-  // 1. Tasas de Preñez (Valores)
   safeText('tasaPreñezGeneral', (kpis.tasaPreñezGeneral?.valor || 0) + '%');
   safeText('tasaPreñezBovinos', (kpis.tasaPreñezBovinos?.valor || 0) + '%');
   safeText('tasaPreñezBufalos', (kpis.tasaPreñezBufalos?.valor || 0) + '%');
 
-  // 1.1 Tasas de Preñez (FORMATO SOLICITADO: X ANIMALES DE Y)
   const gGen = kpis.tasaPreñezGeneral?.gest || 0; const eGen = kpis.tasaPreñezGeneral?.eval || 0;
   safeText('sub-tasaGeneral', `${gGen} ANIMALES DE ${eGen}`);
 
@@ -330,7 +327,6 @@ function renderizarKPIsPrincipales(kpis) {
   const gBuf = kpis.tasaPreñezBufalos?.gest || 0; const eBuf = kpis.tasaPreñezBufalos?.eval || 0;
   safeText('sub-tasaBufalos', `${gBuf} ANIMALES DE ${eBuf}`);
 
-  // 2. Días Abiertos y IEP
   const daBov = kpis.diasAbiertosPromedio?.bovinos?.valor || 'N/A';
   const daBuf = kpis.diasAbiertosPromedio?.bufalos?.valor || 'N/A';
   safeText('diasAbiertosProm', `Bov: ${daBov} | Búf: ${daBuf}`);
@@ -349,7 +345,6 @@ function renderizarKPIsPrincipales(kpis) {
 function prepararDatosYGrafico(kpis, detalles) {
   const preñadas = [...(detalles.preñadas_menor3m || []), ...(detalles.preñadas_3a6m || []), ...(detalles.preñadas_mayor6m || [])];
   
-  // IMPORTANTE: Aquí se usan las variables "vacias" (sin tilde) como viene del API
   const vacias = [...(detalles.vacias_menor3m || []), ...(detalles.vacias_3a6m || []), ...(detalles.vacias_mayor6m || []), ...(detalles.pendientes || [])];
   
   const todasLasHembras = [...preñadas, ...vacias];
@@ -357,19 +352,20 @@ function prepararDatosYGrafico(kpis, detalles) {
   
   const conteosPaths = { QUI: 0, CL: 0, FO: 0, EST: 0, PAT: 0 };
   
-  // NUEVAS PATOLOGÍAS AGREGADAS
   const keysPath = {
-    QUI: ["QUI-D", "QUI-I", "O QUÍST MULTI", "O QUIST MULTI", "QUISTE"],
-    CL:  ["CL-D", "CL-I", "CUERPO LUTEO", "CUERPO LÚTEO"],
-    FO:  ["FO-D", "FO-I", "FOLICULO", "FOLÍCULO"],
-    EST: ["EST-D", "EST-I", "ESTI", "AGENESIA OVÁR", "AGENESIA OVAR", "HIP OVÁRICA", "HIP OVARICA", "TORSIÓN OVÁRICA", "TORSION OVARICA", "OVA-P", "HIPO"],
+    QUI: ["QUI-D", "QUI-I", "O QUIST MULTI", "QUISTE"],
+    CL:  ["CL-D", "CL-I", "CUERPO LUTEO"],
+    FO:  ["FO-D", "FO-I", "FOLICULO"],
+    EST: ["EST-D", "EST-I", "ESTI", "AGENESIA OVAR", "HIP OVARICA", "TORSION OVARICA", "OVA-P", "HIPO"],
     PAT: ["PIO", "MOM", "FETO MOM", "RE-CH", "PATOLOGIA UTERINA"]
   };
 
   todasLasHembras.forEach(vaca => {
     let textoCrudo = (vaca.diagnostico || vaca.motivo || vaca.clasificacion || "").toString().toUpperCase();
     
-    // Escanea directamente si el texto contiene la abreviatura, ignorando guiones.
+    // Normalizar texto para eliminar tildes y asegurar que los acentos no rompan la validación
+    textoCrudo = textoCrudo.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    
     for (let key in keysPath) {
       let tieneLaPatologia = keysPath[key].some(abreviatura => textoCrudo.includes(abreviatura));
       if (tieneLaPatologia) conteosPaths[key]++;
