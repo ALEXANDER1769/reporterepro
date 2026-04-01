@@ -117,24 +117,49 @@ h1, h2, h3 { text-align: center; font-weight: 800; color: var(--azul); }
 
     <h2 style="margin-bottom: 20px;">⏱️ Indicadores Clave de Desempeño (KPI)</h2>
     <div class="kpi-grid">
-      <div class="kpi-card" id="kpi-tasaGeneral"><div class="kpi-titulo">Tasa Preñez General</div><div class="kpi-valor" id="tasaPreñezGeneral">0%</div><div class="kpi-meta-obj" id="meta-tasaGeneral">Meta: 85%</div></div>
+      <div class="kpi-card" id="kpi-tasaGeneral">
+        <div class="kpi-titulo">Tasa Preñez General</div>
+        <div class="kpi-valor" id="tasaPreñezGeneral">0%</div>
+        <div class="kpi-subtexto" id="sub-tasaGeneral" style="font-size:12px; color:var(--gris); margin-bottom:6px; font-weight:bold;">0 DE 0 ANIMALES</div>
+        <div class="kpi-meta-obj" id="meta-tasaGeneral">Meta: 85%</div>
+      </div>
       
-      <div class="kpi-card" id="kpi-tasaBovinos"><div class="kpi-titulo">Tasa Preñez Bovinos</div><div class="kpi-valor" id="tasaPreñezBovinos">0%</div><div class="kpi-meta-obj">Meta: 85%</div></div>
+      <div class="kpi-card" id="kpi-tasaBovinos">
+        <div class="kpi-titulo">Tasa Preñez Bovinos</div>
+        <div class="kpi-valor" id="tasaPreñezBovinos">0%</div>
+        <div class="kpi-subtexto" id="sub-tasaBovinos" style="font-size:12px; color:var(--gris); margin-bottom:6px; font-weight:bold;">0 DE 0 ANIMALES</div>
+        <div class="kpi-meta-obj">Meta: 85%</div>
+      </div>
       
-      <div class="kpi-card" id="kpi-tasaBufalas"><div class="kpi-titulo">Tasa Preñez Búfalos</div><div class="kpi-valor" id="tasaPreñezBufalos">0%</div><div class="kpi-meta-obj">Meta: 85%</div></div>
+      <div class="kpi-card" id="kpi-tasaBufalas">
+        <div class="kpi-titulo">Tasa Preñez Búfalos</div>
+        <div class="kpi-valor" id="tasaPreñezBufalos">0%</div>
+        <div class="kpi-subtexto" id="sub-tasaBufalos" style="font-size:12px; color:var(--gris); margin-bottom:6px; font-weight:bold;">0 DE 0 ANIMALES</div>
+        <div class="kpi-meta-obj">Meta: 85%</div>
+      </div>
 
-      <div class="kpi-card" id="kpi-diasAbiertos"><div class="kpi-titulo">Días Abiertos Prom.</div><div class="kpi-valor" id="diasAbiertosProm" style="font-size: 22px;">0</div><div class="kpi-meta-obj">Bov < 100 | Búf < 120</div></div>
+      <div class="kpi-card" id="kpi-diasAbiertos">
+        <div class="kpi-titulo">Días Abiertos Prom.</div>
+        <div class="kpi-valor" id="diasAbiertosProm" style="font-size: 22px;">0</div>
+        <div class="kpi-subtexto" id="sub-diasAbiertos" style="font-size:11px; color:var(--gris); margin-bottom:6px; font-weight:bold;">CÁLCULO EN 0 ANIMALES</div>
+        <div class="kpi-meta-obj">Bov < 100 | Búf < 120</div>
+      </div>
       
-      <div class="kpi-card" id="kpi-iep"><div class="kpi-titulo">Intervalo Entre Partos</div><div class="kpi-valor" id="iep" style="font-size: 22px;">0</div><div class="kpi-meta-obj">Meta: 400 / 430 Días</div></div>
+      <div class="kpi-card" id="kpi-iep">
+        <div class="kpi-titulo">Intervalo Entre Partos</div>
+        <div class="kpi-valor" id="iep" style="font-size: 22px;">0</div>
+        <div class="kpi-subtexto" id="sub-iep" style="font-size:11px; color:var(--gris); margin-bottom:6px; font-weight:bold;">CÁLCULO EN 0 PARTOS</div>
+        <div class="kpi-meta-obj">Meta: 400 / 430 Días</div>
+      </div>
     </div>
 
     <h2 style="margin-top: 40px; margin-bottom: 20px;">🔬 Incidencia de Patologías</h2>
     <div class="kpi-grid">
-      <div class="kpi-card" id="kpi-qui"><div class="kpi-titulo">% Quistes (QUI)</div><div class="kpi-valor" id="val-qui">0%</div><div class="kpi-meta-obj" style="background:var(--gris);">Meta: 0%</div><br><span class="kpi-estado" id="estado-qui">-</span></div>
-      <div class="kpi-card" id="kpi-cl"><div class="kpi-titulo">% Cuerpo Lúteo (CL)</div><div class="kpi-valor" id="val-cl">0%</div><div class="kpi-meta-obj" style="background:var(--gris);">Meta: 0%</div><br><span class="kpi-estado" id="estado-cl">-</span></div>
-      <div class="kpi-card" id="kpi-fo"><div class="kpi-titulo">% Folículos (FO)</div><div class="kpi-valor" id="val-fo">0%</div><div class="kpi-meta-obj" style="background:var(--gris);">Meta: 0%</div><br><span class="kpi-estado" id="estado-fo">-</span></div>
-      <div class="kpi-card" id="kpi-est"><div class="kpi-titulo">% Ov. Estáticos (EST)</div><div class="kpi-valor" id="val-est">0%</div><div class="kpi-meta-obj" style="background:var(--gris);">Meta: 0%</div><br><span class="kpi-estado" id="estado-est">-</span></div>
-      <div class="kpi-card" id="kpi-pat"><div class="kpi-titulo">% Pat. Uterinas (PAT)</div><div class="kpi-valor" id="val-pat">0%</div><div class="kpi-meta-obj" style="background:var(--gris);">Meta: 0%</div><br><span class="kpi-estado" id="estado-pat">-</span></div>
+      <div class="kpi-card" id="kpi-qui"><div class="kpi-titulo">% Quistes (QUI)</div><div class="kpi-valor" id="val-qui">0%</div><div class="kpi-subtexto" id="sub-qui" style="font-size:12px; color:var(--gris); margin-bottom:6px; font-weight:bold;">0 ANIMALES DE 0</div><div class="kpi-meta-obj" style="background:var(--gris);">Meta: 0%</div><br><span class="kpi-estado" id="estado-qui">-</span></div>
+      <div class="kpi-card" id="kpi-cl"><div class="kpi-titulo">% Cuerpo Lúteo (CL)</div><div class="kpi-valor" id="val-cl">0%</div><div class="kpi-subtexto" id="sub-cl" style="font-size:12px; color:var(--gris); margin-bottom:6px; font-weight:bold;">0 ANIMALES DE 0</div><div class="kpi-meta-obj" style="background:var(--gris);">Meta: 0%</div><br><span class="kpi-estado" id="estado-cl">-</span></div>
+      <div class="kpi-card" id="kpi-fo"><div class="kpi-titulo">% Folículos (FO)</div><div class="kpi-valor" id="val-fo">0%</div><div class="kpi-subtexto" id="sub-fo" style="font-size:12px; color:var(--gris); margin-bottom:6px; font-weight:bold;">0 ANIMALES DE 0</div><div class="kpi-meta-obj" style="background:var(--gris);">Meta: 0%</div><br><span class="kpi-estado" id="estado-fo">-</span></div>
+      <div class="kpi-card" id="kpi-est"><div class="kpi-titulo">% Ov. Estáticos (EST)</div><div class="kpi-valor" id="val-est">0%</div><div class="kpi-subtexto" id="sub-est" style="font-size:12px; color:var(--gris); margin-bottom:6px; font-weight:bold;">0 ANIMALES DE 0</div><div class="kpi-meta-obj" style="background:var(--gris);">Meta: 0%</div><br><span class="kpi-estado" id="estado-est">-</span></div>
+      <div class="kpi-card" id="kpi-pat"><div class="kpi-titulo">% Pat. Uterinas (PAT)</div><div class="kpi-valor" id="val-pat">0%</div><div class="kpi-subtexto" id="sub-pat" style="font-size:12px; color:var(--gris); margin-bottom:6px; font-weight:bold;">0 ANIMALES DE 0</div><div class="kpi-meta-obj" style="background:var(--gris);">Meta: 0%</div><br><span class="kpi-estado" id="estado-pat">-</span></div>
     </div>
 
     <div class="chart-card">
@@ -186,9 +211,9 @@ h1, h2, h3 { text-align: center; font-weight: 800; color: var(--azul); }
     <div class="card seccion-lista"><div style="text-align:center;"><h3>✅ Preñadas - Menor a 3 meses</h3></div><div class="tabla-container"><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días Abiertos</th></tr></thead><tbody id="preñadas_menor3m"></tbody></table></div></div>
     <div class="card seccion-lista"><div style="text-align:center;"><h3>✅ Preñadas - 3 a 6 meses</h3></div><div class="tabla-container"><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días Abiertos</th></tr></thead><tbody id="preñadas_3a6m"></tbody></table></div></div>
     <div class="card seccion-lista"><div style="text-align:center;"><h3>✅ Preñadas - Mayor a 6 meses</h3></div><div class="tabla-container"><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días Abiertos</th></tr></thead><tbody id="preñadas_mayor6m"></tbody></table></div></div>
-    <div class="card seccion-lista"><div style="text-align:center;"><h3>❌ Vacías / Patologías - Menor a 3 meses</h3></div><div class="tabla-container"><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días Vacía</th></tr></thead><tbody id="vacías_menor3m"></tbody></table></div></div>
-    <div class="card seccion-lista"><div style="text-align:center;"><h3>❌ Vacías / Patologías - 3 a 6 meses</h3></div><div class="tabla-container"><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días Vacía</th></tr></thead><tbody id="vacías_3a6m"></tbody></table></div></div>
-    <div class="card seccion-lista"><div style="text-align:center;"><h3>❌ Vacías / Patologías - Mayor a 6 meses</h3></div><div class="tabla-container"><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días Vacía</th></tr></thead><tbody id="vacías_mayor6m"></tbody></table></div></div>
+    <div class="card seccion-lista"><div style="text-align:center;"><h3>❌ Vacías / Patologías - Menor a 3 meses</h3></div><div class="tabla-container"><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días Vacía</th></tr></thead><tbody id="vacias_menor3m"></tbody></table></div></div>
+    <div class="card seccion-lista"><div style="text-align:center;"><h3>❌ Vacías / Patologías - 3 a 6 meses</h3></div><div class="tabla-container"><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días Vacía</th></tr></thead><tbody id="vacias_3a6m"></tbody></table></div></div>
+    <div class="card seccion-lista"><div style="text-align:center;"><h3>❌ Vacías / Patologías - Mayor a 6 meses</h3></div><div class="tabla-container"><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días Vacía</th></tr></thead><tbody id="vacias_mayor6m"></tbody></table></div></div>
   </div>
 </div>
 
@@ -236,7 +261,6 @@ function recargarConParametros() {
   cargarReporte(mesesSecado, mesesMaternidad);
 }
 
-// SECCIÓN MODIFICADA: cargarReporte
 async function cargarReporte(mesesSecado = 6, mesesMaternidad = 8) {
   try {
     safeStyle("loader", "display", "flex");
@@ -261,7 +285,6 @@ async function cargarReporte(mesesSecado = 6, mesesMaternidad = 8) {
     
     renderizarKPIsPrincipales(data.kpis);
     
-    // Variables actualizadas aquí
     renderizarTablaSecadoMaternidad("tablaSecado", data.detalles.secado);
     renderizarTablaSecadoMaternidad("tablaMaternidad", data.detalles.maternidad);
     
@@ -276,9 +299,10 @@ async function cargarReporte(mesesSecado = 6, mesesMaternidad = 8) {
     renderizarTabla("preñadas_menor3m", data.detalles.preñadas_menor3m);
     renderizarTabla("preñadas_3a6m", data.detalles.preñadas_3a6m);
     renderizarTabla("preñadas_mayor6m", data.detalles.preñadas_mayor6m);
-    renderizarTabla("vacías_menor3m", data.detalles.vacías_menor3m);
-    renderizarTabla("vacías_3a6m", data.detalles.vacías_3a6m);
-    renderizarTabla("vacías_mayor6m", data.detalles.vacías_mayor6m);
+    // IMPORTANTE: Aquí se usan las variables "vacias" (sin tilde) como viene del API
+    renderizarTabla("vacias_menor3m", data.detalles.vacias_menor3m);
+    renderizarTabla("vacias_3a6m", data.detalles.vacias_3a6m);
+    renderizarTabla("vacias_mayor6m", data.detalles.vacias_mayor6m);
 
     prepararDatosYGrafico(data.kpis, data.detalles);
 
@@ -288,51 +312,76 @@ async function cargarReporte(mesesSecado = 6, mesesMaternidad = 8) {
   }
 }
 
-// SECCIÓN MODIFICADA: renderizarKPIsPrincipales
 function renderizarKPIsPrincipales(kpis) {
   if (!kpis) return;
   
-  // 1. Tasas de Preñez
+  // 1. Tasas de Preñez (Valores)
   safeText('tasaPreñezGeneral', (kpis.tasaPreñezGeneral?.valor || 0) + '%');
   safeText('tasaPreñezBovinos', (kpis.tasaPreñezBovinos?.valor || 0) + '%');
   safeText('tasaPreñezBufalos', (kpis.tasaPreñezBufalos?.valor || 0) + '%');
 
-  // 2. Días Abiertos y IEP (Mostrar ambos lados: Bovinos y Búfalos)
+  // 1.1 Tasas de Preñez (FORMATO SOLICITADO: X ANIMALES DE Y)
+  const gGen = kpis.tasaPreñezGeneral?.gest || 0; const eGen = kpis.tasaPreñezGeneral?.eval || 0;
+  safeText('sub-tasaGeneral', `${gGen} ANIMALES DE ${eGen}`);
+
+  const gBov = kpis.tasaPreñezBovinos?.gest || 0; const eBov = kpis.tasaPreñezBovinos?.eval || 0;
+  safeText('sub-tasaBovinos', `${gBov} ANIMALES DE ${eBov}`);
+
+  const gBuf = kpis.tasaPreñezBufalos?.gest || 0; const eBuf = kpis.tasaPreñezBufalos?.eval || 0;
+  safeText('sub-tasaBufalos', `${gBuf} ANIMALES DE ${eBuf}`);
+
+  // 2. Días Abiertos y IEP
   const daBov = kpis.diasAbiertosPromedio?.bovinos?.valor || 'N/A';
   const daBuf = kpis.diasAbiertosPromedio?.bufalos?.valor || 'N/A';
   safeText('diasAbiertosProm', `Bov: ${daBov} | Búf: ${daBuf}`);
+  
+  const conteoDA = (kpis.diasAbiertosPromedio?.bovinos?.conteo || 0) + (kpis.diasAbiertosPromedio?.bufalos?.conteo || 0);
+  safeText('sub-diasAbiertos', `CÁLCULO EN ${conteoDA} ANIMALES`);
 
   const iepBov = kpis.intervalosEntrePartos?.bovinos?.valor || 'N/A';
   const iepBuf = kpis.intervalosEntrePartos?.bufalos?.valor || 'N/A';
   safeText('iep', `Bov: ${iepBov} | Búf: ${iepBuf}`);
+  
+  const conteoIEP = (kpis.intervalosEntrePartos?.bovinos?.conteo || 0) + (kpis.intervalosEntrePartos?.bufalos?.conteo || 0);
+  safeText('sub-iep', `CÁLCULO EN ${conteoIEP} PARTOS`);
 }
 
 function prepararDatosYGrafico(kpis, detalles) {
   const preñadas = [...(detalles.preñadas_menor3m || []), ...(detalles.preñadas_3a6m || []), ...(detalles.preñadas_mayor6m || [])];
-  const vacias = [...(detalles.vacías_menor3m || []), ...(detalles.vacías_3a6m || []), ...(detalles.vacías_mayor6m || []), ...(detalles.pendientes || [])];
+  
+  // IMPORTANTE: Aquí se usan las variables "vacias" (sin tilde) como viene del API
+  const vacias = [...(detalles.vacias_menor3m || []), ...(detalles.vacias_3a6m || []), ...(detalles.vacias_mayor6m || []), ...(detalles.pendientes || [])];
   
   const todasLasHembras = [...preñadas, ...vacias];
   const total = todasLasHembras.length;
   
   const conteosPaths = { QUI: 0, CL: 0, FO: 0, EST: 0, PAT: 0 };
+  
+  // NUEVAS PATOLOGÍAS AGREGADAS
   const keysPath = {
-    QUI: ["QUI-D", "QUI-I"], CL: ["CL-D", "CL-I"], FO: ["FO-D", "FO-I"],
-    EST: ["EST-D", "EST-I", "OVA-P", "HIPO"], PAT: ["PIO", "MOM", "RE-CH"]
+    QUI: ["QUI-D", "QUI-I", "O QUÍST MULTI", "O QUIST MULTI", "QUISTE"],
+    CL:  ["CL-D", "CL-I", "CUERPO LUTEO", "CUERPO LÚTEO"],
+    FO:  ["FO-D", "FO-I", "FOLICULO", "FOLÍCULO"],
+    EST: ["EST-D", "EST-I", "ESTI", "AGENESIA OVÁR", "AGENESIA OVAR", "HIP OVÁRICA", "HIP OVARICA", "TORSIÓN OVÁRICA", "TORSION OVARICA", "OVA-P", "HIPO"],
+    PAT: ["PIO", "MOM", "FETO MOM", "RE-CH", "PATOLOGIA UTERINA"]
   };
 
   todasLasHembras.forEach(vaca => {
     let textoCrudo = (vaca.diagnostico || vaca.motivo || vaca.clasificacion || "").toString().toUpperCase();
-    let palabrasEnTexto = textoCrudo.split(/[\s,;.]+/);
+    
+    // Escanea directamente si el texto contiene la abreviatura, ignorando guiones.
     for (let key in keysPath) {
-      let tieneLaPatologia = keysPath[key].some(abreviatura => palabrasEnTexto.includes(abreviatura));
+      let tieneLaPatologia = keysPath[key].some(abreviatura => textoCrudo.includes(abreviatura));
       if (tieneLaPatologia) conteosPaths[key]++;
     }
   });
 
   const calcPct = (c) => total > 0 ? ((c / total) * 100).toFixed(1) : 0;
 
-  const actCard = (idVal, idEst, idCard, count) => {
+  const actCard = (idVal, idSub, idEst, idCard, count) => {
     safeText(idVal, `${calcPct(count)}%`);
+    safeText(idSub, `${count} ANIMALES DE ${total}`); 
+    
     const elEst = document.getElementById(idEst);
     const elCard = document.getElementById(idCard);
     
@@ -347,11 +396,11 @@ function prepararDatosYGrafico(kpis, detalles) {
     }
   };
 
-  actCard('val-qui', 'estado-qui', 'kpi-qui', conteosPaths.QUI);
-  actCard('val-cl', 'estado-cl', 'kpi-cl', conteosPaths.CL);
-  actCard('val-fo', 'estado-fo', 'kpi-fo', conteosPaths.FO);
-  actCard('val-est', 'estado-est', 'kpi-est', conteosPaths.EST);
-  actCard('val-pat', 'estado-pat', 'kpi-pat', conteosPaths.PAT);
+  actCard('val-qui', 'sub-qui', 'estado-qui', 'kpi-qui', conteosPaths.QUI);
+  actCard('val-cl',  'sub-cl',  'estado-cl',  'kpi-cl',  conteosPaths.CL);
+  actCard('val-fo',  'sub-fo',  'estado-fo',  'kpi-fo',  conteosPaths.FO);
+  actCard('val-est', 'sub-est', 'estado-est', 'kpi-est', conteosPaths.EST);
+  actCard('val-pat', 'sub-pat', 'estado-pat', 'kpi-pat', conteosPaths.PAT);
 
   const isVaca = (v) => {
     let c = (v.clasificacion || '').toUpperCase();
