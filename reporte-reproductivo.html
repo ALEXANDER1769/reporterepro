@@ -44,7 +44,7 @@ h1, h2, h3 { text-align: center; font-weight: 800; color: var(--azul); }
 .btn-actualizar:hover { background: #074b83; }
 
 /* KPI GRID Y TARJETAS VIVIDAS */
-.kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 15px; margin-bottom: 25px; }
+.kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
 .kpi-card { background: var(--blanco); border-radius: 12px; padding: 15px; text-align: center; border-top: 5px solid var(--gris); box-shadow: 0 4px 8px rgba(0,0,0,0.06); transition: transform 0.2s; }
 .kpi-card:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.1); }
 .kpi-card.estado-excelente { border-top-color: var(--excelente); }
@@ -53,13 +53,13 @@ h1, h2, h3 { text-align: center; font-weight: 800; color: var(--azul); }
 .kpi-card.estado-sin_datos { border-top-color: var(--gris-claro); opacity: 0.8; }
 
 .kpi-titulo { font-size: 13px; color: var(--azul); font-weight: 800; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px; }
-.kpi-valor { font-size: 34px; font-weight: 900; margin: 5px 0; color: #2d3436; text-shadow: 1px 1px 2px rgba(0,0,0,0.1); }
+.kpi-valor { font-size: 30px; font-weight: 900; margin: 5px 0; color: #2d3436; text-shadow: 1px 1px 2px rgba(0,0,0,0.1); }
 .kpi-meta-obj { font-size: 12px; font-weight: 700; color: #fff; background: var(--gris); padding: 4px 10px; border-radius: 20px; display: inline-block; margin-bottom: 8px; letter-spacing: 0.5px; }
 .estado-excelente .kpi-meta-obj { background: var(--excelente); }
 .estado-regular .kpi-meta-obj { background: var(--alerta); color: #2d3436; }
 .estado-alerta .kpi-meta-obj { background: var(--rojo); }
 
-.kpi-estado { font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 12px; display: inline-block; margin-top: 5px; }
+.kpi-estado { font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 12px; display: inline-block; margin-top: 5px; }
 .estado-excelente .kpi-estado { background: #e8f8f5; color: var(--excelente); }
 .estado-regular .kpi-estado { background: #fff9e6; color: var(--tierra); }
 .estado-alerta .kpi-estado { background: #fdedec; color: var(--rojo); }
@@ -118,21 +118,21 @@ h1, h2, h3 { text-align: center; font-weight: 800; color: var(--azul); }
       <div class="kpi-card" id="kpi-tasaGeneral">
         <div class="kpi-titulo">Tasa Preñez General</div>
         <div class="kpi-valor" id="tasaPreñezGeneral">0%</div>
-        <div class="kpi-subtexto" id="sub-tasaGeneral" style="font-size:12px; color:var(--gris); margin-bottom:6px; font-weight:bold;">0 ANIMALES DE 0</div>
+        <div class="kpi-subtexto" id="sub-tasaGeneral" style="font-size:11px; color:var(--gris); margin-bottom:6px; font-weight:bold;">0 ANIMALES DE 0</div>
         <div class="kpi-meta-obj" id="meta-tasaGeneral">Meta: 85%</div>
       </div>
       
       <div class="kpi-card" id="kpi-tasaBovinos">
         <div class="kpi-titulo">Tasa Preñez Bovinos</div>
         <div class="kpi-valor" id="tasaPreñezBovinos">0%</div>
-        <div class="kpi-subtexto" id="sub-tasaBovinos" style="font-size:12px; color:var(--gris); margin-bottom:6px; font-weight:bold;">0 ANIMALES DE 0</div>
+        <div class="kpi-subtexto" id="sub-tasaBovinos" style="font-size:11px; color:var(--gris); margin-bottom:6px; font-weight:bold;">0 ANIMALES DE 0</div>
         <div class="kpi-meta-obj">Meta: 85%</div>
       </div>
       
       <div class="kpi-card" id="kpi-tasaBufalas">
         <div class="kpi-titulo">Tasa Preñez Búfalos</div>
         <div class="kpi-valor" id="tasaPreñezBufalos">0%</div>
-        <div class="kpi-subtexto" id="sub-tasaBufalos" style="font-size:12px; color:var(--gris); margin-bottom:6px; font-weight:bold;">0 ANIMALES DE 0</div>
+        <div class="kpi-subtexto" id="sub-tasaBufalos" style="font-size:11px; color:var(--gris); margin-bottom:6px; font-weight:bold;">0 ANIMALES DE 0</div>
         <div class="kpi-meta-obj">Meta: 85%</div>
       </div>
 
@@ -151,13 +151,28 @@ h1, h2, h3 { text-align: center; font-weight: 800; color: var(--azul); }
       </div>
     </div>
 
-    <h2 style="margin-top: 40px; margin-bottom: 20px;">🔬 Incidencia de Patologías</h2>
+    <h2 style="margin-top: 40px; margin-bottom: 20px;">🔬 Incidencia Individual de Patologías</h2>
     <div class="kpi-grid">
-      <div class="kpi-card" id="kpi-qui"><div class="kpi-titulo">% Quistes (QUI)</div><div class="kpi-valor" id="val-qui">0%</div><div class="kpi-subtexto" id="sub-qui" style="font-size:12px; color:var(--gris); margin-bottom:6px; font-weight:bold;">0 ANIMALES DE 0</div><div class="kpi-meta-obj" style="background:var(--gris);">Meta: 0%</div><br><span class="kpi-estado" id="estado-qui">-</span></div>
-      <div class="kpi-card" id="kpi-cl"><div class="kpi-titulo">% Cuerpo Lúteo (CL)</div><div class="kpi-valor" id="val-cl">0%</div><div class="kpi-subtexto" id="sub-cl" style="font-size:12px; color:var(--gris); margin-bottom:6px; font-weight:bold;">0 ANIMALES DE 0</div><div class="kpi-meta-obj" style="background:var(--gris);">Meta: 0%</div><br><span class="kpi-estado" id="estado-cl">-</span></div>
-      <div class="kpi-card" id="kpi-fo"><div class="kpi-titulo">% Folículos (FO)</div><div class="kpi-valor" id="val-fo">0%</div><div class="kpi-subtexto" id="sub-fo" style="font-size:12px; color:var(--gris); margin-bottom:6px; font-weight:bold;">0 ANIMALES DE 0</div><div class="kpi-meta-obj" style="background:var(--gris);">Meta: 0%</div><br><span class="kpi-estado" id="estado-fo">-</span></div>
-      <div class="kpi-card" id="kpi-est"><div class="kpi-titulo">% Ov. Estáticos (EST)</div><div class="kpi-valor" id="val-est">0%</div><div class="kpi-subtexto" id="sub-est" style="font-size:12px; color:var(--gris); margin-bottom:6px; font-weight:bold;">0 ANIMALES DE 0</div><div class="kpi-meta-obj" style="background:var(--gris);">Meta: 0%</div><br><span class="kpi-estado" id="estado-est">-</span></div>
-      <div class="kpi-card" id="kpi-pat"><div class="kpi-titulo">% Pat. Uterinas (PAT)</div><div class="kpi-valor" id="val-pat">0%</div><div class="kpi-subtexto" id="sub-pat" style="font-size:12px; color:var(--gris); margin-bottom:6px; font-weight:bold;">0 ANIMALES DE 0</div><div class="kpi-meta-obj" style="background:var(--gris);">Meta: 0%</div><br><span class="kpi-estado" id="estado-pat">-</span></div>
+      <div class="kpi-card" id="kpi-cld"><div class="kpi-titulo">CL-D</div><div class="kpi-valor" id="val-cld">0%</div><div class="kpi-subtexto" id="sub-cld" style="font-size:11px; color:var(--gris); margin-bottom:6px; font-weight:bold;">0 ANIMALES DE 0</div><div class="kpi-meta-obj" style="background:var(--gris);">Meta: 0%</div><br><span class="kpi-estado" id="estado-cld">-</span></div>
+      <div class="kpi-card" id="kpi-cli"><div class="kpi-titulo">CL-I</div><div class="kpi-valor" id="val-cli">0%</div><div class="kpi-subtexto" id="sub-cli" style="font-size:11px; color:var(--gris); margin-bottom:6px; font-weight:bold;">0 ANIMALES DE 0</div><div class="kpi-meta-obj" style="background:var(--gris);">Meta: 0%</div><br><span class="kpi-estado" id="estado-cli">-</span></div>
+      
+      <div class="kpi-card" id="kpi-fod"><div class="kpi-titulo">FO-D</div><div class="kpi-valor" id="val-fod">0%</div><div class="kpi-subtexto" id="sub-fod" style="font-size:11px; color:var(--gris); margin-bottom:6px; font-weight:bold;">0 ANIMALES DE 0</div><div class="kpi-meta-obj" style="background:var(--gris);">Meta: 0%</div><br><span class="kpi-estado" id="estado-fod">-</span></div>
+      <div class="kpi-card" id="kpi-foi"><div class="kpi-titulo">FO-I</div><div class="kpi-valor" id="val-foi">0%</div><div class="kpi-subtexto" id="sub-foi" style="font-size:11px; color:var(--gris); margin-bottom:6px; font-weight:bold;">0 ANIMALES DE 0</div><div class="kpi-meta-obj" style="background:var(--gris);">Meta: 0%</div><br><span class="kpi-estado" id="estado-foi">-</span></div>
+      
+      <div class="kpi-card" id="kpi-quid"><div class="kpi-titulo">QUI-D</div><div class="kpi-valor" id="val-quid">0%</div><div class="kpi-subtexto" id="sub-quid" style="font-size:11px; color:var(--gris); margin-bottom:6px; font-weight:bold;">0 ANIMALES DE 0</div><div class="kpi-meta-obj" style="background:var(--gris);">Meta: 0%</div><br><span class="kpi-estado" id="estado-quid">-</span></div>
+      <div class="kpi-card" id="kpi-quii"><div class="kpi-titulo">QUI-I</div><div class="kpi-valor" id="val-quii">0%</div><div class="kpi-subtexto" id="sub-quii" style="font-size:11px; color:var(--gris); margin-bottom:6px; font-weight:bold;">0 ANIMALES DE 0</div><div class="kpi-meta-obj" style="background:var(--gris);">Meta: 0%</div><br><span class="kpi-estado" id="estado-quii">-</span></div>
+      
+      <div class="kpi-card" id="kpi-estd"><div class="kpi-titulo">EST-D</div><div class="kpi-valor" id="val-estd">0%</div><div class="kpi-subtexto" id="sub-estd" style="font-size:11px; color:var(--gris); margin-bottom:6px; font-weight:bold;">0 ANIMALES DE 0</div><div class="kpi-meta-obj" style="background:var(--gris);">Meta: 0%</div><br><span class="kpi-estado" id="estado-estd">-</span></div>
+      <div class="kpi-card" id="kpi-esti"><div class="kpi-titulo">EST-I</div><div class="kpi-valor" id="val-esti">0%</div><div class="kpi-subtexto" id="sub-esti" style="font-size:11px; color:var(--gris); margin-bottom:6px; font-weight:bold;">0 ANIMALES DE 0</div><div class="kpi-meta-obj" style="background:var(--gris);">Meta: 0%</div><br><span class="kpi-estado" id="estado-esti">-</span></div>
+      
+      <div class="kpi-card" id="kpi-multi"><div class="kpi-titulo">Ov. Quíst Multi</div><div class="kpi-valor" id="val-multi" style="font-size: 26px;">0%</div><div class="kpi-subtexto" id="sub-multi" style="font-size:11px; color:var(--gris); margin-bottom:6px; font-weight:bold;">0 ANIMALES DE 0</div><div class="kpi-meta-obj" style="background:var(--gris);">Meta: 0%</div><br><span class="kpi-estado" id="estado-multi">-</span></div>
+      <div class="kpi-card" id="kpi-agen"><div class="kpi-titulo">Agenesia Ovár</div><div class="kpi-valor" id="val-agen" style="font-size: 26px;">0%</div><div class="kpi-subtexto" id="sub-agen" style="font-size:11px; color:var(--gris); margin-bottom:6px; font-weight:bold;">0 ANIMALES DE 0</div><div class="kpi-meta-obj" style="background:var(--gris);">Meta: 0%</div><br><span class="kpi-estado" id="estado-agen">-</span></div>
+      <div class="kpi-card" id="kpi-hipo"><div class="kpi-titulo">Hipoplasia Ovár</div><div class="kpi-valor" id="val-hipo" style="font-size: 26px;">0%</div><div class="kpi-subtexto" id="sub-hipo" style="font-size:11px; color:var(--gris); margin-bottom:6px; font-weight:bold;">0 ANIMALES DE 0</div><div class="kpi-meta-obj" style="background:var(--gris);">Meta: 0%</div><br><span class="kpi-estado" id="estado-hipo">-</span></div>
+      <div class="kpi-card" id="kpi-torsion"><div class="kpi-titulo">Torsión Ovár</div><div class="kpi-valor" id="val-torsion" style="font-size: 26px;">0%</div><div class="kpi-subtexto" id="sub-torsion" style="font-size:11px; color:var(--gris); margin-bottom:6px; font-weight:bold;">0 ANIMALES DE 0</div><div class="kpi-meta-obj" style="background:var(--gris);">Meta: 0%</div><br><span class="kpi-estado" id="estado-torsion">-</span></div>
+      
+      <div class="kpi-card" id="kpi-pio"><div class="kpi-titulo">Piometra (PIO)</div><div class="kpi-valor" id="val-pio" style="font-size: 26px;">0%</div><div class="kpi-subtexto" id="sub-pio" style="font-size:11px; color:var(--gris); margin-bottom:6px; font-weight:bold;">0 ANIMALES DE 0</div><div class="kpi-meta-obj" style="background:var(--gris);">Meta: 0%</div><br><span class="kpi-estado" id="estado-pio">-</span></div>
+      <div class="kpi-card" id="kpi-mom"><div class="kpi-titulo">Feto Momificado</div><div class="kpi-valor" id="val-mom" style="font-size: 26px;">0%</div><div class="kpi-subtexto" id="sub-mom" style="font-size:11px; color:var(--gris); margin-bottom:6px; font-weight:bold;">0 ANIMALES DE 0</div><div class="kpi-meta-obj" style="background:var(--gris);">Meta: 0%</div><br><span class="kpi-estado" id="estado-mom">-</span></div>
+      <div class="kpi-card" id="kpi-rech"><div class="kpi-titulo">Reabsorción (RE-CH)</div><div class="kpi-valor" id="val-rech" style="font-size: 26px;">0%</div><div class="kpi-subtexto" id="sub-rech" style="font-size:11px; color:var(--gris); margin-bottom:6px; font-weight:bold;">0 ANIMALES DE 0</div><div class="kpi-meta-obj" style="background:var(--gris);">Meta: 0%</div><br><span class="kpi-estado" id="estado-rech">-</span></div>
     </div>
 
     <div class="chart-card">
@@ -167,11 +182,22 @@ h1, h2, h3 { text-align: center; font-weight: 800; color: var(--azul); }
             <option value="prenez_general">Tasa de Preñez General (Todo el Rebaño)</option>
             <option value="prenez_vacas">Tasa de Preñez en Vientres (Vacas + Búfalas)</option>
             <option value="prenez_novillas">Tasa de Preñez en Reemplazos (Novillas + Buvillas)</option>
-            <option value="QUI">Incidencia de Quistes (QUI)</option>
-            <option value="CL">Incidencia de Cuerpo Lúteo (CL)</option>
-            <option value="FO">Incidencia de Folículos (FO)</option>
-            <option value="EST">Ovarios Estáticos / Anormales (EST, OVA-P)</option>
-            <option value="PAT">Patologías Uterinas (PIO, MOM, RE-CH)</option>
+            <option disabled>──────── PATOLOGÍAS ────────</option>
+            <option value="CLD">Cuerpo Lúteo Derecho (CL-D)</option>
+            <option value="CLI">Cuerpo Lúteo Izquierdo (CL-I)</option>
+            <option value="FOD">Folículo Derecho (FO-D)</option>
+            <option value="FOI">Folículo Izquierdo (FO-I)</option>
+            <option value="QUID">Quiste Derecho (QUI-D)</option>
+            <option value="QUII">Quiste Izquierdo (QUI-I)</option>
+            <option value="ESTD">Ovario Estático Derecho (EST-D)</option>
+            <option value="ESTI">Ovario Estático Izquierdo (EST-I)</option>
+            <option value="MULTI">Ovarios Quísticos Múltiples</option>
+            <option value="AGEN">Agenesia Ovárica</option>
+            <option value="HIPO">Hipoplasia Ovárica</option>
+            <option value="TORSION">Torsión Ovárica</option>
+            <option value="PIO">Piometra (PIO)</option>
+            <option value="MOM">Feto Momificado</option>
+            <option value="RECH">Reabsorción (RE-CH)</option>
         </select>
         <div class="chart-wrapper">
             <canvas id="chartKPI"></canvas>
@@ -228,7 +254,6 @@ if (!email) { alert("Parámetro 'email' no encontrado."); location.href = "/"; }
 let chartInstancia = null; 
 window.chartDataMap = {}; 
 
-// PLUGIN CUSTOM PARA EFECTO 3D EN LAS BARRAS
 const pluginSombra3D = {
   id: 'sombra3D',
   beforeDatasetsDraw: function(chart) {
@@ -297,8 +322,6 @@ async function cargarReporte(mesesSecado = 6, mesesMaternidad = 8) {
     renderizarTabla("preñadas_menor3m", data.detalles.preñadas_menor3m);
     renderizarTabla("preñadas_3a6m", data.detalles.preñadas_3a6m);
     renderizarTabla("preñadas_mayor6m", data.detalles.preñadas_mayor6m);
-    
-    // TABLAS VACIAS (Sin acento para que funcione correctamente)
     renderizarTabla("vacias_menor3m", data.detalles.vacias_menor3m);
     renderizarTabla("vacias_3a6m", data.detalles.vacias_3a6m);
     renderizarTabla("vacias_mayor6m", data.detalles.vacias_mayor6m);
@@ -344,29 +367,40 @@ function renderizarKPIsPrincipales(kpis) {
 
 function prepararDatosYGrafico(kpis, detalles) {
   const preñadas = [...(detalles.preñadas_menor3m || []), ...(detalles.preñadas_3a6m || []), ...(detalles.preñadas_mayor6m || [])];
-  
   const vacias = [...(detalles.vacias_menor3m || []), ...(detalles.vacias_3a6m || []), ...(detalles.vacias_mayor6m || []), ...(detalles.pendientes || [])];
   
   const todasLasHembras = [...preñadas, ...vacias];
   const total = todasLasHembras.length;
   
-  const conteosPaths = { QUI: 0, CL: 0, FO: 0, EST: 0, PAT: 0 };
+  // Contenedores individuales
+  const conteosPaths = { 
+    CLD: 0, CLI: 0, FOD: 0, FOI: 0, QUID: 0, QUII: 0, 
+    ESTD: 0, ESTI: 0, MULTI: 0, AGEN: 0, HIPO: 0, TORSION: 0, 
+    PIO: 0, MOM: 0, RECH: 0 
+  };
   
   const keysPath = {
-    QUI: ["QUI-D", "QUI-I", "O QUIST MULTI", "QUISTE"],
-    CL:  ["CL-D", "CL-I", "CUERPO LUTEO"],
-    FO:  ["FO-D", "FO-I", "FOLICULO"],
-    EST: ["EST-D", "EST-I", "ESTI", "AGENESIA OVAR", "HIP OVARICA", "TORSION OVARICA", "OVA-P", "HIPO"],
-    PAT: ["PIO", "MOM", "FETO MOM", "RE-CH", "PATOLOGIA UTERINA"]
+    CLD: ["CL-D"], CLI: ["CL-I"],
+    FOD: ["FO-D"], FOI: ["FO-I"],
+    QUID: ["QUI-D"], QUII: ["QUI-I"],
+    ESTD: ["EST-D"], ESTI: ["EST-I", "ESTI"],
+    MULTI: ["O QUIST MULTI", "QUIST MULTI"],
+    AGEN: ["AGENESIA OVAR"],
+    HIPO: ["HIP OVARICA", "HIPO"],
+    TORSION: ["TORSION OVARICA", "TORSION"],
+    PIO: ["PIO", "PIOMETRA"],
+    MOM: ["FETO MOM", "MOMIFICADO"],
+    RECH: ["RE-CH"]
   };
 
   todasLasHembras.forEach(vaca => {
     let textoCrudo = (vaca.diagnostico || vaca.motivo || vaca.clasificacion || "").toString().toUpperCase();
     
-    // Normalizar texto para eliminar tildes y asegurar que los acentos no rompan la validación
+    // Normalizar para borrar las tildes y evitar que un acento dañe el cálculo
     textoCrudo = textoCrudo.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
     
     for (let key in keysPath) {
+      // Revisa de manera flexible, atrapa patologías aunque estén unidas por guiones (V---EST-D---ESTI)
       let tieneLaPatologia = keysPath[key].some(abreviatura => textoCrudo.includes(abreviatura));
       if (tieneLaPatologia) conteosPaths[key]++;
     }
@@ -392,11 +426,21 @@ function prepararDatosYGrafico(kpis, detalles) {
     }
   };
 
-  actCard('val-qui', 'sub-qui', 'estado-qui', 'kpi-qui', conteosPaths.QUI);
-  actCard('val-cl',  'sub-cl',  'estado-cl',  'kpi-cl',  conteosPaths.CL);
-  actCard('val-fo',  'sub-fo',  'estado-fo',  'kpi-fo',  conteosPaths.FO);
-  actCard('val-est', 'sub-est', 'estado-est', 'kpi-est', conteosPaths.EST);
-  actCard('val-pat', 'sub-pat', 'estado-pat', 'kpi-pat', conteosPaths.PAT);
+  actCard('val-cld', 'sub-cld', 'estado-cld', 'kpi-cld', conteosPaths.CLD);
+  actCard('val-cli', 'sub-cli', 'estado-cli', 'kpi-cli', conteosPaths.CLI);
+  actCard('val-fod', 'sub-fod', 'estado-fod', 'kpi-fod', conteosPaths.FOD);
+  actCard('val-foi', 'sub-foi', 'estado-foi', 'kpi-foi', conteosPaths.FOI);
+  actCard('val-quid', 'sub-quid', 'estado-quid', 'kpi-quid', conteosPaths.QUID);
+  actCard('val-quii', 'sub-quii', 'estado-quii', 'kpi-quii', conteosPaths.QUII);
+  actCard('val-estd', 'sub-estd', 'estado-estd', 'kpi-estd', conteosPaths.ESTD);
+  actCard('val-esti', 'sub-esti', 'estado-esti', 'kpi-esti', conteosPaths.ESTI);
+  actCard('val-multi', 'sub-multi', 'estado-multi', 'kpi-multi', conteosPaths.MULTI);
+  actCard('val-agen', 'sub-agen', 'estado-agen', 'kpi-agen', conteosPaths.AGEN);
+  actCard('val-hipo', 'sub-hipo', 'estado-hipo', 'kpi-hipo', conteosPaths.HIPO);
+  actCard('val-torsion', 'sub-torsion', 'estado-torsion', 'kpi-torsion', conteosPaths.TORSION);
+  actCard('val-pio', 'sub-pio', 'estado-pio', 'kpi-pio', conteosPaths.PIO);
+  actCard('val-mom', 'sub-mom', 'estado-mom', 'kpi-mom', conteosPaths.MOM);
+  actCard('val-rech', 'sub-rech', 'estado-rech', 'kpi-rech', conteosPaths.RECH);
 
   const isVaca = (v) => {
     let c = (v.clasificacion || '').toUpperCase();
@@ -428,11 +472,22 @@ function prepararDatosYGrafico(kpis, detalles) {
     'prenez_general': { title: 'Preñez General (Cantidades)', labels: ['Preñadas', 'Vacías / Pendientes'], data: [preñadas.length, vacias.length], bg: [colorVerde, colorGris] },
     'prenez_vacas': { title: 'Preñez en Vientres (Cantidades)', labels: ['Vientres Preñados', 'Vientres Vacíos / Pendientes'], data: [prenadasVacas, vaciasVacas], bg: [colorVerde, colorGris] },
     'prenez_novillas': { title: 'Preñez en Reemplazos (Cantidades)', labels: ['Reemplazos Preñados', 'Reemplazos Vacíos / Pendientes'], data: [prenadasNov, vaciasNov], bg: [colorVerde, colorGris] },
-    'QUI': { title: 'Quistes (Casos vs Rebaño Sano)', labels: ['Con Quistes', 'Rebaño Sano'], data: [conteosPaths.QUI, total - conteosPaths.QUI], bg: [colorRojo, colorGris] },
-    'CL': { title: 'Cuerpo Lúteo (Casos vs Rebaño Sano)', labels: ['Con C. Lúteo', 'Rebaño Sano'], data: [conteosPaths.CL, total - conteosPaths.CL], bg: [colorAmarillo, colorGris] },
-    'FO': { title: 'Folículos (Casos vs Rebaño Sano)', labels: ['Con Folículos', 'Rebaño Sano'], data: [conteosPaths.FO, total - conteosPaths.FO], bg: ['#e17055', colorGris] },
-    'EST': { title: 'Ov. Estáticos (Casos vs Rebaño Sano)', labels: ['Con Ov. Estáticos', 'Rebaño Sano'], data: [conteosPaths.EST, total - conteosPaths.EST], bg: ['#e84393', colorGris] },
-    'PAT': { title: 'Pat. Uterinas (Casos vs Rebaño Sano)', labels: ['Con Patologías Uterinas', 'Rebaño Sano'], data: [conteosPaths.PAT, total - conteosPaths.PAT], bg: ['#6c5ce7', colorGris] }
+    
+    'CLD': { title: 'Cuerpo Lúteo Derecho (CL-D)', labels: ['Con Patología', 'Resto del Rebaño'], data: [conteosPaths.CLD, total - conteosPaths.CLD], bg: [colorAmarillo, colorGris] },
+    'CLI': { title: 'Cuerpo Lúteo Izquierdo (CL-I)', labels: ['Con Patología', 'Resto del Rebaño'], data: [conteosPaths.CLI, total - conteosPaths.CLI], bg: [colorAmarillo, colorGris] },
+    'FOD': { title: 'Folículo Derecho (FO-D)', labels: ['Con Patología', 'Resto del Rebaño'], data: [conteosPaths.FOD, total - conteosPaths.FOD], bg: ['#e17055', colorGris] },
+    'FOI': { title: 'Folículo Izquierdo (FO-I)', labels: ['Con Patología', 'Resto del Rebaño'], data: [conteosPaths.FOI, total - conteosPaths.FOI], bg: ['#e17055', colorGris] },
+    'QUID': { title: 'Quiste Derecho (QUI-D)', labels: ['Con Patología', 'Resto del Rebaño'], data: [conteosPaths.QUID, total - conteosPaths.QUID], bg: [colorRojo, colorGris] },
+    'QUII': { title: 'Quiste Izquierdo (QUI-I)', labels: ['Con Patología', 'Resto del Rebaño'], data: [conteosPaths.QUII, total - conteosPaths.QUII], bg: [colorRojo, colorGris] },
+    'ESTD': { title: 'Ovario Estático Derecho (EST-D)', labels: ['Con Patología', 'Resto del Rebaño'], data: [conteosPaths.ESTD, total - conteosPaths.ESTD], bg: ['#e84393', colorGris] },
+    'ESTI': { title: 'Ovario Estático Izquierdo (EST-I)', labels: ['Con Patología', 'Resto del Rebaño'], data: [conteosPaths.ESTI, total - conteosPaths.ESTI], bg: ['#e84393', colorGris] },
+    'MULTI': { title: 'Ovarios Quísticos Múltiples', labels: ['Con Patología', 'Resto del Rebaño'], data: [conteosPaths.MULTI, total - conteosPaths.MULTI], bg: ['#6c5ce7', colorGris] },
+    'AGEN': { title: 'Agenesia Ovárica', labels: ['Con Patología', 'Resto del Rebaño'], data: [conteosPaths.AGEN, total - conteosPaths.AGEN], bg: ['#6c5ce7', colorGris] },
+    'HIPO': { title: 'Hipoplasia Ovárica', labels: ['Con Patología', 'Resto del Rebaño'], data: [conteosPaths.HIPO, total - conteosPaths.HIPO], bg: ['#6c5ce7', colorGris] },
+    'TORSION': { title: 'Torsión Ovárica', labels: ['Con Patología', 'Resto del Rebaño'], data: [conteosPaths.TORSION, total - conteosPaths.TORSION], bg: ['#d63031', colorGris] },
+    'PIO': { title: 'Piometra (PIO)', labels: ['Con Patología', 'Resto del Rebaño'], data: [conteosPaths.PIO, total - conteosPaths.PIO], bg: ['#a29bfe', colorGris] },
+    'MOM': { title: 'Feto Momificado', labels: ['Con Patología', 'Resto del Rebaño'], data: [conteosPaths.MOM, total - conteosPaths.MOM], bg: ['#a29bfe', colorGris] },
+    'RECH': { title: 'Reabsorción (RE-CH)', labels: ['Con Patología', 'Resto del Rebaño'], data: [conteosPaths.RECH, total - conteosPaths.RECH], bg: ['#a29bfe', colorGris] }
   };
 
   renderizarGraficoSeleccionado();
