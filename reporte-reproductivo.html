@@ -129,6 +129,7 @@ h1, h2, h3 { text-align: center; font-weight: 800; color: var(--azul); }
         <div class="kpi-subtexto" id="sub-mortalidad" style="font-size:11px; color:var(--gris); margin-bottom:6px; font-weight:bold;">0 MUERTES</div>
         <div class="kpi-meta-obj" style="background: var(--rojo);">Indicador</div>
       </div>
+
       <div class="kpi-card" id="kpi-tasaGeneral">
         <div class="kpi-titulo">Tasa Preñez General</div>
         <div class="kpi-valor" id="tasaPreñezGeneral">0%</div>
@@ -150,19 +151,34 @@ h1, h2, h3 { text-align: center; font-weight: 800; color: var(--azul); }
         <div class="kpi-meta-obj">Meta: 85%</div>
       </div>
 
-      <div class="kpi-card" id="kpi-diasAbiertos">
-        <div class="kpi-titulo">Días Abiertos Prom.</div>
-        <div class="kpi-valor" id="diasAbiertosProm" style="font-size: 22px;">0</div>
-        <div class="kpi-subtexto" id="sub-diasAbiertos" style="font-size:11px; color:var(--gris); margin-bottom:6px; font-weight:bold;">CÁLCULO EN 0 ANIMALES</div>
-        <div class="kpi-meta-obj">Bov < 100 | Búf < 120</div>
+      <div class="kpi-card" id="kpi-diasAbiertosBov">
+        <div class="kpi-titulo">Días Abiertos Bovinos</div>
+        <div class="kpi-valor" id="daBov" style="font-size: 26px;">N/A</div>
+        <div class="kpi-subtexto" id="sub-daBov" style="font-size:11px; color:var(--gris); margin-bottom:6px; font-weight:bold;">CÁLCULO EN 0 ANIMALES</div>
+        <div class="kpi-meta-obj">Meta: < 100 Días</div>
+      </div>
+
+      <div class="kpi-card" id="kpi-diasAbiertosBuf">
+        <div class="kpi-titulo">Días Abiertos Búfalos</div>
+        <div class="kpi-valor" id="daBuf" style="font-size: 26px;">N/A</div>
+        <div class="kpi-subtexto" id="sub-daBuf" style="font-size:11px; color:var(--gris); margin-bottom:6px; font-weight:bold;">CÁLCULO EN 0 ANIMALES</div>
+        <div class="kpi-meta-obj">Meta: < 120 Días</div>
       </div>
       
-      <div class="kpi-card" id="kpi-iep">
-        <div class="kpi-titulo">Intervalo Entre Partos</div>
-        <div class="kpi-valor" id="iep" style="font-size: 22px;">0</div>
-        <div class="kpi-subtexto" id="sub-iep" style="font-size:11px; color:var(--gris); margin-bottom:6px; font-weight:bold;">CÁLCULO EN 0 PARTOS</div>
-        <div class="kpi-meta-obj">Meta: 400 / 430 Días</div>
+      <div class="kpi-card" id="kpi-iepBov">
+        <div class="kpi-titulo">IEP Bovinos</div>
+        <div class="kpi-valor" id="iepBov" style="font-size: 26px;">N/A</div>
+        <div class="kpi-subtexto" id="sub-iepBov" style="font-size:11px; color:var(--gris); margin-bottom:6px; font-weight:bold;">CÁLCULO EN 0 PARTOS</div>
+        <div class="kpi-meta-obj">Meta: 400 Días</div>
       </div>
+
+      <div class="kpi-card" id="kpi-iepBuf">
+        <div class="kpi-titulo">IEP Búfalos</div>
+        <div class="kpi-valor" id="iepBuf" style="font-size: 26px;">N/A</div>
+        <div class="kpi-subtexto" id="sub-iepBuf" style="font-size:11px; color:var(--gris); margin-bottom:6px; font-weight:bold;">CÁLCULO EN 0 PARTOS</div>
+        <div class="kpi-meta-obj">Meta: 430 Días</div>
+      </div>
+
     </div>
 
     <h2 style="margin-top: 40px; margin-bottom: 20px;">🔬 Incidencia Individual de Patologías</h2>
@@ -351,7 +367,6 @@ async function cargarReporte(mesesSecado = 6, mesesMaternidad = 8) {
 function renderizarKPIsPrincipales(kpis) {
   if (!kpis) return;
   
-  // --- INICIO INYECCIÓN DE NUEVAS TASAS ---
   if (kpis.porcentajeNatalidad !== undefined) {
     safeText('val-natalidad', kpis.porcentajeNatalidad + '%');
     safeText('sub-natalidad', `${kpis.conteoNacimientos || 0} NACIMIENTOS`);
@@ -360,7 +375,6 @@ function renderizarKPIsPrincipales(kpis) {
     safeText('val-mortalidad', kpis.porcentajeMortalidad + '%');
     safeText('sub-mortalidad', `${kpis.conteoMuertes || 0} MUERTES`);
   }
-  // --- FIN INYECCIÓN ---
 
   safeText('tasaPreñezGeneral', (kpis.tasaPreñezGeneral?.valor || 0) + '%');
   safeText('tasaPreñezBovinos', (kpis.tasaPreñezBovinos?.valor || 0) + '%');
@@ -375,19 +389,21 @@ function renderizarKPIsPrincipales(kpis) {
   const gBuf = kpis.tasaPreñezBufalos?.gest || 0; const eBuf = kpis.tasaPreñezBufalos?.eval || 0;
   safeText('sub-tasaBufalos', `${gBuf} ANIMALES DE ${eBuf}`);
 
-  const daBov = kpis.diasAbiertosPromedio?.bovinos?.valor || 'N/A';
-  const daBuf = kpis.diasAbiertosPromedio?.bufalos?.valor || 'N/A';
-  safeText('diasAbiertosProm', `Bov: ${daBov} | Búf: ${daBuf}`);
+  // -- DISTRIBUCIÓN EN TARJETAS SEPARADAS --
   
-  const conteoDA = (kpis.diasAbiertosPromedio?.bovinos?.conteo || 0) + (kpis.diasAbiertosPromedio?.bufalos?.conteo || 0);
-  safeText('sub-diasAbiertos', `CÁLCULO EN ${conteoDA} ANIMALES`);
+  // Días Abiertos
+  safeText('daBov', kpis.diasAbiertosPromedio?.bovinos?.valor || 'N/A');
+  safeText('sub-daBov', `CÁLCULO EN ${kpis.diasAbiertosPromedio?.bovinos?.conteo || 0} ANIMALES`);
 
-  const iepBov = kpis.intervalosEntrePartos?.bovinos?.valor || 'N/A';
-  const iepBuf = kpis.intervalosEntrePartos?.bufalos?.valor || 'N/A';
-  safeText('iep', `Bov: ${iepBov} | Búf: ${iepBuf}`);
-  
-  const conteoIEP = (kpis.intervalosEntrePartos?.bovinos?.conteo || 0) + (kpis.intervalosEntrePartos?.bufalos?.conteo || 0);
-  safeText('sub-iep', `CÁLCULO EN ${conteoIEP} PARTOS`);
+  safeText('daBuf', kpis.diasAbiertosPromedio?.bufalos?.valor || 'N/A');
+  safeText('sub-daBuf', `CÁLCULO EN ${kpis.diasAbiertosPromedio?.bufalos?.conteo || 0} ANIMALES`);
+
+  // IEP
+  safeText('iepBov', kpis.intervalosEntrePartos?.bovinos?.valor || 'N/A');
+  safeText('sub-iepBov', `CÁLCULO EN ${kpis.intervalosEntrePartos?.bovinos?.conteo || 0} PARTOS`);
+
+  safeText('iepBuf', kpis.intervalosEntrePartos?.bufalos?.valor || 'N/A');
+  safeText('sub-iepBuf', `CÁLCULO EN ${kpis.intervalosEntrePartos?.bufalos?.conteo || 0} PARTOS`);
 }
 
 function prepararDatosYGrafico(kpis, detalles) {
@@ -397,7 +413,6 @@ function prepararDatosYGrafico(kpis, detalles) {
   const todasLasHembras = [...preñadas, ...vacias];
   const total = todasLasHembras.length;
   
-  // Contenedores individuales
   const conteosPaths = { 
     CLD: 0, CLI: 0, FOD: 0, FOI: 0, QUID: 0, QUII: 0, 
     ESTD: 0, ESTI: 0, MULTI: 0, AGEN: 0, HIPO: 0, TORSION: 0, 
@@ -420,12 +435,9 @@ function prepararDatosYGrafico(kpis, detalles) {
 
   todasLasHembras.forEach(vaca => {
     let textoCrudo = (vaca.diagnostico || vaca.motivo || vaca.clasificacion || "").toString().toUpperCase();
-    
-    // Normalizar para borrar las tildes y evitar que un acento dañe el cálculo
     textoCrudo = textoCrudo.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
     
     for (let key in keysPath) {
-      // Revisa de manera flexible, atrapa patologías aunque estén unidas por guiones (V---EST-D---ESTI)
       let tieneLaPatologia = keysPath[key].some(abreviatura => textoCrudo.includes(abreviatura));
       if (tieneLaPatologia) conteosPaths[key]++;
     }
