@@ -115,6 +115,20 @@ h1, h2, h3 { text-align: center; font-weight: 800; color: var(--azul); }
 
     <h2 style="margin-bottom: 20px;">⏱️ Indicadores Clave de Desempeño (KPI)</h2>
     <div class="kpi-grid">
+      
+      <div class="kpi-card" id="kpi-natalidad" style="border-top-color: var(--verde);">
+        <div class="kpi-titulo">% Natalidad</div>
+        <div class="kpi-valor" id="val-natalidad" style="color: var(--verde);">0.00%</div>
+        <div class="kpi-subtexto" id="sub-natalidad" style="font-size:11px; color:var(--gris); margin-bottom:6px; font-weight:bold;">0 NACIMIENTOS</div>
+        <div class="kpi-meta-obj" style="background: var(--verde);">Indicador</div>
+      </div>
+      
+      <div class="kpi-card" id="kpi-mortalidad" style="border-top-color: var(--rojo);">
+        <div class="kpi-titulo">% Mortalidad</div>
+        <div class="kpi-valor" id="val-mortalidad" style="color: var(--rojo);">0.00%</div>
+        <div class="kpi-subtexto" id="sub-mortalidad" style="font-size:11px; color:var(--gris); margin-bottom:6px; font-weight:bold;">0 MUERTES</div>
+        <div class="kpi-meta-obj" style="background: var(--rojo);">Indicador</div>
+      </div>
       <div class="kpi-card" id="kpi-tasaGeneral">
         <div class="kpi-titulo">Tasa Preñez General</div>
         <div class="kpi-valor" id="tasaPreñezGeneral">0%</div>
@@ -337,6 +351,17 @@ async function cargarReporte(mesesSecado = 6, mesesMaternidad = 8) {
 function renderizarKPIsPrincipales(kpis) {
   if (!kpis) return;
   
+  // --- INICIO INYECCIÓN DE NUEVAS TASAS ---
+  if (kpis.porcentajeNatalidad !== undefined) {
+    safeText('val-natalidad', kpis.porcentajeNatalidad + '%');
+    safeText('sub-natalidad', `${kpis.conteoNacimientos || 0} NACIMIENTOS`);
+  }
+  if (kpis.porcentajeMortalidad !== undefined) {
+    safeText('val-mortalidad', kpis.porcentajeMortalidad + '%');
+    safeText('sub-mortalidad', `${kpis.conteoMuertes || 0} MUERTES`);
+  }
+  // --- FIN INYECCIÓN ---
+
   safeText('tasaPreñezGeneral', (kpis.tasaPreñezGeneral?.valor || 0) + '%');
   safeText('tasaPreñezBovinos', (kpis.tasaPreñezBovinos?.valor || 0) + '%');
   safeText('tasaPreñezBufalos', (kpis.tasaPreñezBufalos?.valor || 0) + '%');
