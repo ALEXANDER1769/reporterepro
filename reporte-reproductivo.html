@@ -123,10 +123,10 @@ h1, h2, h3 { text-align: center; font-weight: 800; color: var(--azul); }
         <div class="kpi-meta-obj" style="background: var(--verde);">Indicador</div>
       </div>
       
-      <div class="kpi-card" id="kpi-mortalidad" style="border-top-color: var(--rojo);">
-        <div class="kpi-titulo">% Mortalidad</div>
-        <div class="kpi-valor" id="val-mortalidad" style="color: var(--rojo);">0.00%</div>
-        <div class="kpi-subtexto" id="sub-mortalidad" style="font-size:11px; color:var(--gris); margin-bottom:6px; font-weight:bold;">0 MUERTES</div>
+      <div class="kpi-card" id="kpi-patologia" style="border-top-color: var(--rojo);">
+        <div class="kpi-titulo">% Patologías</div>
+        <div class="kpi-valor" id="val-patologia" style="color: var(--rojo);">0.00%</div>
+        <div class="kpi-subtexto" id="sub-patologia" style="font-size:11px; color:var(--gris); margin-bottom:6px; font-weight:bold;">0 CASOS CLÍNICOS</div>
         <div class="kpi-meta-obj" style="background: var(--rojo);">Indicador</div>
       </div>
 
@@ -367,38 +367,43 @@ async function cargarReporte(mesesSecado = 6, mesesMaternidad = 8) {
 function renderizarKPIsPrincipales(kpis) {
   if (!kpis) return;
   
-  if (kpis.porcentajeNatalidad !== undefined) {
-    safeText('val-natalidad', kpis.porcentajeNatalidad + '%');
-    safeText('sub-natalidad', `${kpis.conteoNacimientos || 0} NACIMIENTOS`);
+  // 1. NATALIDAD
+  if (kpis.natalidad !== undefined) {
+    const totalInventarioEval = kpis.tasaPreñezGeneral?.evaluadas || 100; 
+    const pctNatalidad = totalInventarioEval > 0 ? ((kpis.natalidad / totalInventarioEval) * 100).toFixed(1) : 0;
+    safeText('val-natalidad', pctNatalidad + '%');
+    safeText('sub-natalidad', `${kpis.natalidad} NACIMIENTOS`);
   }
-  if (kpis.porcentajeMortalidad !== undefined) {
-    safeText('val-mortalidad', kpis.porcentajeMortalidad + '%');
-    safeText('sub-mortalidad', `${kpis.conteoMuertes || 0} MUERTES`);
+  
+  // 2. PATOLOGÍAS
+  if (kpis.patologia !== undefined) {
+    const totalInventarioEval = kpis.tasaPreñezGeneral?.evaluadas || 100;
+    const pctPatologia = totalInventarioEval > 0 ? ((kpis.patologia / totalInventarioEval) * 100).toFixed(1) : 0;
+    safeText('val-patologia', pctPatologia + '%');
+    safeText('sub-patologia', `${kpis.patologia} CASOS CLÍNICOS`);
   }
 
+  // 3. TASAS DE PREÑEZ
   safeText('tasaPreñezGeneral', (kpis.tasaPreñezGeneral?.valor || 0) + '%');
   safeText('tasaPreñezBovinos', (kpis.tasaPreñezBovinos?.valor || 0) + '%');
   safeText('tasaPreñezBufalos', (kpis.tasaPreñezBufalos?.valor || 0) + '%');
 
-  const gGen = kpis.tasaPreñezGeneral?.gest || 0; const eGen = kpis.tasaPreñezGeneral?.eval || 0;
+  const gGen = kpis.tasaPreñezGeneral?.gest || 0; const eGen = kpis.tasaPreñezGeneral?.evaluadas || 0;
   safeText('sub-tasaGeneral', `${gGen} ANIMALES DE ${eGen}`);
 
-  const gBov = kpis.tasaPreñezBovinos?.gest || 0; const eBov = kpis.tasaPreñezBovinos?.eval || 0;
+  const gBov = kpis.tasaPreñezBovinos?.gest || 0; const eBov = kpis.tasaPreñezBovinos?.evaluadas || 0;
   safeText('sub-tasaBovinos', `${gBov} ANIMALES DE ${eBov}`);
 
-  const gBuf = kpis.tasaPreñezBufalos?.gest || 0; const eBuf = kpis.tasaPreñezBufalos?.eval || 0;
+  const gBuf = kpis.tasaPreñezBufalos?.gest || 0; const eBuf = kpis.tasaPreñezBufalos?.evaluadas || 0;
   safeText('sub-tasaBufalos', `${gBuf} ANIMALES DE ${eBuf}`);
 
-  // -- DISTRIBUCIÓN EN TARJETAS SEPARADAS --
-  
-  // Días Abiertos
+  // 4. DÍAS ABIERTOS Y IEP
   safeText('daBov', kpis.diasAbiertosPromedio?.bovinos?.valor || 'N/A');
   safeText('sub-daBov', `CÁLCULO EN ${kpis.diasAbiertosPromedio?.bovinos?.conteo || 0} ANIMALES`);
 
   safeText('daBuf', kpis.diasAbiertosPromedio?.bufalos?.valor || 'N/A');
   safeText('sub-daBuf', `CÁLCULO EN ${kpis.diasAbiertosPromedio?.bufalos?.conteo || 0} ANIMALES`);
 
-  // IEP
   safeText('iepBov', kpis.intervalosEntrePartos?.bovinos?.valor || 'N/A');
   safeText('sub-iepBov', `CÁLCULO EN ${kpis.intervalosEntrePartos?.bovinos?.conteo || 0} PARTOS`);
 
