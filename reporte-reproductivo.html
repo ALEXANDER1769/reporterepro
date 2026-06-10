@@ -261,14 +261,25 @@ h1, h2, h3 { text-align: center; font-weight: 800; color: var(--azul); }
       <div class="tabla-container"><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Clasificación</th><th>Sexo</th><th>Motivo</th></tr></thead><tbody id="tablaHembrasPendientes"></tbody></table></div>
     </div>
 
-    <h2 style="margin-top: 40px; margin-bottom: 20px;">📅 Estatus por Días Abiertos (Cronograma)</h2>
-    <div class="card seccion-lista"><div style="text-align:center;"><h3>✅ Preñadas - Menor a 3 meses</h3></div><div class="tabla-container"><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días Abiertos</th></tr></thead><tbody id="preñadas_menor3m"></tbody></table></div></div>
-    <div class="card seccion-lista"><div style="text-align:center;"><h3>✅ Preñadas - 3 a 6 meses</h3></div><div class="tabla-container"><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días Abiertos</th></tr></thead><tbody id="preñadas_3a6m"></tbody></table></div></div>
-    <div class="card seccion-lista"><div style="text-align:center;"><h3>✅ Preñadas - Mayor a 6 meses</h3></div><div class="tabla-container"><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días Abiertos</th></tr></thead><tbody id="preñadas_mayor6m"></tbody></table></div></div>
-    <div class="card seccion-lista"><div style="text-align:center;"><h3>❌ Vacías / Patologías - Menor a 3 meses</h3></div><div class="tabla-container"><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días Vacía</th></tr></thead><tbody id="vacias_menor3m"></tbody></table></div></div>
-    <div class="card seccion-lista"><div style="text-align:center;"><h3>❌ Vacías / Patologías - 3 a 6 meses</h3></div><div class="tabla-container"><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días Vacía</th></tr></thead><tbody id="vacias_3a6m"></tbody></table></div></div>
-    <div class="card seccion-lista"><div style="text-align:center;"><h3>❌ Vacías / Patologías - Mayor a 6 meses</h3></div><div class="tabla-container"><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días Vacía</th></tr></thead><tbody id="vacias_mayor6m"></tbody></table></div></div>
-  </div>
+    <h2 style="margin-top: 40px; margin-bottom: 20px;">📅 Cronograma por Días Abiertos</h2>
+    
+    <div class="card seccion-lista"><div style="text-align:center;"><h3>✅ Preñadas Élite (Concepción < 90 días)</h3></div><div class="tabla-container"><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días Abiertos</th></tr></thead><tbody id="prenadas_elite"></tbody></table></div></div>
+    
+    <div class="card seccion-lista"><div style="text-align:center;"><h3>✅ Preñadas Promedio (Concepción 90-180 días)</h3></div><div class="tabla-container"><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días Abiertos</th></tr></thead><tbody id="prenadas_promedio"></tbody></table></div></div>
+    
+    <div class="card seccion-lista"><div style="text-align:center;"><h3>✅ Preñadas con Retraso Crítico (> 180 días)</h3></div><div class="tabla-container"><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días Abiertos</th></tr></thead><tbody id="prenadas_critico"></tbody></table></div></div>
+    
+    <div class="card seccion-lista"><div style="text-align:center;"><h3>❌ Vacías en Periodo de Espera (< 90 días)</h3></div><div class="tabla-container"><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días Vacía</th></tr></thead><tbody id="vacias_espera"></tbody></table></div></div>
+    
+    <div class="card seccion-lista"><div style="text-align:center;"><h3>❌ Vacías en Alerta (90-180 días)</h3></div><div class="tabla-container"><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días Vacía</th></tr></thead><tbody id="vacias_alerta"></tbody></table></div></div>
+    
+    <div class="card seccion-lista"><div style="text-align:center;"><h3>❌ Vacías Problema / Críticas (> 180 días)</h3></div><div class="tabla-container"><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días Vacía</th></tr></thead><tbody id="vacias_critica"></tbody></table></div></div>
+    
+    <div class="card seccion-lista" style="border: 2px solid var(--gris);"><div style="text-align:center;"><h3>⚪ Animales Sin Cálculo de Días (Falta Fecha Parto)</h3><p style="font-size:12px; color:var(--gris);">Novillas o vacas sin registro de parto previo.</p></div><div class="tabla-container"><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días Abiertos</th></tr></thead><tbody id="sin_calculo"></tbody></table></div></div>
+
+    <h2 style="margin-top: 40px; margin-bottom: 20px;">🩺 Resultados de la Última Jornada de Palpación</h2>
+    <div class="card seccion-lista"><div style="text-align:center;"><h3>✅ Última Palpación: Preñadas</h3></div><div class="tabla-container"><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días Abiertos</th></tr></thead><tbody id="ultima_palp_prenadas"></tbody></table></div></div>
+    <div class="card seccion-lista"><div style="text-align:center;"><h3>❌ Última Palpación: Vacías / Patologías</h3></div><div class="tabla-container"><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días Vacía</th></tr></thead><tbody id="ultima_palp_vacias"></tbody></table></div></div> </div>
 </div>
 
 <script>
