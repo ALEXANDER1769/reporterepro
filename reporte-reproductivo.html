@@ -360,13 +360,16 @@ async function cargarReporte(mesesSecado = 6, mesesMaternidad = 8) {
       safeStyle('seccionHembrasPendientes', 'display', 'none'); 
     }
     
-    renderizarTabla("preñadas_menor3m", data.detalles.preñadas_menor3m);
-    renderizarTabla("preñadas_3a6m", data.detalles.preñadas_3a6m);
-    renderizarTabla("preñadas_mayor6m", data.detalles.preñadas_mayor6m);
-    renderizarTabla("vacias_menor3m", data.detalles.vacias_menor3m);
-    renderizarTabla("vacias_3a6m", data.detalles.vacias_3a6m);
-    renderizarTabla("vacias_mayor6m", data.detalles.vacias_mayor6m);
-
+    renderizarTabla("prenadas_elite", data.detalles.prenadas_elite);
+    renderizarTabla("prenadas_promedio", data.detalles.prenadas_promedio);
+    renderizarTabla("prenadas_critico", data.detalles.prenadas_critico);
+    renderizarTabla("vacias_espera", data.detalles.vacias_espera);
+    renderizarTabla("vacias_alerta", data.detalles.vacias_alerta);
+    renderizarTabla("vacias_critica", data.detalles.vacias_critica);
+    renderizarTabla("sin_calculo", data.detalles.sin_calculo);
+    
+    renderizarTabla("ultima_palp_prenadas", data.detalles.ultima_palp_prenadas);
+    renderizarTabla("ultima_palp_vacias", data.detalles.ultima_palp_vacias);
     prepararDatosYGrafico(data.kpis, data.detalles);
 
   } catch (e) { 
