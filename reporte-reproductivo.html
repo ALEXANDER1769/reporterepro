@@ -418,124 +418,75 @@ function recargarConParametros() {
   safeText('iepBuf', kpis.intervalosEntrePartos?.bufalos?.valor || 'N/A');
   safeText('sub-iepBuf', `CÁLCULO EN ${kpis.intervalosEntrePartos?.bufalos?.conteo || 0} PARTOS`);
 }
-  function prepararDatosYGrafico(kpis, detalles) {
-  const preñadas = [...(detalles.prenadas_elite || []), ...(detalles.prenadas_promedio || []), ...(detalles.prenadas_critico || [])];
-  const vacias = [...(detalles.vacias_espera || []), ...(detalles.vacias_alerta || []), ...(detalles.vacias_critica || []), ...(detalles.sin_calculo || []), ...(detalles.pendientes || [])];
+ function prepararDatosYGrafico(kpis, detalles) {
+  // 1. Agrupamos las listas normales
+  const preñadas_base = [...(detalles.prenadas_elite || []), ...(detalles.prenadas_promedio || []), ...(detalles.prenadas_critico || [])];
+  const vacias_base = [...(detalles.vacias_espera || []), ...(detalles.vacias_alerta || []), ...(detalles.vacias_critica || []), ...(detalles.pendientes || [])];
+  
+  // 2. Extraemos los "Sin Cálculo" y los dividimos correctamente leyendo si dicen "meses"
+  const sin_calc = detalles.sin_calculo || [];
+  const sin_calc_prenadas = sin_calc.filter(v => v.diagnostico && v.diagnostico.toString().toLowerCase().includes("meses"));
+  const sin_calc_vacias = sin_calc.filter(v => !(v.diagnostico && v.diagnostico.toString().toLowerCase().includes("meses")));
+
+  // 3. Unimos todo de forma exacta (sin contar doble la última palpación)
+  const preñadas = [...preñadas_base, ...sin_calc_prenadas];
+  const vacias = [...vacias_base, ...sin_calc_vacias];
   
   const todasLasHembras = [...preñadas, ...vacias];
   const total = todasLasHembras.length;
   
-  const conteosPaths = { 
-    CLD: 0, CLI: 0, FOD: 0, FOI: 0, QUID: 0, QUII: 0, 
-    ESTD: 0, ESTI: 0, MULTI: 0, AGEN: 0, HIPO: 0, TORSION: 0, 
-    PIO: 0, MOM: 0, RECH: 0 
-  };
-  
-  const keysPath = {
-    CLD: ["CL-D"], CLI: ["CL-I"],
-    FOD: ["FO-D"], FOI: ["FO-I"],
-    QUID: ["QUI-D"], QUII: ["QUI-I"],
-    ESTD: ["EST-D"], ESTI: ["EST-I", "ESTI"],
-    MULTI: ["O QUIST MULTI", "QUIST MULTI"],
-    AGEN: ["AGENESIA OVAR"],
-    HIPO: ["HIP OVARICA", "HIPO"],
-    TORSION: ["TORSION OVARICA", "TORSION"],
-    PIO: ["PIO", "PIOMETRA"],
-    MOM: ["FETO MOM", "MOMIFICADO"],
-    RECH: ["RE-CH"]
-  };
+  const conteosPaths = { CLD: 0, CLI: 0, FOD: 0, FOI: 0, QUID: 0, QUII: 0, ESTD: 0, ESTI: 0, MULTI: 0, AGEN: 0, HIPO: 0, TORSION: 0, PIO: 0, MOM: 0, RECH: 0 };
+  const keysPath = { CLD: ["CL-D"], CLI: ["CL-I"], FOD: ["FO-D"], FOI: ["FO-I"], QUID: ["QUI-D"], QUII: ["QUI-I"], ESTD: ["EST-D"], ESTI: ["EST-I", "ESTI"], MULTI: ["O QUIST MULTI", "QUIST MULTI"], AGEN: ["AGENESIA OVAR"], HIPO: ["HIP OVARICA", "HIPO"], TORSION: ["TORSION OVARICA", "TORSION"], PIO: ["PIO", "PIOMETRA"], MOM: ["FETO MOM", "MOMIFICADO"], RECH: ["RE-CH"] };
 
   todasLasHembras.forEach(vaca => {
-    let textoCrudo = (vaca.diagnostico || vaca.motivo || vaca.clasificacion || "").toString().toUpperCase();
-    textoCrudo = textoCrudo.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    
-    for (let key in keysPath) {
-      let tieneLaPatologia = keysPath[key].some(abreviatura => textoCrudo.includes(abreviatura));
-      if (tieneLaPatologia) conteosPaths[key]++;
-    }
+    let txt = (vaca.diagnostico || vaca.motivo || vaca.clasificacion || "").toString().toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    for (let key in keysPath) { if (keysPath[key].some(abrv => txt.includes(abrv))) conteosPaths[key]++; }
   });
 
   const calcPct = (c) => total > 0 ? ((c / total) * 100).toFixed(1) : 0;
-
   const actCard = (idVal, idSub, idEst, idCard, count) => {
-    safeText(idVal, `${calcPct(count)}%`);
-    safeText(idSub, `${count} ANIMALES DE ${total}`); 
-    
-    const elEst = document.getElementById(idEst);
-    const elCard = document.getElementById(idCard);
-    
+    safeText(idVal, `${calcPct(count)}%`); safeText(idSub, `${count} ANIMALES DE ${total}`); 
+    const elEst = document.getElementById(idEst); const elCard = document.getElementById(idCard);
     if (elEst && elCard) {
-      if(count > 0) {
-        elEst.textContent = `⚠️ ${count} ANIMALES`;
-        elCard.className = `kpi-card estado-alerta`;
-      } else {
-        elEst.textContent = `✅ 0 CASOS`;
-        elCard.className = `kpi-card estado-excelente`;
-      }
+      if(count > 0) { elEst.textContent = `⚠️ ${count} ANIMALES`; elCard.className = `kpi-card estado-alerta`; } 
+      else { elEst.textContent = `✅ 0 CASOS`; elCard.className = `kpi-card estado-excelente`; }
     }
   };
 
-  actCard('val-cld', 'sub-cld', 'estado-cld', 'kpi-cld', conteosPaths.CLD);
-  actCard('val-cli', 'sub-cli', 'estado-cli', 'kpi-cli', conteosPaths.CLI);
-  actCard('val-fod', 'sub-fod', 'estado-fod', 'kpi-fod', conteosPaths.FOD);
-  actCard('val-foi', 'sub-foi', 'estado-foi', 'kpi-foi', conteosPaths.FOI);
-  actCard('val-quid', 'sub-quid', 'estado-quid', 'kpi-quid', conteosPaths.QUID);
-  actCard('val-quii', 'sub-quii', 'estado-quii', 'kpi-quii', conteosPaths.QUII);
-  actCard('val-estd', 'sub-estd', 'estado-estd', 'kpi-estd', conteosPaths.ESTD);
-  actCard('val-esti', 'sub-esti', 'estado-esti', 'kpi-esti', conteosPaths.ESTI);
-  actCard('val-multi', 'sub-multi', 'estado-multi', 'kpi-multi', conteosPaths.MULTI);
-  actCard('val-agen', 'sub-agen', 'estado-agen', 'kpi-agen', conteosPaths.AGEN);
-  actCard('val-hipo', 'sub-hipo', 'estado-hipo', 'kpi-hipo', conteosPaths.HIPO);
-  actCard('val-torsion', 'sub-torsion', 'estado-torsion', 'kpi-torsion', conteosPaths.TORSION);
-  actCard('val-pio', 'sub-pio', 'estado-pio', 'kpi-pio', conteosPaths.PIO);
-  actCard('val-mom', 'sub-mom', 'estado-mom', 'kpi-mom', conteosPaths.MOM);
+  actCard('val-cld', 'sub-cld', 'estado-cld', 'kpi-cld', conteosPaths.CLD); actCard('val-cli', 'sub-cli', 'estado-cli', 'kpi-cli', conteosPaths.CLI);
+  actCard('val-fod', 'sub-fod', 'estado-fod', 'kpi-fod', conteosPaths.FOD); actCard('val-foi', 'sub-foi', 'estado-foi', 'kpi-foi', conteosPaths.FOI);
+  actCard('val-quid', 'sub-quid', 'estado-quid', 'kpi-quid', conteosPaths.QUID); actCard('val-quii', 'sub-quii', 'estado-quii', 'kpi-quii', conteosPaths.QUII);
+  actCard('val-estd', 'sub-estd', 'estado-estd', 'kpi-estd', conteosPaths.ESTD); actCard('val-esti', 'sub-esti', 'estado-esti', 'kpi-esti', conteosPaths.ESTI);
+  actCard('val-multi', 'sub-multi', 'estado-multi', 'kpi-multi', conteosPaths.MULTI); actCard('val-agen', 'sub-agen', 'estado-agen', 'kpi-agen', conteosPaths.AGEN);
+  actCard('val-hipo', 'sub-hipo', 'estado-hipo', 'kpi-hipo', conteosPaths.HIPO); actCard('val-torsion', 'sub-torsion', 'estado-torsion', 'kpi-torsion', conteosPaths.TORSION);
+  actCard('val-pio', 'sub-pio', 'estado-pio', 'kpi-pio', conteosPaths.PIO); actCard('val-mom', 'sub-mom', 'estado-mom', 'kpi-mom', conteosPaths.MOM);
   actCard('val-rech', 'sub-rech', 'estado-rech', 'kpi-rech', conteosPaths.RECH);
-    const isVaca = (v) => {
-    let c = (v.clasificacion || '').toUpperCase();
-    if (c.includes('VACA') || c.includes('BUFALA')) return true;
-    if (c.includes('NOVILLA') || c.includes('BUVILLA')) return false;
-    let up = (v.ultimoParto || '').trim().toUpperCase();
-    return (up !== '' && up !== '-' && up !== 'S/P' && up !== 'N/A');
-  };
 
-  const isNovilla = (v) => {
-    let c = (v.clasificacion || '').toUpperCase();
-    if (c.includes('NOVILLA') || c.includes('BUVILLA')) return true;
-    if (c.includes('VACA') || c.includes('BUFALA')) return false;
-    let up = (v.ultimoParto || '').trim().toUpperCase();
-    return (up === '' || up === '-' || up === 'S/P' || up === 'N/A');
-  };
+  const isVaca = (v) => { let c = (v.clasificacion || '').toUpperCase(); return (c.includes('VACA') || c.includes('BUFALA') || ((v.ultimoParto || '').trim().toUpperCase() !== '' && (v.ultimoParto || '').trim().toUpperCase() !== 'S/P' && (v.ultimoParto || '').trim().toUpperCase() !== '-' && !c.includes('NOVILLA') && !c.includes('BUVILLA'))); };
+  const isNovilla = (v) => !isVaca(v);
 
-  const prenadasVacas = preñadas.filter(isVaca).length;
-  const vaciasVacas = vacias.filter(isVaca).length;
-  const prenadasNov = preñadas.filter(isNovilla).length;
-  const vaciasNov = vacias.filter(isNovilla).length;
-
-  const colorVerde = '#00b894';
-  const colorGris = '#b2bec3';
-  const colorRojo = '#d63031';
-  const colorAmarillo = '#fdcb6e';
+  const prenadasVacas = preñadas.filter(isVaca).length; const vaciasVacas = vacias.filter(isVaca).length;
+  const prenadasNov = preñadas.filter(isNovilla).length; const vaciasNov = vacias.filter(isNovilla).length;
 
   window.chartDataMap = {
-    'prenez_general': { title: 'Preñez General (Cantidades)', labels: ['Preñadas', 'Vacías / Pendientes'], data: [preñadas.length, vacias.length], bg: [colorVerde, colorGris] },
-    'prenez_vacas': { title: 'Preñez en Vientres (Vacas + Búfalas)', labels: ['Vientres Preñados', 'Vientres Vacíos / Pendientes'], data: [prenadasVacas, vaciasVacas], bg: [colorVerde, colorGris] },
-    'prenez_novillas': { title: 'Preñez en Reemplazos (Novillas + Buvillas)', labels: ['Reemplazos Preñados', 'Reemplazos Vacíos / Pendientes'], data: [prenadasNov, vaciasNov], bg: [colorVerde, colorGris] },
-    
-    'CLD': { title: 'Cuerpo Lúteo Derecho (CL-D)', labels: ['Con Patología', 'Resto del Rebaño'], data: [conteosPaths.CLD, total - conteosPaths.CLD], bg: [colorAmarillo, colorGris] },
-    'CLI': { title: 'Cuerpo Lúteo Izquierdo (CL-I)', labels: ['Con Patología', 'Resto del Rebaño'], data: [conteosPaths.CLI, total - conteosPaths.CLI], bg: [colorAmarillo, colorGris] },
-    'FOD': { title: 'Folículo Derecho (FO-D)', labels: ['Con Patología', 'Resto del Rebaño'], data: [conteosPaths.FOD, total - conteosPaths.FOD], bg: ['#e17055', colorGris] },
-    'FOI': { title: 'Folículo Izquierdo (FO-I)', labels: ['Con Patología', 'Resto del Rebaño'], data: [conteosPaths.FOI, total - conteosPaths.FOI], bg: ['#e17055', colorGris] },
-    'QUID': { title: 'Quiste Derecho (QUI-D)', labels: ['Con Patología', 'Resto del Rebaño'], data: [conteosPaths.QUID, total - conteosPaths.QUID], bg: [colorRojo, colorGris] },
-    'QUII': { title: 'Quiste Izquierdo (QUI-I)', labels: ['Con Patología', 'Resto del Rebaño'], data: [conteosPaths.QUII, total - conteosPaths.QUII], bg: [colorRojo, colorGris] },
-    'ESTD': { title: 'Ovario Estático Derecho (EST-D)', labels: ['Con Patología', 'Resto del Rebaño'], data: [conteosPaths.ESTD, total - conteosPaths.ESTD], bg: ['#e84393', colorGris] },
-    'ESTI': { title: 'Ovario Estático Izquierdo (EST-I)', labels: ['Con Patología', 'Resto del Rebaño'], data: [conteosPaths.ESTI, total - conteosPaths.ESTI], bg: ['#e84393', colorGris] },
-    'MULTI': { title: 'Ovarios Quísticos Múltiples', labels: ['Con Patología', 'Resto del Rebaño'], data: [conteosPaths.MULTI, total - conteosPaths.MULTI], bg: ['#6c5ce7', colorGris] },
-    'AGEN': { title: 'Agenesia Ovárica', labels: ['Con Patología', 'Resto del Rebaño'], data: [conteosPaths.AGEN, total - conteosPaths.AGEN], bg: ['#6c5ce7', colorGris] },
-    'HIPO': { title: 'Hipoplasia Ovárica', labels: ['Con Patología', 'Resto del Rebaño'], data: [conteosPaths.HIPO, total - conteosPaths.HIPO], bg: ['#6c5ce7', colorGris] },
-    'TORSION': { title: 'Torsión Ovárica', labels: ['Con Patología', 'Resto del Rebaño'], data: [conteosPaths.TORSION, total - conteosPaths.TORSION], bg: ['#d63031', colorGris] },
-    'PIO': { title: 'Piometra (PIO)', labels: ['Con Patología', 'Resto del Rebaño'], data: [conteosPaths.PIO, total - conteosPaths.PIO], bg: ['#a29bfe', colorGris] },
-    'MOM': { title: 'Feto Momificado', labels: ['Con Patología', 'Resto del Rebaño'], data: [conteosPaths.MOM, total - conteosPaths.MOM], bg: ['#a29bfe', colorGris] },
-    'RECH': { title: 'Reabsorción (RE-CH)', labels: ['Con Patología', 'Resto del Rebaño'], data: [conteosPaths.RECH, total - conteosPaths.RECH], bg: ['#a29bfe', colorGris] }
+    'prenez_general': { title: 'Preñez General (Cantidades)', labels: ['Preñadas', 'Vacías / Pendientes'], data: [preñadas.length, vacias.length], bg: ['#00b894', '#b2bec3'] },
+    'prenez_vacas': { title: 'Preñez en Vientres', labels: ['Vientres Preñados', 'Vientres Vacíos'], data: [prenadasVacas, vaciasVacas], bg: ['#00b894', '#b2bec3'] },
+    'prenez_novillas': { title: 'Preñez en Reemplazos', labels: ['Reemplazos Preñados', 'Reemplazos Vacíos'], data: [prenadasNov, vaciasNov], bg: ['#00b894', '#b2bec3'] },
+    'CLD': { title: 'Cuerpo Lúteo Derecho', labels: ['Con Patología', 'Resto'], data: [conteosPaths.CLD, total - conteosPaths.CLD], bg: ['#fdcb6e', '#b2bec3'] },
+    'CLI': { title: 'Cuerpo Lúteo Izquierdo', labels: ['Con Patología', 'Resto'], data: [conteosPaths.CLI, total - conteosPaths.CLI], bg: ['#fdcb6e', '#b2bec3'] },
+    'FOD': { title: 'Folículo Derecho', labels: ['Con Patología', 'Resto'], data: [conteosPaths.FOD, total - conteosPaths.FOD], bg: ['#e17055', '#b2bec3'] },
+    'FOI': { title: 'Folículo Izquierdo', labels: ['Con Patología', 'Resto'], data: [conteosPaths.FOI, total - conteosPaths.FOI], bg: ['#e17055', '#b2bec3'] },
+    'QUID': { title: 'Quiste Derecho', labels: ['Con Patología', 'Resto'], data: [conteosPaths.QUID, total - conteosPaths.QUID], bg: ['#d63031', '#b2bec3'] },
+    'QUII': { title: 'Quiste Izquierdo', labels: ['Con Patología', 'Resto'], data: [conteosPaths.QUII, total - conteosPaths.QUII], bg: ['#d63031', '#b2bec3'] },
+    'ESTD': { title: 'Ovario Estático Derecho', labels: ['Con Patología', 'Resto'], data: [conteosPaths.ESTD, total - conteosPaths.ESTD], bg: ['#e84393', '#b2bec3'] },
+    'ESTI': { title: 'Ovario Estático Izquierdo', labels: ['Con Patología', 'Resto'], data: [conteosPaths.ESTI, total - conteosPaths.ESTI], bg: ['#e84393', '#b2bec3'] },
+    'MULTI': { title: 'Ovarios Quísticos Múltiples', labels: ['Con Patología', 'Resto'], data: [conteosPaths.MULTI, total - conteosPaths.MULTI], bg: ['#6c5ce7', '#b2bec3'] },
+    'AGEN': { title: 'Agenesia Ovárica', labels: ['Con Patología', 'Resto'], data: [conteosPaths.AGEN, total - conteosPaths.AGEN], bg: ['#6c5ce7', '#b2bec3'] },
+    'HIPO': { title: 'Hipoplasia Ovárica', labels: ['Con Patología', 'Resto'], data: [conteosPaths.HIPO, total - conteosPaths.HIPO], bg: ['#6c5ce7', '#b2bec3'] },
+    'TORSION': { title: 'Torsión Ovárica', labels: ['Con Patología', 'Resto'], data: [conteosPaths.TORSION, total - conteosPaths.TORSION], bg: ['#d63031', '#b2bec3'] },
+    'PIO': { title: 'Piometra (PIO)', labels: ['Con Patología', 'Resto'], data: [conteosPaths.PIO, total - conteosPaths.PIO], bg: ['#a29bfe', '#b2bec3'] },
+    'MOM': { title: 'Feto Momificado', labels: ['Con Patología', 'Resto'], data: [conteosPaths.MOM, total - conteosPaths.MOM], bg: ['#a29bfe', '#b2bec3'] },
+    'RECH': { title: 'Reabsorción', labels: ['Con Patología', 'Resto'], data: [conteosPaths.RECH, total - conteosPaths.RECH], bg: ['#a29bfe', '#b2bec3'] }
   };
 
   renderizarGraficoSeleccionado();
