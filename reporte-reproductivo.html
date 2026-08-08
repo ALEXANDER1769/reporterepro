@@ -75,10 +75,10 @@ h1, h2, h3 { text-align: center; font-weight: 800; color: var(--azul); }
 .tabla-detalles tr:hover { background: #eef5ff; }
 .sin-registros { text-align: center; color: var(--gris); font-style: italic; padding: 20px; font-weight: bold; background: #fdfdfd; }
 
-/* NUEVO: ESTILO PARA FILAS CON ERRORES */
-.fila-alerta { background-color: #fff0f0 !important; }
-.fila-alerta:hover { background-color: #ffe5e5 !important; }
-.fila-alerta td { border-bottom: 1px solid #ffcccc !important; }
+/* NUEVO: ALERTA ALTA VISIBILIDAD (ROJO INTENSO) */
+.fila-alerta { background-color: #ffcccc !important; border-left: 5px solid #d63031; }
+.fila-alerta:hover { background-color: #ffb3b3 !important; }
+.fila-alerta td { border-bottom: 1px solid #ff9999 !important; color: #900c3f; font-weight: bold; }
 
 /* GRÁFICOS */
 .chart-card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-bottom: 30px; border-top: 5px solid var(--morado); text-align: center; }
@@ -308,7 +308,6 @@ if (!email) { alert("Parámetro 'email' no encontrado."); location.href = "/"; }
 
 let chartInstancia = null; 
 window.chartDataMap = {}; 
-// >>> VARIABLE GLOBAL PARA RASTREAR ANIMALES INCONSISTENTES <<<
 window.inconsistentesSet = new Set();
 
 const pluginSombra3D = {
@@ -363,7 +362,6 @@ async function cargarReporte(mesesSecado = 6, mesesMaternidad = 8) {
     safeText('labelMesesSecado', data.parametros?.mesesParaSecado || 6);
     safeText('labelMesesMaternidad', data.parametros?.mesesParaMaternidad || 8);
 
-    // >>> LLENAMOS EL RASTREADOR DE ANIMALES CON PROBLEMAS <<<
     window.inconsistentesSet.clear();
     if (data.detalles.inconsistencias) {
         data.detalles.inconsistencias.forEach(inc => {
@@ -408,7 +406,6 @@ async function cargarReporte(mesesSecado = 6, mesesMaternidad = 8) {
 function renderizarKPIsPrincipales(kpis) {
   if (!kpis) return;
   
-  // 1. NATALIDAD
   if (kpis.natalidad !== undefined) {
     const totalInventarioEval = kpis.tasaPreñezGeneral?.evaluadas || 100; 
     const pctNatalidad = totalInventarioEval > 0 ? ((kpis.natalidad / totalInventarioEval) * 100).toFixed(1) : 0;
@@ -416,7 +413,6 @@ function renderizarKPIsPrincipales(kpis) {
     safeText('sub-natalidad', `${kpis.natalidad} NACIMIENTOS`);
   }
   
-  // 2. PATOLOGÍAS
   if (kpis.patologia !== undefined) {
     const totalInventarioEval = kpis.tasaPreñezGeneral?.evaluadas || 100;
     const pctPatologia = totalInventarioEval > 0 ? ((kpis.patologia / totalInventarioEval) * 100).toFixed(1) : 0;
@@ -424,7 +420,6 @@ function renderizarKPIsPrincipales(kpis) {
     safeText('sub-patologia', `${kpis.patologia} CASOS CLÍNICOS`);
   }
 
-  // 3. TASAS DE PREÑEZ
   safeText('tasaPreñezGeneral', (kpis.tasaPreñezGeneral?.valor || 0) + '%');
   safeText('tasaPreñezBovinos', (kpis.tasaPreñezBovinos?.valor || 0) + '%');
   safeText('tasaPreñezBufalos', (kpis.tasaPreñezBufalos?.valor || 0) + '%');
@@ -438,7 +433,6 @@ function renderizarKPIsPrincipales(kpis) {
   const gBuf = kpis.tasaPreñezBufalos?.gest || 0; const eBuf = kpis.tasaPreñezBufalos?.evaluadas || 0;
   safeText('sub-tasaBufalos', `${gBuf} ANIMALES DE ${eBuf}`);
 
-  // 4. DÍAS ABIERTOS Y IEP
   safeText('daBov', kpis.diasAbiertosPromedio?.bovinos?.valor || 'N/A');
   safeText('sub-daBov', `CÁLCULO EN ${kpis.diasAbiertosPromedio?.bovinos?.conteo || 0} ANIMALES`);
 
@@ -453,16 +447,13 @@ function renderizarKPIsPrincipales(kpis) {
 }
 
 function prepararDatosYGrafico(kpis, detalles) {
-  // 1. Agrupamos las listas normales
   const preñadas_base = [...(detalles.prenadas_elite || []), ...(detalles.prenadas_promedio || []), ...(detalles.prenadas_critico || [])];
   const vacias_base = [...(detalles.vacias_espera || []), ...(detalles.vacias_alerta || []), ...(detalles.vacias_critica || []), ...(detalles.pendientes || [])];
   
-  // 2. Extraemos los "Sin Cálculo" y los dividimos correctamente leyendo si dicen "meses"
   const sin_calc = detalles.sin_calculo || [];
   const sin_calc_prenadas = sin_calc.filter(v => v.diagnostico && v.diagnostico.toString().toLowerCase().includes("meses"));
   const sin_calc_vacias = sin_calc.filter(v => !(v.diagnostico && v.diagnostico.toString().toLowerCase().includes("meses")));
 
-  // 3. Unimos todo de forma exacta (sin contar doble la última palpación)
   const preñadas = [...preñadas_base, ...sin_calc_prenadas];
   const vacias = [...vacias_base, ...sin_calc_vacias];
   
@@ -585,7 +576,6 @@ function renderizarTabla(id, datos, columnas = ['ID','numeroPractico','ultimoPar
     const numPrac = String(row.numeroPractico || "-");
     const esInconsistente = window.inconsistentesSet && window.inconsistentesSet.has(numPrac);
     
-    // >>> APLICAR CLASE ROJA A FILAS INCONSISTENTES <<<
     if (esInconsistente) {
         tr.className = "fila-alerta";
     }
@@ -597,16 +587,15 @@ function renderizarTabla(id, datos, columnas = ['ID','numeroPractico','ultimoPar
       if (col === 'diagnostico') {
         const num = parseFloat(valor);
         if (!isNaN(num) && num > 0) { valor = `✅ ${num} meses`; } 
-        else if (valor && valor.toString().trim() !== "") { valor = `⚠️ ${valor}`; td.style.color = "red"; td.style.fontWeight = "bold"; } 
+        else if (valor && valor.toString().trim() !== "") { valor = `⚠️ ${valor}`; td.style.color = "#900c3f"; td.style.fontWeight = "bold"; } 
         else { valor = `❌ Vacía`; }
       }
       
-      if (col === 'ID') { td.style.fontWeight = "bold"; td.style.color = "#0984e3"; }
+      if (col === 'ID') { td.style.fontWeight = "bold"; td.style.color = esInconsistente ? "#900c3f" : "#0984e3"; }
       
-      // >>> AGREGAR LOGO DE ALERTA AL NÚMERO PRÁCTICO <<<
       if (col === 'numeroPractico') {
          if (esInconsistente) {
-            td.innerHTML = `<span style="color:#d63031; font-weight:bold;" title="Inconsistencia de datos detectada">⚠️ ${valor || '-'}</span>`;
+            td.innerHTML = `<span style="background:#d63031; color:white; padding:3px 8px; border-radius:4px; font-weight:bold;" title="Inconsistencia detectada">⚠️ ${valor || '-'}</span>`;
          } else {
             td.textContent = valor || '-';
          }
@@ -631,16 +620,15 @@ function renderizarTablaSecadoMaternidad(id, datos) {
     const numPrac = String(row.numeroPractico || "-");
     const esInconsistente = window.inconsistentesSet && window.inconsistentesSet.has(numPrac);
     
-    // >>> APLICAR CLASE ROJA <<<
     if (esInconsistente) {
         tr.className = "fila-alerta";
     }
     
     let numPracHtml = esInconsistente 
-        ? `<b style="color:#d63031;" title="Inconsistencia detectada">⚠️ ${numPrac}</b>` 
+        ? `<span style="background:#d63031; color:white; padding:3px 8px; border-radius:4px; font-weight:bold;" title="Inconsistencia detectada">⚠️ ${numPrac}</span>` 
         : `<b>${numPrac}</b>`;
         
-    tr.innerHTML = `<td style="font-weight:bold; color:var(--azul);">${row.ID}</td><td>${numPracHtml}</td><td>${row.clasificacion || '-'}</td><td style="font-weight:bold; font-size: 15px;">${row.edadGestacion} meses</td><td>${row.ultimoParto || '-'}</td><td>${row.diagnostico > 0 ? '✅ ' + row.diagnostico + ' meses' : '❌ Vacía'}</td><td>${row.fechaDiagnostico}</td>`;
+    tr.innerHTML = `<td style="font-weight:bold; color:${esInconsistente ? '#900c3f' : 'var(--azul)'};">${row.ID}</td><td>${numPracHtml}</td><td>${row.clasificacion || '-'}</td><td style="font-weight:bold; font-size: 15px;">${row.edadGestacion} meses</td><td>${row.ultimoParto || '-'}</td><td>${row.diagnostico > 0 ? '✅ ' + row.diagnostico + ' meses' : '❌ Vacía'}</td><td>${row.fechaDiagnostico}</td>`;
     tbody.appendChild(tr);
   });
 }
@@ -656,13 +644,12 @@ function renderizarTablaHembrasPendientes(id, datos) {
     const numPrac = String(row.numeroPractico || "-");
     const esInconsistente = window.inconsistentesSet && window.inconsistentesSet.has(numPrac);
     
-    // >>> APLICAR CLASE ROJA <<<
     if (esInconsistente) {
         tr.className = "fila-alerta";
     }
     
     let numPracHtml = esInconsistente 
-        ? `<b style="color:#d63031;" title="Inconsistencia detectada">⚠️ ${numPrac}</b>` 
+        ? `<span style="background:#d63031; color:white; padding:3px 8px; border-radius:4px; font-weight:bold;" title="Inconsistencia detectada">⚠️ ${numPrac}</span>` 
         : `<b>${numPrac}</b>`;
         
     tr.innerHTML = `<td style="font-weight:bold; color:var(--rojo);">${row.ID}</td><td>${numPracHtml}</td><td>${row.clasificacion || '-'}</td><td>${row.sexo || '-'}</td><td style="color:var(--tierra); font-weight:bold;">${row.motivo || '-'}</td>`;
