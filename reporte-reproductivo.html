@@ -179,6 +179,20 @@ h1, h2, h3 { text-align: center; font-weight: 800; color: var(--azul); }
       </div>
 
     </div>
+
+    <!-- SECCIÓN NUEVA: AUDITORÍA DE DATOS Y ALERTAS ZOOTÉCNICAS -->
+    <div id="seccionAuditoria" style="display: none; background: white; margin-top: 10px; margin-bottom: 30px; padding: 20px; border-radius: 12px; border: 2px solid var(--rojo); box-shadow: 0 4px 10px rgba(214,48,49,0.1);">
+        <h3 style="color: #e74c3c; text-align: center; font-weight: bold; margin-top: 0;">
+            ⚠️ Auditoría de Datos: Inconsistencias Detectadas
+        </h3>
+        <p style="text-align: center; color: var(--gris); font-size: 14px; margin-bottom: 20px;">
+            Estos registros presentan errores biológicos o fechas cruzadas. Los cálculos reproductivos de estos animales han sido suspendidos para proteger la estadística general del hato.
+        </p>
+        <div id="listaInconsistencias" style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center;">
+            <!-- Las tarjetas se inyectarán aquí automáticamente -->
+        </div>
+    </div>
+
     <h2 style="margin-top: 40px; margin-bottom: 20px;">🔬 Incidencia Individual de Patologías</h2>
     <div class="kpi-grid">
       <div class="kpi-card" id="kpi-cld"><div class="kpi-titulo">CL-D</div><div class="kpi-valor" id="val-cld">0%</div><div class="kpi-subtexto" id="sub-cld" style="font-size:11px; color:var(--gris); margin-bottom:6px; font-weight:bold;">0 ANIMALES DE 0</div><div class="kpi-meta-obj" style="background:var(--gris);">Meta: 0%</div><br><span class="kpi-estado" id="estado-cld">-</span></div>
@@ -364,6 +378,9 @@ function recargarConParametros() {
     
     renderizarTabla("ultima_palp_prenadas", data.detalles.ultima_palp_prenadas);
     renderizarTabla("ultima_palp_vacias", data.detalles.ultima_palp_vacias);
+
+    // >>> NUEVA LLAMADA: Dibuja las inconsistencias biológicas/fechas cruzadas <<<
+    renderizarAuditoria(data.detalles.inconsistencias);
 
     prepararDatosYGrafico(data.kpis, data.detalles);
 
@@ -583,6 +600,39 @@ function renderizarTablaHembrasPendientes(id, datos) {
     tr.innerHTML = `<td style="font-weight:bold; color:var(--rojo);">${row.ID}</td><td><b>${row.numeroPractico || '-'}</b></td><td>${row.clasificacion || '-'}</td><td>${row.sexo || '-'}</td><td style="color:var(--tierra); font-weight:bold;">${row.motivo || '-'}</td>`;
     tbody.appendChild(tr);
   });
+}
+
+// >>> NUEVA FUNCIÓN: Genera visualmente las tarjetas de auditoría <<<
+function renderizarAuditoria(inconsistencias) {
+    const seccion = document.getElementById("seccionAuditoria");
+    const lista = document.getElementById("listaInconsistencias");
+    if(!seccion || !lista) return;
+    lista.innerHTML = ""; 
+
+    if (!inconsistencias || inconsistencias.length === 0) {
+        seccion.style.display = "none";
+        return;
+    }
+
+    seccion.style.display = "block";
+    inconsistencias.forEach(inc => {
+        const card = document.createElement("div");
+        card.style.cssText = "background-color: #fdf2f2; border-left: 5px solid #e74c3c; padding: 15px; border-radius: 8px; width: 320px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); text-align: left;";
+        
+        card.innerHTML = `
+            <h4 style="margin-top: 0; margin-bottom: 10px; color: #c0392b; font-size: 16px;">
+                Nº ${inc.numeroPractico} <span style="font-size: 12px; color: #7f8c8d;">(${inc.clasificacion})</span>
+            </h4>
+            <div style="font-size: 13px; color: #2c3e50; line-height: 1.5;">
+                <div><strong>📅 Parto registrado:</strong> ${inc.fechaParto}</div>
+                <div><strong>🩺 Palpación:</strong> ${inc.fechaPalpacion}</div>
+                <div><strong>📋 Diagnóstico:</strong> <span style="color: #2980b9; font-weight: bold;">${inc.diagnostico}</span></div>
+                <hr style="border: 0; border-top: 1px solid #fab1a0; margin: 8px 0;">
+                <div style="color: #d35400;"><strong>Motivo:</strong> ${inc.motivo}</div>
+            </div>
+        `;
+        lista.appendChild(card);
+    });
 }
 
 function exportarTabla(idTabla, nombreArchivo) {
