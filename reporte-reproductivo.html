@@ -75,6 +75,11 @@ h1, h2, h3 { text-align: center; font-weight: 800; color: var(--azul); }
 .tabla-detalles tr:hover { background: #eef5ff; }
 .sin-registros { text-align: center; color: var(--gris); font-style: italic; padding: 20px; font-weight: bold; background: #fdfdfd; }
 
+/* NUEVO: ESTILO PARA FILAS CON ERRORES */
+.fila-alerta { background-color: #fff0f0 !important; }
+.fila-alerta:hover { background-color: #ffe5e5 !important; }
+.fila-alerta td { border-bottom: 1px solid #ffcccc !important; }
+
 /* GRÁFICOS */
 .chart-card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-bottom: 30px; border-top: 5px solid var(--morado); text-align: center; }
 .chart-wrapper { position: relative; height: 400px; width: 100%; margin-top: 20px; }
@@ -154,14 +159,14 @@ h1, h2, h3 { text-align: center; font-weight: 800; color: var(--azul); }
         <div class="kpi-titulo">Días Abiertos Bovinos</div>
         <div class="kpi-valor" id="daBov" style="font-size: 26px;">N/A</div>
         <div class="kpi-subtexto" id="sub-daBov" style="font-size:11px; color:var(--gris); margin-bottom:6px; font-weight:bold;">CÁLCULO EN 0 ANIMALES</div>
-        <div class="kpi-meta-obj">Meta: < 100 Días</div>
+        <div class="kpi-meta-obj">Meta: &lt; 100 Días</div>
       </div>
 
       <div class="kpi-card" id="kpi-diasAbiertosBuf">
         <div class="kpi-titulo">Días Abiertos Búfalos</div>
         <div class="kpi-valor" id="daBuf" style="font-size: 26px;">N/A</div>
         <div class="kpi-subtexto" id="sub-daBuf" style="font-size:11px; color:var(--gris); margin-bottom:6px; font-weight:bold;">CÁLCULO EN 0 ANIMALES</div>
-        <div class="kpi-meta-obj">Meta: < 120 Días</div>
+        <div class="kpi-meta-obj">Meta: &lt; 120 Días</div>
       </div>
       
       <div class="kpi-card" id="kpi-iepBov">
@@ -180,7 +185,7 @@ h1, h2, h3 { text-align: center; font-weight: 800; color: var(--azul); }
 
     </div>
 
-    <!-- SECCIÓN NUEVA: AUDITORÍA DE DATOS Y ALERTAS ZOOTÉCNICAS -->
+    <!-- SECCIÓN DE AUDITORÍA DE DATOS Y ALERTAS ZOOTÉCNICAS -->
     <div id="seccionAuditoria" style="display: none; background: white; margin-top: 10px; margin-bottom: 30px; padding: 20px; border-radius: 12px; border: 2px solid var(--rojo); box-shadow: 0 4px 10px rgba(214,48,49,0.1);">
         <h3 style="color: #e74c3c; text-align: center; font-weight: bold; margin-top: 0;">
             ⚠️ Auditoría de Datos: Inconsistencias Detectadas
@@ -272,13 +277,13 @@ h1, h2, h3 { text-align: center; font-weight: 800; color: var(--azul); }
     </div>
     <h2 style="margin-top: 40px; margin-bottom: 20px;">📅 Cronograma por Días Abiertos</h2>
     
-    <div class="card seccion-lista"><div style="text-align:center;"><h3>✅ Preñadas Élite (Concepción < 90 días)</h3></div><div class="tabla-container"><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días Abiertos</th></tr></thead><tbody id="prenadas_elite"></tbody></table></div></div>
+    <div class="card seccion-lista"><div style="text-align:center;"><h3>✅ Preñadas Élite (Concepción &lt; 90 días)</h3></div><div class="tabla-container"><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días Abiertos</th></tr></thead><tbody id="prenadas_elite"></tbody></table></div></div>
     
     <div class="card seccion-lista"><div style="text-align:center;"><h3>✅ Preñadas Promedio (Concepción 90-180 días)</h3></div><div class="tabla-container"><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días Abiertos</th></tr></thead><tbody id="prenadas_promedio"></tbody></table></div></div>
     
     <div class="card seccion-lista"><div style="text-align:center;"><h3>✅ Preñadas con Retraso Crítico (> 180 días)</h3></div><div class="tabla-container"><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días Abiertos</th></tr></thead><tbody id="prenadas_critico"></tbody></table></div></div>
     
-    <div class="card seccion-lista"><div style="text-align:center;"><h3>❌ Vacías en Periodo de Espera (< 90 días)</h3></div><div class="tabla-container"><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días Vacía</th></tr></thead><tbody id="vacias_espera"></tbody></table></div></div>
+    <div class="card seccion-lista"><div style="text-align:center;"><h3>❌ Vacías en Periodo de Espera (&lt; 90 días)</h3></div><div class="tabla-container"><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días Vacía</th></tr></thead><tbody id="vacias_espera"></tbody></table></div></div>
     
     <div class="card seccion-lista"><div style="text-align:center;"><h3>❌ Vacías en Alerta (90-180 días)</h3></div><div class="tabla-container"><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días Vacía</th></tr></thead><tbody id="vacias_alerta"></tbody></table></div></div>
     
@@ -303,6 +308,8 @@ if (!email) { alert("Parámetro 'email' no encontrado."); location.href = "/"; }
 
 let chartInstancia = null; 
 window.chartDataMap = {}; 
+// >>> VARIABLE GLOBAL PARA RASTREAR ANIMALES INCONSISTENTES <<<
+window.inconsistentesSet = new Set();
 
 const pluginSombra3D = {
   id: 'sombra3D',
@@ -333,7 +340,8 @@ function recargarConParametros() {
   safeText('labelMesesMaternidad', mesesMaternidad);
   cargarReporte(mesesSecado, mesesMaternidad);
 }
-  async function cargarReporte(mesesSecado = 6, mesesMaternidad = 8) {
+
+async function cargarReporte(mesesSecado = 6, mesesMaternidad = 8) {
   try {
     safeStyle("loader", "display", "flex");
     safeStyle("contenido", "display", "none");
@@ -354,6 +362,14 @@ function recargarConParametros() {
     safeVal('mesesMaternidad', data.parametros?.mesesParaMaternidad || 8);
     safeText('labelMesesSecado', data.parametros?.mesesParaSecado || 6);
     safeText('labelMesesMaternidad', data.parametros?.mesesParaMaternidad || 8);
+
+    // >>> LLENAMOS EL RASTREADOR DE ANIMALES CON PROBLEMAS <<<
+    window.inconsistentesSet.clear();
+    if (data.detalles.inconsistencias) {
+        data.detalles.inconsistencias.forEach(inc => {
+            window.inconsistentesSet.add(String(inc.numeroPractico));
+        });
+    }
     
     renderizarKPIsPrincipales(data.kpis);
     
@@ -379,7 +395,6 @@ function recargarConParametros() {
     renderizarTabla("ultima_palp_prenadas", data.detalles.ultima_palp_prenadas);
     renderizarTabla("ultima_palp_vacias", data.detalles.ultima_palp_vacias);
 
-    // >>> NUEVA LLAMADA: Dibuja las inconsistencias biológicas/fechas cruzadas <<<
     renderizarAuditoria(data.detalles.inconsistencias);
 
     prepararDatosYGrafico(data.kpis, data.detalles);
@@ -389,7 +404,8 @@ function recargarConParametros() {
     safeText("loader-text", `❌ Error: ${e.message}`); 
   }
 }
-  function renderizarKPIsPrincipales(kpis) {
+
+function renderizarKPIsPrincipales(kpis) {
   if (!kpis) return;
   
   // 1. NATALIDAD
@@ -435,7 +451,8 @@ function recargarConParametros() {
   safeText('iepBuf', kpis.intervalosEntrePartos?.bufalos?.valor || 'N/A');
   safeText('sub-iepBuf', `CÁLCULO EN ${kpis.intervalosEntrePartos?.bufalos?.conteo || 0} PARTOS`);
 }
- function prepararDatosYGrafico(kpis, detalles) {
+
+function prepararDatosYGrafico(kpis, detalles) {
   // 1. Agrupamos las listas normales
   const preñadas_base = [...(detalles.prenadas_elite || []), ...(detalles.prenadas_promedio || []), ...(detalles.prenadas_critico || [])];
   const vacias_base = [...(detalles.vacias_espera || []), ...(detalles.vacias_alerta || []), ...(detalles.vacias_critica || []), ...(detalles.pendientes || [])];
@@ -556,25 +573,50 @@ function renderizarGraficoSeleccionado() {
     }
   });
 }
-  function renderizarTabla(id, datos, columnas = ['ID','numeroPractico','ultimoParto','diagnostico','fechaDiagnostico','dias']) {
+
+function renderizarTabla(id, datos, columnas = ['ID','numeroPractico','ultimoParto','diagnostico','fechaDiagnostico','dias']) {
   const tbody = document.getElementById(id); 
   if (!tbody) return;
   tbody.innerHTML = "";
   if (!datos || datos.length === 0) { tbody.innerHTML = '<tr><td colspan="6" class="sin-registros">⚠️ No existen registros en esta categoría actualmente.</td></tr>'; return; }
+  
   datos.forEach(row => {
     const tr = document.createElement("tr");
+    const numPrac = String(row.numeroPractico || "-");
+    const esInconsistente = window.inconsistentesSet && window.inconsistentesSet.has(numPrac);
+    
+    // >>> APLICAR CLASE ROJA A FILAS INCONSISTENTES <<<
+    if (esInconsistente) {
+        tr.className = "fila-alerta";
+    }
+
     columnas.forEach(col => {
       const td = document.createElement("td");
       let valor = row[col];
+      
       if (col === 'diagnostico') {
         const num = parseFloat(valor);
         if (!isNaN(num) && num > 0) { valor = `✅ ${num} meses`; } 
         else if (valor && valor.toString().trim() !== "") { valor = `⚠️ ${valor}`; td.style.color = "red"; td.style.fontWeight = "bold"; } 
         else { valor = `❌ Vacía`; }
       }
+      
       if (col === 'ID') { td.style.fontWeight = "bold"; td.style.color = "#0984e3"; }
-      td.textContent = valor || '-'; tr.appendChild(td);
-    }); tbody.appendChild(tr);
+      
+      // >>> AGREGAR LOGO DE ALERTA AL NÚMERO PRÁCTICO <<<
+      if (col === 'numeroPractico') {
+         if (esInconsistente) {
+            td.innerHTML = `<span style="color:#d63031; font-weight:bold;" title="Inconsistencia de datos detectada">⚠️ ${valor || '-'}</span>`;
+         } else {
+            td.textContent = valor || '-';
+         }
+      } else {
+         td.textContent = valor || '-';
+      }
+      
+      tr.appendChild(td);
+    }); 
+    tbody.appendChild(tr);
   });
 }
 
@@ -583,9 +625,22 @@ function renderizarTablaSecadoMaternidad(id, datos) {
   if (!tbody) return;
   tbody.innerHTML = "";
   if (!datos || datos.length === 0) { tbody.innerHTML = '<tr><td colspan="7" class="sin-registros">⚠️ No existen registros en esta categoría actualmente.</td></tr>'; return; }
+  
   datos.forEach(row => {
     const tr = document.createElement("tr");
-    tr.innerHTML = `<td style="font-weight:bold; color:var(--azul);">${row.ID}</td><td><b>${row.numeroPractico}</b></td><td>${row.clasificacion || '-'}</td><td style="font-weight:bold; font-size: 15px;">${row.edadGestacion} meses</td><td>${row.ultimoParto || '-'}</td><td>${row.diagnostico > 0 ? '✅ ' + row.diagnostico + ' meses' : '❌ Vacía'}</td><td>${row.fechaDiagnostico}</td>`;
+    const numPrac = String(row.numeroPractico || "-");
+    const esInconsistente = window.inconsistentesSet && window.inconsistentesSet.has(numPrac);
+    
+    // >>> APLICAR CLASE ROJA <<<
+    if (esInconsistente) {
+        tr.className = "fila-alerta";
+    }
+    
+    let numPracHtml = esInconsistente 
+        ? `<b style="color:#d63031;" title="Inconsistencia detectada">⚠️ ${numPrac}</b>` 
+        : `<b>${numPrac}</b>`;
+        
+    tr.innerHTML = `<td style="font-weight:bold; color:var(--azul);">${row.ID}</td><td>${numPracHtml}</td><td>${row.clasificacion || '-'}</td><td style="font-weight:bold; font-size: 15px;">${row.edadGestacion} meses</td><td>${row.ultimoParto || '-'}</td><td>${row.diagnostico > 0 ? '✅ ' + row.diagnostico + ' meses' : '❌ Vacía'}</td><td>${row.fechaDiagnostico}</td>`;
     tbody.appendChild(tr);
   });
 }
@@ -595,14 +650,26 @@ function renderizarTablaHembrasPendientes(id, datos) {
   if (!tbody) return;
   tbody.innerHTML = "";
   if (!datos || datos.length === 0) { tbody.innerHTML = '<tr><td colspan="5" class="sin-registros">⚠️ Todos los animales tienen diagnóstico al día.</td></tr>'; return; }
+  
   datos.forEach(row => {
     const tr = document.createElement("tr");
-    tr.innerHTML = `<td style="font-weight:bold; color:var(--rojo);">${row.ID}</td><td><b>${row.numeroPractico || '-'}</b></td><td>${row.clasificacion || '-'}</td><td>${row.sexo || '-'}</td><td style="color:var(--tierra); font-weight:bold;">${row.motivo || '-'}</td>`;
+    const numPrac = String(row.numeroPractico || "-");
+    const esInconsistente = window.inconsistentesSet && window.inconsistentesSet.has(numPrac);
+    
+    // >>> APLICAR CLASE ROJA <<<
+    if (esInconsistente) {
+        tr.className = "fila-alerta";
+    }
+    
+    let numPracHtml = esInconsistente 
+        ? `<b style="color:#d63031;" title="Inconsistencia detectada">⚠️ ${numPrac}</b>` 
+        : `<b>${numPrac}</b>`;
+        
+    tr.innerHTML = `<td style="font-weight:bold; color:var(--rojo);">${row.ID}</td><td>${numPracHtml}</td><td>${row.clasificacion || '-'}</td><td>${row.sexo || '-'}</td><td style="color:var(--tierra); font-weight:bold;">${row.motivo || '-'}</td>`;
     tbody.appendChild(tr);
   });
 }
 
-// >>> NUEVA FUNCIÓN: Genera visualmente las tarjetas de auditoría <<<
 function renderizarAuditoria(inconsistencias) {
     const seccion = document.getElementById("seccionAuditoria");
     const lista = document.getElementById("listaInconsistencias");
