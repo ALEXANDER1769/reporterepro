@@ -115,6 +115,8 @@ h1, h2, h3 { text-align: center; font-weight: 800; color: var(--azul); }
       <span style="font-size: 18px;">⚙️</span>
       <label>Meses para secado: <input type="number" id="mesesSecado" value="6" min="1" max="12"></label>
       <label>Meses para maternidad: <input type="number" id="mesesMaternidad" value="8" min="1" max="12"></label>
+      <!-- NUEVO INPUT: VENTANA DINÁMICA -->
+      <label>Ventana Jornada (Días): <input type="number" id="diasJornada" value="60" min="1"></label>
       <button class="btn-actualizar" onclick="recargarConParametros()">🔄 Actualizar Reporte</button>
     </div>
     
@@ -291,7 +293,8 @@ h1, h2, h3 { text-align: center; font-weight: 800; color: var(--azul); }
     
     <div class="card seccion-lista" style="border: 2px solid var(--gris);"><div style="text-align:center;"><h3>⚪ Animales Sin Cálculo de Días (Falta Fecha Parto)</h3><p style="font-size:12px; color:var(--gris);">Novillas o vacas sin registro de parto previo.</p></div><div class="tabla-container"><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días Abiertos</th></tr></thead><tbody id="sin_calculo"></tbody></table></div></div>
 
-    <h2 style="margin-top: 40px; margin-bottom: 20px;">🩺 Resultados de la Última Jornada de Palpación</h2>
+    <!-- EL TÍTULO AHORA ES DINÁMICO GRACIAS AL ID "titulo-jornada" -->
+    <h2 id="titulo-jornada" style="margin-top: 40px; margin-bottom: 20px;">🩺 Resultados de la Última Jornada (Últimos 60 Días)</h2>
     <div class="card seccion-lista"><div style="text-align:center;"><h3>✅ Última Palpación: Preñadas</h3></div><div class="tabla-container"><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días Abiertos</th></tr></thead><tbody id="ultima_palp_prenadas"></tbody></table></div></div>
     <div class="card seccion-lista"><div style="text-align:center;"><h3>❌ Última Palpación: Vacías / Patologías</h3></div><div class="tabla-container"><table class="tabla-detalles"><thead><tr><th>ID</th><th>Nº Práctico</th><th>Último Parto</th><th>Diagnóstico</th><th>Fecha Diagnóstico</th><th>Días Vacía</th></tr></thead><tbody id="ultima_palp_vacias"></tbody></table></div></div>
   </div>
@@ -335,12 +338,17 @@ function cerrarReporte() {
 function recargarConParametros() {
   const mesesSecado = document.getElementById('mesesSecado')?.value || 6;
   const mesesMaternidad = document.getElementById('mesesMaternidad')?.value || 8;
+  const diasJornada = document.getElementById('diasJornada')?.value || 60; // <-- NUEVA VARIABLE
+  
   safeText('labelMesesSecado', mesesSecado);
   safeText('labelMesesMaternidad', mesesMaternidad);
-  cargarReporte(mesesSecado, mesesMaternidad);
+  
+  // Enviamos también la jornada al método cargarReporte
+  cargarReporte(mesesSecado, mesesMaternidad, diasJornada);
 }
 
-async function cargarReporte(mesesSecado = 6, mesesMaternidad = 8) {
+// Ahora la función recibe 3 variables en lugar de 2
+async function cargarReporte(mesesSecado = 6, mesesMaternidad = 8, diasJornada = 60) {
   try {
     safeStyle("loader", "display", "flex");
     safeStyle("contenido", "display", "none");
@@ -348,7 +356,13 @@ async function cargarReporte(mesesSecado = 6, mesesMaternidad = 8) {
     const res = await fetch(WORKER_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ accion: "reporteReproductivo", email: email, mesesSecado: parseInt(mesesSecado), mesesMaternidad: parseInt(mesesMaternidad) })
+      body: JSON.stringify({ 
+        accion: "reporteReproductivo", 
+        email: email, 
+        mesesSecado: parseInt(mesesSecado), 
+        mesesMaternidad: parseInt(mesesMaternidad),
+        diasJornada: parseInt(diasJornada) // <-- VIAJA AL CLOUDFLARE WORKER
+      })
     });
     
     const data = await res.json();
@@ -359,8 +373,13 @@ async function cargarReporte(mesesSecado = 6, mesesMaternidad = 8) {
     
     safeVal('mesesSecado', data.parametros?.mesesParaSecado || 6);
     safeVal('mesesMaternidad', data.parametros?.mesesParaMaternidad || 8);
+    safeVal('diasJornada', data.parametros?.diasJornada || 60); // <-- ACTUALIZA LA CASILLA
+    
     safeText('labelMesesSecado', data.parametros?.mesesParaSecado || 6);
     safeText('labelMesesMaternidad', data.parametros?.mesesParaMaternidad || 8);
+    
+    // TÍTULO DINÁMICO DE LA JORNADA
+    safeText('titulo-jornada', `🩺 Resultados de la Última Jornada (Últimos ${data.parametros?.diasJornada || 60} Días)`);
 
     window.inconsistentesSet.clear();
     if (data.detalles.inconsistencias) {
